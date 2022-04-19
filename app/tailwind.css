@@ -653,9 +653,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
-.bg-slate-500 {
+.bg-primary {
   --tw-bg-opacity: 1;
-  background-color: rgb(100 116 139 / var(--tw-bg-opacity));
+  background-color: rgb(10 26 56 / var(--tw-bg-opacity));
 }
 
 .bg-gray-900 {
@@ -666,11 +666,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-secondary-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(197 214 203 / var(--tw-bg-opacity));
-}
-
-.bg-primary {
-  --tw-bg-opacity: 1;
-  background-color: rgb(10 26 56 / var(--tw-bg-opacity));
 }
 
 .bg-cover {
@@ -725,6 +720,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .leading-3 {
   line-height: .75rem;
+}
+
+.text-secondary-100 {
+  --tw-text-opacity: 1;
+  color: rgb(197 214 203 / var(--tw-text-opacity));
 }
 
 .text-white {

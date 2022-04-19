@@ -104,12 +104,13 @@ export default function App() {
             </li>
           ))}
         </ul>
-        <Container className={"bg-slate-500 h-10 w-full border-neutral-900"}>
-          <div className={"flex justify-center items-center"}>
-            <p>kjsdajshjdasdljkha</p>
-          </div>
+        <Container
+          className={
+            "bg-primary text-secondary-100 h-10 w-full border-neutral-900"
+          }
+        >
+          <Outlet />
         </Container>
-        <Outlet />
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
