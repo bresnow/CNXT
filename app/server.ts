@@ -1,16 +1,30 @@
 import * as fs from "fs";
 import * as fsp from "fs/promises";
 import { createServer } from "http";
-import type { RequestListener } from "http";
+import type { RequestListener, ServerResponse } from "http";
 import * as path from "path";
-
 import { installGlobals, formatServerError } from "@remix-run/node";
 import { createRequestHandler } from "@remix-run/server-runtime";
 import * as build from "@remix-run/server-build";
 import mime from "mime";
-
+import { RemixGunContext } from "./load-context";
+import Gun from "gun";
+import 'gun/lib/path'
+import 'gun/sea'
+import 'gun/lib/webrtc'
+import 'gun/lib/radix'
+import 'gun/lib/radisk'
+import 'gun/lib/store'
+import 'gun/lib/rindexed'
+import 'gun/lib/then'
+import { data } from "../data.config";
 installGlobals();
-
+const env = {
+  DOMAIN: process.env.DOMAIN,
+  PEER_DOMAIN: process.env.PEER_DOMAIN,
+  CLIENT: process.env.CLIENT_PORT,
+  APP_KEY_PAIR: process.env.APP_KEY_PAIR,
+};
 let remixHandler = createRequestHandler(
   build,
   { formatServerError },
@@ -42,7 +56,7 @@ let requestListener: RequestListener = async (req, res) => {
       stream.pipe(res);
       return;
     }
-  } catch (error) {}
+  } catch (error) { }
 
   try {
     let url = new URL(req.url || "/", `http://${req.headers.host}`);
@@ -68,7 +82,7 @@ let requestListener: RequestListener = async (req, res) => {
       method,
     });
 
-    let response = await remixHandler(request, { res });
+    let response = await remixHandler(request, { RemixGunContext, res });
     if (response) {
       let headers: Record<string, string[]> = {};
       for (const [key, value] of response.headers) {
@@ -92,6 +106,21 @@ let requestListener: RequestListener = async (req, res) => {
 };
 
 let server = createServer(requestListener);
-server.listen(3000, () => {
-  console.log("Listening on http://localhost:3000");
+
+const getServeUrl = () => {
+  if (process.env.NODE_ENV === "development") {
+    return `http://0.0.0.0:${env.CLIENT}/gun`;
+  }
+  return `http://${env.DOMAIN}:${env.CLIENT}/gun`
+}
+
+const gun = Gun({
+  web: server.listen(env.CLIENT, () => {
+    console.log(`Remix server is also acting as GunDB relay server. Both tasks are listening on ${getServeUrl()}`);
+  }),
+  radisk: true
+
 });
+
+gun.get('peers').put({ PEER: env.PEER_DOMAIN });
+gun.get('pages').put(data.pages)

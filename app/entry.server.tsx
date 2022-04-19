@@ -1,27 +1,26 @@
-import type { OutgoingHttpHeaders } from "http";
-
 // @ts-expect-error
 import { renderToPipeableStream } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
-
-import { Context } from "./context";
+import type { ServerResponse } from "http";
 import { DataloaderProvider } from "./dataloader/lib";
 import { createServerDataloader } from "./dataloader/server";
+import { RmxGunCtx } from "types";
+import { error, log } from "./lib/console-utils";
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  { res }: Context
+  { res }: { res: ServerResponse }
 ) {
   let dataloader = createServerDataloader(remixContext, request, {}, {});
-
+  log(remixContext);
   responseHeaders.set("Content-Type", "text/html; charset=UTF-8");
   responseHeaders.set("Transfer-Encoding", "chunked");
 
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     let didError = false;
     const { pipe, abort } = renderToPipeableStream(
       <DataloaderProvider dataloader={dataloader}>
@@ -40,14 +39,16 @@ export default async function handleRequest(
               headers[key] = value;
             }
           }
-          console.log(headers);
           res.writeHead(statusCode, headers);
           pipe(res);
 
           resolve();
         },
+        onShellError(err: Error) {
+          reject(err);
+        },
         onError(err: Error) {
-          console.error(err);
+          error(err);
           didError = true;
         },
       }

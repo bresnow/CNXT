@@ -19,7 +19,7 @@ export function createBrowserDataloader(): Dataloader {
         id.replace("root", "/").replace("routes/", "/"),
         window.location.href
       );
-      url.searchParams.set("_data", id);
+      // url.searchParams.set("_data", id);
 
       return fetch(url.toString());
     },
