@@ -17,7 +17,14 @@ import 'gun/lib/radisk'
 import 'gun/lib/store'
 import 'gun/lib/rindexed'
 import 'gun/lib/then'
+import 'gun/lib/later'
+import 'gun/lib/load'
+import 'gun/lib/open'
+import 'gun/lib/not'
+import 'gun/lib/axe'
 import { data } from "../data.config";
+
+
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,

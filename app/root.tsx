@@ -1,4 +1,5 @@
 import {
+  json,
   Link,
   Links,
   LiveReload,
@@ -9,7 +10,7 @@ import {
   useLoaderData,
 } from "remix";
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { LoadCtx, RmxGunCtx } from "types";
+import { LoadCtx, Nodevalues, RmxGunCtx } from "types";
 import styles from "./tailwind.css";
 import { useId } from "react";
 import { log } from "./lib/console-utils";
@@ -26,8 +27,22 @@ export const links: LinksFunction = () => {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { ENV } = RemixGunContext(Gun);
-  return {
+  let { ENV, graph } = RemixGunContext(Gun);
+  let meta = await graph.get(`pages/root/meta`).val();
+  let peerList = {
+    DOMAIN: `http://${ENV.DOMAIN}:${ENV.CLIENT}/gun`,
+    PEER: `http://${ENV.PEER_DOMAIN}/gun`,
+  };
+  let gunOpts = {
+    peers: [`${peerList.DOMAIN}`],
+    radisk: true,
+    localStorage: false,
+  };
+
+  return json<RootLoaderData>({
+    peers: [peerList.PEER, peerList.DOMAIN],
+    meta,
+    gunOpts,
     ENV,
     links: [
       {
@@ -43,9 +58,16 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
         link: "/profile",
       },
     ],
-  };
+  });
 };
 type RootLoaderData = {
+  peers: string[];
+  meta: Nodevalues | undefined;
+  gunOpts: {
+    peers: string[];
+    radisk: boolean;
+    localStorage: boolean;
+  };
   ENV: {
     DOMAIN: string | undefined;
     PEER_DOMAIN: string | undefined;
