@@ -2,6 +2,9 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 const path = require("path");
 // const url = typeof window !== undefined ? window.location.origin : "";
 module.exports = {
+    content: [
+        "./app/**/*.{js,ts,jsx,tsx}",
+    ],
     //1d53b8-345fad-101f15-0a1a38-b30205
     darkMode: "class", // or 'media' or 'class'
     theme: {

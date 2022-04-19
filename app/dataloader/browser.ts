@@ -1,6 +1,6 @@
 import type { Dataloader } from "./context";
 
-export function createBrowserDataloader(): Dataloader {
+export function createGunClientLoader(): Dataloader {
   return {
     async load(id, internalId) {
       let cache = (window as any).__remix_dataloader || {};

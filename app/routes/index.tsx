@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
-import {  useNodeFetcher, useRouteData, useSEAFetcher } from "~/gun/hooks";
+import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/gun/hooks";
 import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
 import { LoaderFunction, useLoaderData } from "remix";
-import { useLoader } from "~/dataloader/lib";
+import { useGunFetcher } from "~/dataloader/lib";
 import { useIsMounted, useSafeEffect } from "bresnow_utility-react-hooks";
 type LoaderData = {
   username: string;
@@ -26,7 +26,7 @@ function SuspendedData({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useLoader<any>("routes/api/gun/pages.index");
+  let postsLoader = useGunFetcher<any>("routes/api/gun/pages.index");
   useSafeEffect(() => {
     console.log("useEffect");
   }, []);

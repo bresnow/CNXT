@@ -14,4 +14,4 @@ export let DataloaderProvider: FC<{ dataloader: Dataloader }> = ({
   return <context.Provider value={dataloader}>{children}</context.Provider>;
 };
 
-export let useDataloader = () => useContext(context);
+export let useGunLoader = () => useContext(context);

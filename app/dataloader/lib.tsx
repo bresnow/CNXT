@@ -3,11 +3,11 @@ import { useLocation } from "remix";
 import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 
-import { useDataloader } from "./context";
+import { useGunLoader } from "./context";
 export { DataloaderProvider } from "./context";
 
-export function useLoader<T = any>(id: string) {
-  let dataloader = useDataloader();
+export function useGunFetcher<T = any>(id: string) {
+  let dataloader = useGunLoader();
   let internalId = useId();
   let { key } = useLocation();
 

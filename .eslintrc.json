@@ -1,1 +1,4 @@
-{ "plugins": ["cypress"] }
+{
+  "plugins": ["cypress"],
+  "extends": ["plugin:tailwind/recommended"]
+}

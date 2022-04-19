@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
-import { useLoader } from "~/dataloader/lib";
+import { useGunFetcher } from "~/dataloader/lib";
 import React from "react";
 
 type LoaderData = {
@@ -27,7 +27,7 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useLoader<any>("/routes/api/gun/pages/index");
+  let postsLoader = useGunFetcher<any>("/routes/api/gun/pages/index");
 
   return (
     <>
