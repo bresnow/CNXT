@@ -27,7 +27,7 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useGunFetcher<any>("/routes/api/gun/pages/index");
+  let postsLoader = useGunFetcher<any>("/api/gun/pages.index.meta");
 
   return (
     <>

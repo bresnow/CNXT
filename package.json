@@ -32,7 +32,8 @@
     "mime": "^3.0.0",
     "react": "18.0.0-rc.0",
     "react-dom": "18.0.0-rc.0",
-    "remix": "0.0.0-experimental-4e814511"
+    "remix": "0.0.0-experimental-4e814511",
+    "remix-utils": "^3.0.0"
   },
   "devDependencies": {
     "@remix-run/dev": "0.0.0-experimental-4e814511",

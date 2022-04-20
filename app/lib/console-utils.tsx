@@ -8,21 +8,15 @@ export const log = (...args: any[]) => {
   if (isDev()) {
     for (let i = 0; i < args.length; i++) {
       for (var key in args[i]) {
-        console.group("........." + `${key}` + ".........");
-        console.groupCollapsed();
+        console.group("........." + ".........");
         console.log(args[i]);
-        console.groupCollapsed();
         console.groupEnd();
-        console.groupCollapsed();
-        console.group("––––––––– TRACE ––––––––");
-        console.groupCollapsed();
+        console.groupCollapsed("........." + `TRACE` + ".........");
         console.trace();
-        console.groupCollapsed();
         console.groupEnd();
       }
     }
   }
-  console.clear();
 };
 export const error = (...args: any[]) => {
   if (isDev()) {
@@ -38,5 +32,4 @@ export const error = (...args: any[]) => {
       console.groupEnd();
     }
   }
-  console.clear();
 };

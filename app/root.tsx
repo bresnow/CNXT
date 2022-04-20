@@ -7,9 +7,18 @@ import {
   Meta,
   Outlet,
   Scripts,
+  useMatches,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
 } from "remix";
+import type {
+  AppData,
+  HtmlMetaDescriptor,
+  LinkDescriptor,
+  MetaDescriptor,
+} from "@remix-run/server-runtime";
+
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
 import { LoadCtx, Nodevalues, RmxGunCtx } from "types";
 import styles from "./tailwind.css";
@@ -18,6 +27,9 @@ import { log } from "./lib/console-utils";
 import Gun, { ISEAPair } from "gun";
 import cn from "classnames";
 import { useSafeEffect } from "bresnow_utility-react-hooks";
+import { matches } from "lodash";
+import { useRouteData } from "./gun/hooks";
+import { RouteHandle } from "@remix-run/react/routeModules";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: styles },
@@ -30,7 +42,7 @@ export const links: LinksFunction = () => {
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { ENV, graph } = RemixGunContext(Gun);
-  let meta = await graph.get(`pages/root/meta`).val();
+  let meta = await graph.get(`pages.root.meta`).val();
   let peerList = {
     DOMAIN: `http://${ENV.DOMAIN}:${ENV.CLIENT}/gun`,
     PEER: `http://${ENV.PEER_DOMAIN}/gun`,
@@ -41,7 +53,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     localStorage: false,
   };
 
-  return json<RootLoaderData>({
+  return json({
     peers: [peerList.PEER, peerList.DOMAIN],
     meta,
     gunOpts,
@@ -64,7 +76,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 };
 type RootLoaderData = {
   peers: string[];
-  meta: Nodevalues | undefined;
+  meta: { title: string; description: string };
   gunOpts: {
     peers: string[];
     radisk: boolean;
@@ -82,7 +94,7 @@ type RootLoaderData = {
   }[];
 };
 export const meta: MetaFunction = () => {
-  return { title: "Remix_Gun" };
+  return { title: "Remix Gun", description: "Remix Gun" };
 };
 
 export default function App() {
@@ -96,7 +108,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-red-500">
+      <body className="bg-slate-300">
         <ul>
           {links.map(({ link, label }) => (
             <li key={label + useId()}>
@@ -104,13 +116,9 @@ export default function App() {
             </li>
           ))}
         </ul>
-        <Container
-          className={
-            "bg-primary text-secondary-100 h-10 w-full border-neutral-900"
-          }
-        >
-          <Outlet />
-        </Container>
+
+        <Outlet />
+
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
@@ -149,9 +157,9 @@ type PlayerCardType = {
   }: {
     image: { src: string; alt: string };
     name: string;
-    slug: string;
+    slug?: string;
     label: string;
-    socials: { link: string; icon: string; id: string }[];
+    socials?: { link: string; icon: string; id: string }[];
   }): JSX.Element;
 };
 
@@ -165,7 +173,11 @@ export const PlayerCard: PlayerCardType = ({
   return (
     <div className="player-card relative group">
       <div className="player-thum relative z-20">
-        {/* IMAGE */}
+        <img
+          className="align-middle ml-3  transition-all group-hover:ml-5"
+          src={image.src}
+          alt={image.alt}
+        />
         <span className="w-full h-full absolute left-0 top-0 bg-gray-900 rounded-5xl opacity-0 group-hover:opacity-70"></span>
 
         <div className="social-link absolute left-0 text-center bottom-0 group-hover:bottom-8 w-full space-x-2 opacity-0 group-hover:opacity-100 transition-all z-20">
@@ -194,7 +206,36 @@ export const PlayerCard: PlayerCardType = ({
   );
 };
 
-const LoginForm = () => {
+export const checkIf = {
+  isObject: function (value: unknown) {
+    return !!(value && typeof value === "object" && !Array.isArray(value));
+  },
+  isNumber: function (value: unknown) {
+    return !isNaN(Number(value));
+  },
+  isBoolean: function (value: unknown) {
+    if (
+      value === "true" ||
+      value === "false" ||
+      value === true ||
+      value === false
+    ) {
+      return true;
+    }
+  },
+  isString: function (value: unknown) {
+    return typeof value === "string";
+  },
+  isArray: function (value: unknown) {
+    return Array.isArray(value);
+  },
+
+  isFn: function (value: unknown) {
+    return typeof value === "function";
+  },
+};
+
+export const LoginForm = () => {
   return (
     <Form className="form-login mt-10" method="post" action="#">
       <div className="single-fild">

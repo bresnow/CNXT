@@ -4,6 +4,7 @@ import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
 import { LoaderFunction, useLoaderData } from "remix";
 import { useGunFetcher } from "~/dataloader/lib";
 import { useIsMounted, useSafeEffect } from "bresnow_utility-react-hooks";
+import { Container, LoginForm, PlayerCard } from "~/root";
 type LoaderData = {
   username: string;
 };
@@ -15,26 +16,37 @@ export let loader: LoaderFunction = () => {
 };
 
 function SuspendedData({ getData }: { getData: () => any }) {
-  let posts = getData();
-
+  let { title, description, pageTitle, src } = getData();
+  let img = { src: "/github/rmix-gun.png", alt: "test" };
   return (
-    <pre>
-      <code>{JSON.stringify(posts, null, 2)}</code>
-    </pre>
+    <>
+      <p>{description}</p>
+      <PlayerCard image={img} name={pageTitle} label={title} />
+    </>
   );
 }
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useGunFetcher<any>("routes/api/gun/pages.index");
+  let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
   useSafeEffect(() => {
     console.log("useEffect");
   }, []);
   return (
-    <Suspense fallback="Loading Profile....">
-      <SuspendedData getData={postsLoader.load} />
-      <postsLoader.Component />
-    </Suspense>
+    <>
+      {" "}
+      <Container
+        className={
+          "bg-gray-400 flex mx-auto p-10 text-gray-900 w-1/2 border-neutral-900"
+        }
+      >
+        <Suspense fallback="Loading Profile....">
+          <SuspendedData getData={postsLoader.load} />
+          <postsLoader.Component />
+        </Suspense>
+        <LoginForm />
+      </Container>
+    </>
   );
 }
 export function useGunStatic(
