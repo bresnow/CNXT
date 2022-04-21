@@ -1,10 +1,10 @@
 import * as ReactDOM from "react-dom";
 import { RemixBrowser } from "remix";
 
-import { createGunClientLoader } from "./dataloader/browser";
+import { createGunFetchLoader, createGunPut } from "./dataloader/browser";
 import { DataloaderProvider } from "./dataloader/lib";
 
-let dataloader = createGunClientLoader();
+let dataloader = { createGunFetchLoader, createGunPut };
 
 ReactDOM.hydrateRoot(
   document,

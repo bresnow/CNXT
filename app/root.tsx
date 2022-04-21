@@ -76,7 +76,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     ],
   });
 };
-type RootLoaderData = {
+export type RootLoaderData = {
   peers: string[];
   meta: { title: string; description: string };
   gunOpts: {
@@ -118,9 +118,7 @@ export default function App() {
             </li>
           ))}
         </ul>
-
         <Outlet />
-
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}

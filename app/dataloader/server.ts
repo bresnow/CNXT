@@ -3,7 +3,6 @@ import type { EntryContext } from "remix";
 import type { ServerResponse } from "http";
 import { isResponse } from "@remix-run/server-runtime/responses";
 import type { ServerBuild } from "@remix-run/server-runtime";
-import type { Dataloader } from "./context";
 import { LoadCtx, RmxGunCtx } from "types";
 
 export function createServerDataloader(
@@ -11,9 +10,9 @@ export function createServerDataloader(
   request: Request,
   params: any,
   context: any
-): Dataloader {
+) {
   return {
-    async load(id) {
+    async load(id: string) {
       let route = build.routeModules[id];
       if (!route) {
         throw new Error(`Route ${id} not found`);

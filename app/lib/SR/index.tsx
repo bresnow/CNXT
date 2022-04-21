@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import invariant from "@remix-run/react/invariant";
 import { useIf } from "bresnow_utility-react-hooks";
 import { log } from "../console-utils";
+import { useSafeReducer } from "bresnow_utility-react-hooks/dist/hooks/useSafe";
 type PayloadType = Partial<{
   container: null | HTMLElement;
   width: number;
@@ -81,15 +82,11 @@ export function SecureFrameWrapper({
   const initState = {
     container: null, // container within which the user content should be rendered
     width: 0, // iframe width
-    height: 0, // iframe height
-    isResizing: false, // is the user currently resizing IFramePlayground?
+    height: 0, // iframe height    isResizing: false, // is the user currently resizing IFramePlayground?
     direction: "horizontal",
   }; // resizing direction
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null); // <iframe> ref
-  const [state, dispatcher] = React.useReducer<Reducer<any, PayloadType>>(
-    changeState,
-    initState
-  );
+  const [state, dispatcher] = useSafeReducer(changeState, initState);
 
   function copyStyles(iframeNode: HTMLIFrameElement) {
     const links = Array.from(document.getElementsByTagName("link"));
@@ -221,22 +218,22 @@ export function SecureFrameWrapper({
       className={"playground"}
       style={{ minWidth, minHeight, maxWidth, maxHeight }}
     >
-      {enableResizing && (
+      {/* {enableResizing && (
         <div
           className={"resize-controller height-resize-controller"}
           onMouseDown={(e) => handleResizeStart(e, "vertical")}
           style={{ width }}
         />
-      )}
+      )} */}
       <iframe
         sandbox="allow-same-origin"
         ref={iframeRef}
-        srcDoc={`<!DOCTYPE html> <h1>djfiajfisdjpfsdjpofjasdopfjasodpfjsp</h1>`}
+        srcDoc={`<!DOCTYPE html> <h1>/* SEA DECRYPTED*/h1>`}
         className={"iframe"}
         style={{ width: "100%", height: "100%" }}
       ></iframe>
-
-      {enableResizing && (
+      {/* ENCRYPTED DATA LOADED =>> dispatch decryption */}
+      {/* {enableResizing && (
         <div
           className={"resize-controller width-resize-controller"}
           onMouseDown={(e) => handleResizeStart(e, "horizontal")}
@@ -244,7 +241,7 @@ export function SecureFrameWrapper({
             left: width,
           }}
         />
-      )}
+      )} */}
     </div>
   );
 }

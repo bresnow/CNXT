@@ -3,7 +3,11 @@ import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/gun/hooks";
 import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
 import { LoaderFunction, useLoaderData } from "remix";
 import { useGunFetcher } from "~/dataloader/lib";
-import { useIsMounted, useSafeEffect } from "bresnow_utility-react-hooks";
+import {
+  useIsMounted,
+  useSafeCallback,
+  useSafeEffect,
+} from "bresnow_utility-react-hooks";
 import { Container, LoginForm, PlayerCard } from "~/root";
 import { SecureFrameWrapper } from "~/lib/SR";
 type LoaderData = {
@@ -41,6 +45,13 @@ export default function Profile() {
           "bg-gray-400 grid-cols-2 mx-auto p-10 text-gray-900 w-1/2 border-neutral-900"
         }
       >
+        <SectionTitle
+          heading="Profile"
+          description={"Description"}
+          align={"center"}
+          color={"primary"}
+          showDescription={true}
+        />
         <Suspense fallback="Loading Profile....">
           <SuspendedData getData={postsLoader.load} />
           <postsLoader.Component />
@@ -67,13 +78,13 @@ export function useNodeSubscribe(
   [gunRef, ...dependencies]: [gunRef: IGunChain<any>, dependencies?: any],
   opts: { unsubscribe: boolean }
 ) {
-  const subscribe = React.useCallback(cb, [dependencies]);
+  const subscribe = useSafeCallback(cb);
   const mounted = useIsMounted();
-  const unsubscribe = React.useCallback(() => {
+  const unsubscribe = useSafeCallback(() => {
     if (mounted.current) {
       (gunRef as IGunChain<any>).off();
     }
-  }, [gunRef, mounted]);
+  });
 
   useSafeEffect(() => {
     (gunRef as IGunChain<any>).on(subscribe);
@@ -82,3 +93,36 @@ export function useNodeSubscribe(
     }
   }, [subscribe]);
 }
+
+export const SectionTitle = ({
+  heading,
+  description,
+  align,
+  color,
+  showDescription,
+}: TitleProps) => {
+  const title = {
+    showDescription: showDescription || false,
+    align: align ? align : "center",
+    color: color ? color : "primary",
+  };
+  return (
+    <div className="section-title">
+      <div className="container">
+        <div className={`align-${title.align} mx-auto`}>
+          <h2 className="font-bold max-w-3xl">{heading}</h2>
+          {title.showDescription && (
+            <p className="max-w-xl mt-2 leading-7 text-18base">{description}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+type TitleProps = {
+  heading: string;
+  description: string;
+  align?: "left" | "right" | "center";
+  color?: "white" | "primary";
+  showDescription: boolean;
+};
