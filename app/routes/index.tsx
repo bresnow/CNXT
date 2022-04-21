@@ -5,6 +5,7 @@ import { LoaderFunction, useLoaderData } from "remix";
 import { useGunFetcher } from "~/dataloader/lib";
 import { useIsMounted, useSafeEffect } from "bresnow_utility-react-hooks";
 import { Container, LoginForm, PlayerCard } from "~/root";
+import { SecureFrameWrapper } from "~/lib/SR";
 type LoaderData = {
   username: string;
 };
@@ -37,7 +38,7 @@ export default function Profile() {
       {" "}
       <Container
         className={
-          "bg-gray-400 flex mx-auto p-10 text-gray-900 w-1/2 border-neutral-900"
+          "bg-gray-400 grid-cols-2 mx-auto p-10 text-gray-900 w-1/2 border-neutral-900"
         }
       >
         <Suspense fallback="Loading Profile....">

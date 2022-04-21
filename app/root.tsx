@@ -26,12 +26,14 @@ import { ButtonHTMLAttributes, useId } from "react";
 import { log } from "./lib/console-utils";
 import Gun, { ISEAPair } from "gun";
 import cn from "classnames";
+import srStyles from "~/lib/SR/sr.css";
 import { useSafeEffect } from "bresnow_utility-react-hooks";
 import { matches } from "lodash";
 import { useRouteData } from "./gun/hooks";
 import { RouteHandle } from "@remix-run/react/routeModules";
 export const links: LinksFunction = () => {
   return [
+    { rel: "stylesheet", href: srStyles },
     { rel: "stylesheet", href: styles },
     {
       rel: "stylesheet",
@@ -173,12 +175,13 @@ export const PlayerCard: PlayerCardType = ({
   return (
     <div className="player-card relative group">
       <div className="player-thum relative z-20">
-        <img
-          className="align-middle ml-3  transition-all group-hover:ml-5"
-          src={image.src}
-          alt={image.alt}
-        />
-        <span className="w-full h-full absolute left-0 top-0 bg-gray-900 rounded-5xl opacity-0 group-hover:opacity-70"></span>
+        <span className="w-full h-full absolute left-0 top-0 bg-gray-900 rounded-5xl opacity-0 group-hover:opacity-70">
+          <img
+            className="align-middle ml-3 rounded-5xl transition-all group-hover:ml-5"
+            src={image.src}
+            alt={image.alt}
+          />
+        </span>
 
         <div className="social-link absolute left-0 text-center bottom-0 group-hover:bottom-8 w-full space-x-2 opacity-0 group-hover:opacity-100 transition-all z-20">
           {socials &&

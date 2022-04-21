@@ -16,7 +16,7 @@ export default async function handleRequest(
   { res }: { res: ServerResponse }
 ) {
   let dataloader = createServerDataloader(remixContext, request, {}, {});
-  log(remixContext);
+  // log(remixContext);
   responseHeaders.set("Content-Type", "text/html; charset=UTF-8");
   responseHeaders.set("Transfer-Encoding", "chunked");
 

@@ -1263,10 +1263,10 @@ braces@^3.0.1, braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-bresnow_utility-react-hooks@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/bresnow_utility-react-hooks/-/bresnow_utility-react-hooks-0.2.3.tgz#a25ff3e6e83c31f751e1827434fe7f525f28272c"
-  integrity sha512-ABC2pckQ/UWYzlW76VNXvFJvDPj/l1gJeRLBIpv4x+H33qWSxwnsM877Av6SSasWcgwBEMVC6uo5awGemfQ9rw==
+bresnow_utility-react-hooks@0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/bresnow_utility-react-hooks/-/bresnow_utility-react-hooks-0.2.5.tgz#6114e9849e89d85fe05b4b3aeace3ea8a0b7958e"
+  integrity sha512-kkqbzNkqX/LAC1GDqWQdPm7WPFdN4v3ziaxuBBAGTHJiRTjIu9Bqph8bX0z95HfB62HqBPC7D3k0nDoDfDP5jQ==
   dependencies:
     lz-object "^0.1.7"
     prop-types "^15.7.2"
