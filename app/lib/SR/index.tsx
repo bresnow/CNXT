@@ -1,9 +1,8 @@
 import React, { ReactElement, Reducer } from "react";
 import ReactDOM from "react-dom";
 import invariant from "@remix-run/react/invariant";
-import { useIf } from "bresnow_utility-react-hooks";
+import { useIf, useSafeReducer } from "bresnow_utility-react-hooks";
 import { log } from "../console-utils";
-import { useSafeReducer } from "bresnow_utility-react-hooks/dist/hooks/useSafe";
 type PayloadType = Partial<{
   container: null | HTMLElement;
   width: number;

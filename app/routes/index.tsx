@@ -10,6 +10,7 @@ import {
 } from "bresnow_utility-react-hooks";
 import { Container, LoginForm, PlayerCard } from "~/root";
 import { SecureFrameWrapper } from "~/lib/SR";
+import { log } from "~/lib/console-utils";
 type LoaderData = {
   username: string;
 };
@@ -21,41 +22,64 @@ export let loader: LoaderFunction = () => {
 };
 
 function SuspendedData({ getData }: { getData: () => any }) {
-  let { title, description, pageTitle, src } = getData();
+  let { title, textarea, pageTitle, src } = getData();
   let img = { src: "/github/rmix-gun.png", alt: "test" };
   return (
     <>
-      <p>{description}</p>
+      <SectionTitle
+        heading={pageTitle}
+        description={textarea}
+        align={"center"}
+        color={"primary"}
+        showDescription={true}
+      />
       <PlayerCard image={img} name={pageTitle} label={title} />
     </>
   );
 }
+function SuspendedTest({ getData }: { getData: () => any }) {
+  let data = getData();
 
+  return (
+    <pre>
+      <code>{JSON.stringify(data, null, 2)}</code>
+    </pre>
+  );
+}
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
   let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
+  const [gun, SEA] = useGunStatic(Gun);
+  gun.get("posts").get("test").put({ hello: "world", username });
+
+  let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   useSafeEffect(() => {
-    console.log("useEffect");
+    gun
+      .get("pages")
+      .get("index")
+      .on(function (data) {
+        console.log(data, "DATA");
+      });
   }, []);
   return (
     <>
       {" "}
       <Container
         className={
-          "bg-gray-400 grid-cols-2 mx-auto p-10 text-gray-900 w-1/2 border-neutral-900"
+          "bg-slate-900 grid mx-auto p-10 text-gray-400 w-1/2 border-neutral-900"
         }
       >
-        <SectionTitle
-          heading="Profile"
-          description={"Description"}
-          align={"center"}
-          color={"primary"}
-          showDescription={true}
-        />
-        <Suspense fallback="Loading Profile....">
+        <Suspense fallback="Loading Data...">
           <SuspendedData getData={postsLoader.load} />
           <postsLoader.Component />
         </Suspense>
+      </Container>
+      <Container rounded={true} className="bg-slate- grid grid-cols-2">
+        <Container rounded={true} className="bg-slate- grid grid-cols">
+          <Suspense fallback="Loading Data....">
+            <SuspendedTest getData={testLoader.load} />
+          </Suspense>
+        </Container>
         <LoginForm />
       </Container>
     </>

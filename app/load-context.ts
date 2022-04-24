@@ -118,21 +118,20 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
          * @param remove 
          * @returns 
          */
-        options: (peers: string | string[], remove?: {
-            peers: string | string[];
-        } | undefined) => {
+        options: (peers: string | string[], remove?: boolean) => {
             var peerOpt = (gun as any).back('opt.peers');
             var mesh = (gun as any).back('opt.mesh');  // DAM
-
-            if (remove !== undefined) {
-                if (typeof remove.peers === 'string') {
-                    mesh.bye(remove.peers);
-                }
-                Object.values(peerOpt).forEach(value => mesh.bye(value));
+            if (remove) {
+                if (Array.isArray(peers)) {
+                    peers.forEach((peer) => {
+                        mesh.bye(peer);
+                    });
+                } mesh.bye(peers);
+                return json({ message: `Peers ${peers} removed` });
             }
             // Ask local peer to connect to another peer. //
             mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
-
+            return json({ message: `Peers ${peers} added` });
         }
 
 
@@ -165,61 +164,25 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
                 );
             }
             let session = await getSession();
-            // We clone the request to ensure we don't modify the original request.
-            // This allow us to parse the body of the request and let the original request
-            // still be used and parsed without errors.
             let formData = await request.clone().formData();
 
-            // if the session doesn't have a csrf token, throw an error
             if (!session.has(sessionKey)) {
                 throw unprocessableEntity({
                     message: "Can't find token in session.",
                 });
             }
 
-            // if the body doesn't have a csrf token, throw an error
             if (!formData.get(sessionKey)) {
                 throw unprocessableEntity({
                     message: "Can't find token in body.",
                 });
             }
 
-            // if the body csrf token doesn't match the session csrf token, throw an
-            // error
             if (formData.get(sessionKey) !== session.get(sessionKey)) {
                 throw unprocessableEntity({
                     message: "Can't verify token authenticity.",
                 });
             }
         },
-        getLoader: async (args: DataFunctionArgs) => {
-            return null
-        },
-        putAction: async ({ params, context, request }: DataFunctionArgs) => {
-            // let keys = await getSessionKeyPair(request)
-            let { formData, graph } = context as RmxGunCtx;
-            let path = params.path;
-            let values = await formData(request);
-            let obj = {}
-            if (typeof path === "string") {
-                for (var key in values) {
-                    if (typeof values[key] !== 'string') {
-                        return json({ err: ` Invalid entry at: ${key}` });
-                    } Object.assign(obj, { [key]: values[key] })
-                }
-
-
-                if (Object.values(obj).length > 0) {
-                    let { ok } = await graph.get(`${path}`).put(obj);
-                    if (ok) {
-                        return json({ put: obj });
-                    }
-                    throw new Error("put failed");
-                }
-                throw new Error("no values to put")
-            }
-            throw new Error("node path invalid")
-        }
-
     }
 }

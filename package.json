@@ -22,7 +22,7 @@
   "dependencies": {
     "@remix-run/node": "0.0.0-experimental-4e814511",
     "@remix-run/react": "0.0.0-experimental-4e814511",
-    "bresnow_utility-react-hooks": "0.2.5",
+    "bresnow_utility-react-hooks": "^0.2.7",
     "classnames": "^2.3.1",
     "cross-env": "^7.0.3",
     "gun": "^0.2020.1236",

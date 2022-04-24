@@ -38,8 +38,8 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useGunFetcher<any>("pages.index.meta");
-  postsLoader;
+  let postsLoader = useGunFetcher<any>("pages.index");
+
   return (
     <>
       <h1>Profile: {username}</h1>

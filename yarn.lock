@@ -1263,13 +1263,15 @@ braces@^3.0.1, braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-bresnow_utility-react-hooks@0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/bresnow_utility-react-hooks/-/bresnow_utility-react-hooks-0.2.5.tgz#6114e9849e89d85fe05b4b3aeace3ea8a0b7958e"
-  integrity sha512-kkqbzNkqX/LAC1GDqWQdPm7WPFdN4v3ziaxuBBAGTHJiRTjIu9Bqph8bX0z95HfB62HqBPC7D3k0nDoDfDP5jQ==
+bresnow_utility-react-hooks@^0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/bresnow_utility-react-hooks/-/bresnow_utility-react-hooks-0.2.7.tgz#1399915b04c124c56afba5c443bfbb35aa57865c"
+  integrity sha512-BdXGUdENJ90DFknWJnBuFQ+hs+p9EH0zFTCVgdBIbNOeSVULqwuPQAf53bsvndRAkDbuz0PdRkILFxSOz141Bg==
   dependencies:
     lz-object "^0.1.7"
     prop-types "^15.7.2"
+    react "18.1.0-next-fc47cb1b6-20220404"
+    react-dom "18.1.0-next-fc47cb1b6-20220404"
 
 browserslist@^4.17.5, browserslist@^4.20.2:
   version "4.20.2"
@@ -5098,7 +5100,7 @@ rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@18.0.0-rc.0:
+react-dom@18.0.0-rc.0, react-dom@18.1.0-next-fc47cb1b6-20220404:
   version "18.0.0-rc.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.0.0-rc.0.tgz#aa07044bdd6399ff94c664b2985e2e25948fbf3e"
   integrity sha512-tdD1n0svTndHBQvVAq/f2Kx7FgQ30CpSLp87/neQKAHPW5WtdgW1sBSwmFAcMQOrmstTuP0M+zRlH86f9kMX/A==
@@ -5132,7 +5134,7 @@ react-router@6.2.1:
   dependencies:
     history "^5.2.0"
 
-react@18.0.0-rc.0:
+react@18.0.0-rc.0, react@18.1.0-next-fc47cb1b6-20220404:
   version "18.0.0-rc.0"
   resolved "https://registry.npmjs.org/react/-/react-18.0.0-rc.0.tgz#60bfcf1edd0b35fbeeeca852515c6cc2ce06a6eb"
   integrity sha512-PawosMBgF8k5Nlc3++ibzjFqPvo1XKv80MNtVYqz3abHHB2w3IpU65sSdSmBd2ooCwVhcp9b1vkx/twqhakNtA==

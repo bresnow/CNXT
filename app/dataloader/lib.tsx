@@ -10,7 +10,6 @@ export function useGunFetcher<T = any>(id: string) {
   let dataloader = useGunLoader();
   let internalId = useId();
   let { key } = useLocation();
-
   let defered = useMemo(() => {
     invariant(
       dataloader,

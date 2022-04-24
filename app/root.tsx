@@ -98,7 +98,50 @@ export type RootLoaderData = {
 export const meta: MetaFunction = () => {
   return { title: "Remix Gun", description: "Remix Gun" };
 };
-
+export type MenuLinks = {
+  id?: string;
+  link: string;
+  label: string;
+  submenu?: { link: string; label: string }[];
+}[];
+export const MainMenu = ({ data }: { data?: MenuLinks }) => {
+  const menuarr = data;
+  return (
+    <ul className="hidden lg:flex lg:items-center lg:w-auto lg:space-x-12">
+      {menuarr?.map((menu) => {
+        const submenu = menu.submenu;
+        return (
+          <li
+            key={`menu-${menu.id}`}
+            className={`${
+              !!submenu ? "has-submenu" : ""
+            } group relative pt-4 pb-4 cursor-pointer text-white font-bold z-10 before:bg-nav-shape before:empty-content before:absolute before:w-23.5 before:h-11 before:z-n1 before:top-1/2 before:left-1/2 before:transform before:-translate-x-2/4 before:-translate-y-2/4 before:transition-all before:opacity-0 hover:before:opacity-100`}
+          >
+            <Link to={menu.link} className="font-semibold uppercase">
+              {menu.label}
+            </Link>
+            {!!submenu && (
+              <ul className="submenu-nav absolute left-0 z-50 bg-white rounded-lg mt-14 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:mt-4 transition-all duration-500 min-w-200 p-4 border border-gray-100 w-64">
+                {submenu.map((submenu, i) => {
+                  return (
+                    <li key={`submenu${i}`}>
+                      <Link
+                        to={submenu.link}
+                        className="menu-sub-item text-sm font-medium text-black block py-1 hover:text-primary"
+                      >
+                        {submenu.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
 export default function App() {
   let { links } = useLoaderData<RootLoaderData>();
 
@@ -111,6 +154,7 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-slate-300">
+        <MainMenu data={links} />
         <ul>
           {links.map(({ link, label }) => (
             <li key={label + useId()}>
@@ -173,12 +217,13 @@ export const PlayerCard: PlayerCardType = ({
   return (
     <div className="player-card relative group">
       <div className="player-thum relative z-20">
+        <img
+          className="align-middle ml-3 rounded-5xl transition-all group-hover:ml-5"
+          src={image.src}
+          alt={image.alt}
+        />
         <span className="w-full h-full absolute left-0 top-0 bg-gray-900 rounded-5xl opacity-0 group-hover:opacity-70">
-          <img
-            className="align-middle ml-3 rounded-5xl transition-all group-hover:ml-5"
-            src={image.src}
-            alt={image.alt}
-          />
+          {label}
         </span>
 
         <div className="social-link absolute left-0 text-center bottom-0 group-hover:bottom-8 w-full space-x-2 opacity-0 group-hover:opacity-100 transition-all z-20">
@@ -238,29 +283,36 @@ export const checkIf = {
 
 export const LoginForm = () => {
   return (
-    <Form className="form-login mt-10" method="post" action="#">
+    <Form className="form-login mt-10" method="post">
       <div className="single-fild">
         <input
-          className="px-6 h-14 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
-          type="email"
-          placeholder="E-mail"
+          className="px-6 h-10 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
+          type="text"
+          placeholder="Alias"
+          name="alias"
         />
       </div>
       <div className="single-fild">
         <input
-          className="px-6 h-14 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
+          className="px-6 h-10 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
           type="password"
+          name="password"
           placeholder="password"
         />
       </div>
       <div className="button text-center">
-        <Button type={"button"} className="text-white">
+        <Button
+          type={"button"}
+          color={"primary"}
+          shape={"square"}
+          className="text-white"
+        >
           Login
         </Button>
       </div>
       <div className="account-text mt-5 text-center">
         <p>
-          Do not have any account,{" "}
+          Don‘t have account?
           <Link to="/register" className="text-yellow-400 font-semibold">
             Signup here
           </Link>
@@ -270,38 +322,84 @@ export const LoginForm = () => {
   );
 };
 
+export const SectionTitle = ({
+  heading,
+  description,
+  align,
+  color,
+  showDescription,
+}: SectionTitleType) => {
+  const title = {
+    showDescription: showDescription || false,
+    align: align || "center",
+    color: color || "primary",
+  };
+  return (
+    <div className="section-title">
+      <div className="container">
+        <div className={`mx-auto align-${title.align}`}>
+          <h2 className="font-bold max-w-3xl">{heading}</h2>
+          {title.showDescription && (
+            <p className="max-w-xl mt-2 leading-7 text-18base">{description}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+export type SectionTitleType = {
+  heading: string;
+  description: string;
+  align: "left" | "right" | "center";
+  color: "white" | "primary";
+  showDescription: boolean;
+};
+
+export const Search = ({
+  method,
+  action,
+}: {
+  method: "get" | "post";
+  action: string;
+}) => {
+  return (
+    <Form method={method} action={action} className="relative">
+      <input
+        className="px-5 h-14 border-secondary-90 bg-secondary-100 border-2 border-solid rounded-md w-full focus:outline-none"
+        placeholder="Search here"
+        type="text"
+      />
+      <button
+        type="submit"
+        className="absolute px-5 top-0 right-0 bg-primary hover:bg-primary-90 transition-all rounded-md inline-block h-full"
+      >
+        <i className="icofont-search-1"></i>
+      </button>
+    </Form>
+  );
+};
+
 interface ButtonType<ButtonProps = ButtonHTMLAttributes<any>> {
-  (
-    props: ButtonProps,
-    {
-      children,
-      path,
-      className,
-      size,
-      shape,
-      color,
-      image,
-    }: {
-      children:
-        | string
-        | JSX.Element[]
-        | HTMLElement[]
-        | JSX.Element
-        | HTMLElement;
-      path?: string;
-      className?: string;
-      size?: "md" | "lg" | "xl";
-      shape?: "rounded" | "square" | "square20xl" | "square2xl" | "square22xl";
-      color?: "primary" | "secondary";
-      image?: { large?: string; small?: string };
-    }
-  ): JSX.Element;
+  children: string | JSX.Element[] | HTMLElement[] | JSX.Element | HTMLElement;
+  path?: string;
+  type: "button" | "submit" | "reset";
+  className?: string;
+  size?: "md" | "lg" | "xl";
+  shape?: "rounded" | "square" | "square20xl" | "square2xl" | "square22xl";
+  color?: "primary" | "secondary";
+  image?: { large?: string; small?: string };
 }
 
-export const Button: ButtonType<ButtonHTMLAttributes<any>> = (
-  props,
-  { children, path, className, size, shape, color, image }
-) => {
+export const Button = ({
+  children,
+  path,
+  className,
+  size,
+  shape,
+  color,
+  image,
+  type,
+}: ButtonType) => {
   const btnstyle = {
     size: size || "md",
     shape: shape || "square22xl",
@@ -367,6 +465,7 @@ export const Button: ButtonType<ButtonHTMLAttributes<any>> = (
       return (
         <a href={path}>
           <button
+            type={type}
             style={size ? btnImageLg : btnImageSm}
             className={buttonClasses}
           >
@@ -389,7 +488,7 @@ export const Button: ButtonType<ButtonHTMLAttributes<any>> = (
   }
 
   return (
-    <button {...props} className={buttonClasses}>
+    <button type={type} className={buttonClasses}>
       {children}
     </button>
   );
