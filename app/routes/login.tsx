@@ -1,15 +1,19 @@
 import { Suspense } from "react";
-import { Link, useLoaderData } from "remix";
+import { Link, useCatch, useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
 import { useGunFetcher } from "~/dataloader/lib";
 import React from "react";
+import Display from "~/components/DisplayHeading";
 
 type LoaderData = {
   username: string;
 };
 type BlogNoSideBar = {
-  getItems: () => {
+  sectionTitle: {
+    heading: string;
+  };
+  items: {
     title: string;
     author: string;
     postedAt: { date: string; slug: string };
@@ -35,13 +39,13 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useGunFetcher<any>("/api/posts");
+  let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
 
   return (
     <>
       <h1>Profile: {username}</h1>
       <Suspense fallback="Loading Profile....">
-        <BlogNoSideBar getItems={postsLoader.load} />
+        <SuspendedProfileInfo getData={postsLoader.load} />
         <postsLoader.Component />
       </Suspense>
     </>
@@ -105,10 +109,10 @@ export const BlogCard = ({ title, date, slug, dateSlug, image }: BlogCard) => {
   );
 };
 
-export const BlogNoSideBar = ({ getItems }: BlogNoSideBar) => {
-  let items = getItems();
+export const BlogNoSideBar = ({ sectionTitle, items }: BlogNoSideBar) => {
   return (
     <section className="blog-section">
+      {sectionTitle}
       <div className="container px-4">
         <div className="flex flex-wrap -mx-3">
           {items &&
@@ -132,3 +136,40 @@ export const BlogNoSideBar = ({ getItems }: BlogNoSideBar) => {
     </section>
   );
 };
+
+export function CatchBoundary() {
+  let caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+    case 403:
+    case 404:
+      return (
+        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+          <Display
+            title={`${caught.status}`}
+            titleColor="white"
+            span={`${caught.statusText}`}
+            spanColor="pink-500"
+            description={`${caught.statusText}`}
+          />
+        </div>
+      );
+  }
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+      <Display
+        title="Error:"
+        titleColor="#cb2326"
+        span={error.message}
+        spanColor="#fff"
+        description={`error`}
+      />
+    </div>
+  );
+}

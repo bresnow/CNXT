@@ -1,5 +1,5 @@
 import type { ChainCtx, RmxGunCtx, Nodevalues } from "types";
-import type { GunOptions, IGun, IGunChain, ISEAPair } from "gun/types";
+import type { GunCallbackUserCreate, GunOptions, IGun, IGunChain, ISEAPair } from "gun/types";
 import type { DataFunctionArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { getSession } from "~/session.server";
@@ -32,18 +32,44 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
     //         return keys as ISEAPair
     //     }
     // }
+
+    const createUser = async (username: string, password: string): Promise<{ result: string }> =>
+        new Promise((resolve, reject) => gun.user().create(username, password, (ack) => {
+            console.log(ack)
+            if (Object.getOwnPropertyNames(ack).includes('ok')) {
+                resolve({ result: 'ok' })
+            } else {
+                reject({ result: JSON.parse(JSON.stringify(ack)).err })
+            }
+        }));
     type T = any
     const SEA = Gun.SEA
     const pair = async () => await SEA.pair()
-    const auth = (pair: ISEAPair): Promise<{ ok: boolean; err: boolean; }> => {
-        return new Promise((resolve, reject) => gun.user().auth(pair, (ack: any) => {
-            if (Object.getOwnPropertyNames(ack).includes('id')) {
-                resolve({ ok: true, err: false });
-            } else {
-                resolve({ ok: false, err: (ack).err })
-            }
-        }))
+    const auth = {
+
+        pair: (pair: ISEAPair): Promise<{ ok: any; err: boolean; }> => {
+            return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
+                if (Object.getOwnPropertyNames(ack).includes('id')) {
+                    resolve({ ok: ack, err: false });
+                } else {
+                    resolve({ ok: false, err: (ack as any).err })
+                }
+            }))
+
+        },
+
+        password: (alias: string, password: string): Promise<{ ok: boolean; err: boolean; }> => {
+            return new Promise((resolve, reject) => gun.user().auth(alias, password, (ack: any) => {
+                if (Object.getOwnPropertyNames(ack).includes('id')) {
+                    resolve({ ok: true, err: false });
+                } else {
+                    resolve({ ok: false, err: (ack).err })
+                }
+            }))
+        }
+
     }
+
 
 
     /**
@@ -142,13 +168,13 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
 
     return {
         ENV,
+        createUser,
         graph,
         pair,
         auth,
         formData: async (request: Request) => {
-            let formData = Object.fromEntries(await request.formData())
+            return Object.fromEntries(await request.formData())
 
-            return formData;
         },
         createToken: async (sessionKey = "verify") => {
             let session = await getSession();

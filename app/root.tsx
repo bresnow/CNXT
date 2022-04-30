@@ -25,12 +25,22 @@ import styles from "./tailwind.css";
 import { ButtonHTMLAttributes, useId } from "react";
 import { log } from "./lib/console-utils";
 import Gun, { ISEAPair } from "gun";
-import cn from "classnames";
+
 import srStyles from "~/lib/SR/sr.css";
 import { useSafeEffect } from "bresnow_utility-react-hooks";
 import { matches } from "lodash";
 import { useRouteData } from "./gun/hooks";
 import { RouteHandle } from "@remix-run/react/routeModules";
+import BDSLogo from "./components/svg/BDS";
+import React from "react";
+import useSticky from "./lib/utils/useSticky";
+import {
+  getClosest,
+  getSiblings,
+  slideToggle,
+  slideUp,
+} from "./lib/utils/mobile-nav-utils";
+import Button from "./components/Button";
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: srStyles },
@@ -63,15 +73,18 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     links: [
       {
         label: "Home",
+        id: "home",
         link: "/",
       },
       {
         label: "About",
         link: "/about",
+        id: "about",
       },
       {
         label: "Profile",
         link: "/profile",
+        id: "profile",
       },
     ],
   });
@@ -90,10 +103,7 @@ export type RootLoaderData = {
     CLIENT: string | undefined;
     APP_KEY_PAIR: ISEAPair;
   };
-  links: {
-    label: string;
-    link: string;
-  }[];
+  links: MenuLinks;
 };
 export const meta: MetaFunction = () => {
   return { title: "Remix Gun", description: "Remix Gun" };
@@ -102,7 +112,7 @@ export type MenuLinks = {
   id?: string;
   link: string;
   label: string;
-  submenu?: { link: string; label: string }[];
+  submenu?: MenuLinks;
 }[];
 export const MainMenu = ({ data }: { data?: MenuLinks }) => {
   const menuarr = data;
@@ -153,16 +163,11 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-300">
-        <MainMenu data={links} />
-        <ul>
-          {links.map(({ link, label }) => (
-            <li key={label + useId()}>
-              <Link to={link}>{label}</Link>
-            </li>
-          ))}
-        </ul>
-        <Outlet />
+      <body className="bg-slate-200">
+        <Header links={links} />
+        <div className="pt-60">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
@@ -171,188 +176,65 @@ export default function App() {
   );
 }
 
-export function Container({
-  children,
-  className,
-  rounded,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  rounded?: boolean;
-}) {
-  // main function
-  return (
-    <div
-      className={`lg:col-span-4  ${
-        rounded ?? "rounded-lg"
-      } aspect-w-2 aspect-h-3 ${className}`}
-    >
-      <div className="">{children}</div>
-    </div>
-  );
-}
-type PlayerCardType = {
-  ({
-    image,
-    name,
-    slug,
-    label,
-    socials,
-  }: {
-    image: { src: string; alt: string };
-    name: string;
-    slug?: string;
-    label: string;
-    socials?: { link: string; icon: string; id: string }[];
-  }): JSX.Element;
-};
+export const Header = ({ links }: { links: MenuLinks }) => {
+  // Sticky Header
+  const { sticky, headerRef, fixedRef } = useSticky();
 
-export const PlayerCard: PlayerCardType = ({
-  image,
-  name,
-  slug,
-  label,
-  socials,
-}) => {
-  return (
-    <div className="player-card relative group">
-      <div className="player-thum relative z-20">
-        <img
-          className="align-middle ml-3 rounded-5xl transition-all group-hover:ml-5"
-          src={image.src}
-          alt={image.alt}
-        />
-        <span className="w-full h-full absolute left-0 top-0 bg-gray-900 rounded-5xl opacity-0 group-hover:opacity-70">
-          {label}
-        </span>
+  // OfCanvas Menu
+  const [ofcanvasOpen, setOfcanvasOpen] = React.useState(false);
 
-        <div className="social-link absolute left-0 text-center bottom-0 group-hover:bottom-8 w-full space-x-2 opacity-0 group-hover:opacity-100 transition-all z-20">
-          {socials &&
-            socials?.map(({ link, icon, id }) => (
-              <li key={id} className="text-center inline-block">
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-10 flex items-center justify-center bg-social-shape hover:bg-social-hover-shape transition-all bg-cover"
-                >
-                  <i className={icon}></i>
-                </a>
-              </li>
-            ))}
-        </div>
-      </div>
-      <div className="our-team-info py-5 xl:py-7 text-center transition-all mt-8 w-full z-10">
-        <h3 className="uppercase font-bold mb-3">
-          <Link to={`/players/${slug}`}>{name}</Link>
-        </h3>
-        <h5 className="text-white">{label}</h5>
-      </div>
-    </div>
-  );
-};
-
-export const checkIf = {
-  isObject: function (value: unknown) {
-    return !!(value && typeof value === "object" && !Array.isArray(value));
-  },
-  isNumber: function (value: unknown) {
-    return !isNaN(Number(value));
-  },
-  isBoolean: function (value: unknown) {
-    if (
-      value === "true" ||
-      value === "false" ||
-      value === true ||
-      value === false
-    ) {
-      return true;
-    }
-  },
-  isString: function (value: unknown) {
-    return typeof value === "string";
-  },
-  isArray: function (value: unknown) {
-    return Array.isArray(value);
-  },
-
-  isFn: function (value: unknown) {
-    return typeof value === "function";
-  },
-};
-
-export const LoginForm = () => {
-  return (
-    <Form className="form-login mt-10" method="post">
-      <div className="single-fild">
-        <input
-          className="px-6 h-10 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
-          type="text"
-          placeholder="Alias"
-          name="alias"
-        />
-      </div>
-      <div className="single-fild">
-        <input
-          className="px-6 h-10 mb-6 border-secondary-90 bg-secondary-100 hover:border-primary transition-all border-2 border-solid block rounded-md w-full focus:outline-none"
-          type="password"
-          name="password"
-          placeholder="password"
-        />
-      </div>
-      <div className="button text-center">
-        <Button
-          type={"button"}
-          color={"primary"}
-          shape={"square"}
-          className="text-white"
-        >
-          Login
-        </Button>
-      </div>
-      <div className="account-text mt-5 text-center">
-        <p>
-          Don‘t have account?
-          <Link to="/register" className="text-yellow-400 font-semibold">
-            Signup here
-          </Link>
-        </p>
-      </div>
-    </Form>
-  );
-};
-
-export const SectionTitle = ({
-  heading,
-  description,
-  align,
-  color,
-  showDescription,
-}: SectionTitleType) => {
-  const title = {
-    showDescription: showDescription || false,
-    align: align || "center",
-    color: color || "primary",
+  // OfCanvas Menu Open & Remove
+  const ofcanvasHandaler = () => {
+    setOfcanvasOpen((prev) => !prev);
   };
   return (
-    <div className="section-title">
-      <div className="container">
-        <div className={`mx-auto align-${title.align}`}>
-          <h2 className="font-bold max-w-3xl">{heading}</h2>
-          {title.showDescription && (
-            <p className="max-w-xl mt-2 leading-7 text-18base">{description}</p>
-          )}
+    <header
+      ref={headerRef}
+      className="bg-transparent absolute w-full mx-auto z-40"
+    >
+      <div
+        ref={fixedRef}
+        className={`header-top ${
+          sticky ? "fixed top-0 bg-secondary-100 opacity-90 w-full" : ""
+        }`}
+      >
+        <div className="container px-4">
+          <nav className="bg-transparent flex justify-between items-center py-3">
+            <div className="text-3xl font-semibold leading-none">
+              {"REMIX GUN"}
+            </div>
+            {/* <BDSLogo /> */}
+            <MainMenu data={links} />
+            <div className="header-right-action flex items-center">
+              <Button
+                path="/login"
+                shape="square"
+                size="md"
+                type="button"
+                className="text-white hidden xs:block"
+              >
+                <p>SIGN UP</p>
+                <img
+                  className="align-middle ml-3"
+                  src="../../data/images/icons/arrrow-icon2.webp"
+                  alt=""
+                />
+              </Button>
+              <button
+                onClick={ofcanvasHandaler}
+                onKeyDown={ofcanvasHandaler}
+                className="flex flex-col space-y-1.5 ml-8 lg:hidden"
+              >
+                <span className="line h-0.5 w-6 inline-block bg-white"></span>
+                <span className="line h-0.5 w-6 inline-block bg-white"></span>
+                <span className="line h-0.5 w-6 inline-block bg-white"></span>
+              </button>
+            </div>
+          </nav>
         </div>
       </div>
-    </div>
+    </header>
   );
-};
-export type SectionTitleType = {
-  heading: string;
-  description: string;
-  align: "left" | "right" | "center";
-  color: "white" | "primary";
-  showDescription: boolean;
 };
 
 export const Search = ({
@@ -376,120 +258,5 @@ export const Search = ({
         <i className="icofont-search-1"></i>
       </button>
     </Form>
-  );
-};
-
-interface ButtonType<ButtonProps = ButtonHTMLAttributes<any>> {
-  children: string | JSX.Element[] | HTMLElement[] | JSX.Element | HTMLElement;
-  path?: string;
-  type: "button" | "submit" | "reset";
-  className?: string;
-  size?: "md" | "lg" | "xl";
-  shape?: "rounded" | "square" | "square20xl" | "square2xl" | "square22xl";
-  color?: "primary" | "secondary";
-  image?: { large?: string; small?: string };
-}
-
-export const Button = ({
-  children,
-  path,
-  className,
-  size,
-  shape,
-  color,
-  image,
-  type,
-}: ButtonType) => {
-  const btnstyle = {
-    size: size || "md",
-    shape: shape || "square22xl",
-    color: color || "primary",
-  };
-  const sizeStyle = {
-    md: `leading-11 h-12 w-32 sm:h-15 sm:w-40 sm:leading-12`,
-    lg: `text-22base h-73 w-230 leading-73`,
-    xl: `h-15 w-50 text-xl leading-3`,
-  };
-  const shapeStyle = {
-    rounded: `rounded`,
-    square: `rounded-4xl`,
-    square20xl: `rounded-20`,
-    square2xl: `rounded-2xl`,
-    square22xl: `rounded-22`,
-  };
-  const colorStyle = {
-    primary: `bg-primary`,
-    secondary: `bg-secondary`,
-  };
-
-  const buttonClasses = cn(
-    className,
-    "font-exo",
-    "inline-block",
-    "text-center",
-    "font-bold",
-    "group",
-    "hover:opacity-80",
-    sizeStyle[btnstyle.size],
-    shapeStyle[btnstyle.shape ?? "square22xl"],
-    colorStyle[btnstyle.color ?? "primary"]
-  );
-
-  const btnImageSm = {
-    backgroundImage: `url(${image?.small})`,
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  };
-  const btnImageLg = {
-    backgroundImage: `url(${image?.large})`,
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  };
-
-  if (path) {
-    const internal = /^\/(?!\/)/.test(path);
-    const isHash = path.startsWith("#");
-
-    if (internal) {
-      return (
-        <Link
-          to={path}
-          style={size ? btnImageLg : btnImageSm}
-          className={buttonClasses}
-        >
-          {children}
-        </Link>
-      );
-    }
-    if (isHash) {
-      return (
-        <a href={path}>
-          <button
-            type={type}
-            style={size ? btnImageLg : btnImageSm}
-            className={buttonClasses}
-          >
-            {children}
-          </button>
-        </a>
-      );
-    }
-    return (
-      <a
-        href={path}
-        target="_blank"
-        style={size ? btnImageLg : btnImageSm}
-        className={buttonClasses}
-        rel="noopener noreferrer"
-      >
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <button type={type} className={buttonClasses}>
-      {children}
-    </button>
   );
 };

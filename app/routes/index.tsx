@@ -1,16 +1,28 @@
 import React, { Suspense } from "react";
 import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/gun/hooks";
 import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
-import { LoaderFunction, useLoaderData } from "remix";
+import {
+  ActionFunction,
+  json,
+  LoaderFunction,
+  useLoaderData,
+  useActionData,
+  useCatch,
+} from "remix";
 import { useGunFetcher } from "~/dataloader/lib";
 import {
+  useIf,
   useIsMounted,
   useSafeCallback,
   useSafeEffect,
 } from "bresnow_utility-react-hooks";
-import { Container, LoginForm, PlayerCard } from "~/root";
 import { SecureFrameWrapper } from "~/lib/SR";
 import { log } from "~/lib/console-utils";
+import { LoadCtx } from "types";
+import { Card } from "~/components/Card";
+import Container from "~/components/Container";
+import LoginForm from "~/components/LoginForm";
+import Display from "~/components/DisplayHeading";
 type LoaderData = {
   username: string;
 };
@@ -33,7 +45,7 @@ function SuspendedData({ getData }: { getData: () => any }) {
         color={"primary"}
         showDescription={true}
       />
-      <PlayerCard image={img} name={pageTitle} label={title} />
+      <Card image={img} name={pageTitle} label={title} />
     </>
   );
 }
@@ -46,21 +58,48 @@ function SuspendedTest({ getData }: { getData: () => any }) {
     </pre>
   );
 }
+
+export let action: ActionFunction = async ({ params, request, context }) => {
+  let { RemixGunContext } = context as LoadCtx;
+  let { formData, createUser } = RemixGunContext(Gun);
+  let { alias, password } = await formData(request);
+  if (typeof alias !== "string") {
+    return json({ ok: false, message: "Invalid alias entry" });
+  }
+  if (typeof password !== "string") {
+    return json({ ok: false, message: "Invalid password entry" });
+  }
+  let { result } = await createUser(alias, password);
+  if (!result) {
+    return json({
+      ok: false,
+      message: result,
+    });
+  }
+  return json({ ok: true, message: "ok" });
+};
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
+  let ack = useActionData<{
+    ok: boolean;
+    message: string;
+  }>();
+
+  useIf([ack], () => {
+    log(ack, "ACK");
+  });
   let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
-  const [gun, SEA] = useGunStatic(Gun);
+  const gun = useGunStatic(Gun);
+  const SEA = Gun.SEA;
+  //@ts-ignore
+  const enc = SEA.encrypt({ hello: "world" }, "SECRET", async (data) => {
+    log(data);
+    const dec = await SEA.decrypt(data, "SECRET");
+    log(dec);
+  });
   gun.get("posts").get("test").put({ hello: "world", username });
 
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
-  useSafeEffect(() => {
-    gun
-      .get("pages")
-      .get("index")
-      .on(function (data) {
-        console.log(data, "DATA");
-      });
-  }, []);
   return (
     <>
       {" "}
@@ -85,16 +124,13 @@ export default function Profile() {
     </>
   );
 }
-export function useGunStatic(
-  Gun: IGun,
-  opts?: GunOptions
-): [instance: IGunInstance, sea: ISEA] {
+export function useGunStatic(Gun: IGun, opts?: GunOptions): IGunInstance {
   const { data } = useRouteData("/"),
     gunOptions = data.gunOpts;
   let [options] = React.useState<GunOptions>(opts ? opts : gunOptions);
   let gunInstance = Gun(options);
   let [instance] = React.useState(gunInstance);
-  return [instance, Gun.SEA];
+  return instance;
 }
 
 export function useNodeSubscribe(
@@ -150,3 +186,40 @@ type TitleProps = {
   color?: "white" | "primary";
   showDescription: boolean;
 };
+
+export function CatchBoundary() {
+  let caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+    case 403:
+    case 404:
+      return (
+        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+          <Display
+            title={`${caught.status}`}
+            titleColor="white"
+            span={`${caught.statusText}`}
+            spanColor="pink-500"
+            description={`${caught.statusText}`}
+          />
+        </div>
+      );
+  }
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+      <Display
+        title="Error:"
+        titleColor="#cb2326"
+        span={error.message}
+        spanColor="#fff"
+        description={`error`}
+      />
+    </div>
+  );
+}
