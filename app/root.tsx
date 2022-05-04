@@ -29,7 +29,7 @@ import Gun, { ISEAPair } from "gun";
 import srStyles from "~/lib/SR/sr.css";
 import { useSafeEffect } from "bresnow_utility-react-hooks";
 import { matches } from "lodash";
-import { useRouteData } from "./gun/hooks";
+import { useRouteData } from "~/lib/gun/hooks";
 import { RouteHandle } from "@remix-run/react/routeModules";
 import BDSLogo from "./components/svg/BDS";
 import React from "react";

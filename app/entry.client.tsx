@@ -1,8 +1,8 @@
 import * as ReactDOM from "react-dom";
 import { RemixBrowser } from "remix";
 
-import { createGunFetchLoader } from "./dataloader/browser";
-import { DataloaderProvider } from "./dataloader/lib";
+import { createGunFetchLoader } from "~/dataloader/browser";
+import { DataloaderProvider } from "~/dataloader/lib";
 
 let dataloader = createGunFetchLoader();
 

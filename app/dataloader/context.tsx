@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import type { FC } from "react";
-import type { ISEAPair } from "gun";
+import type { IGunChain, ISEAPair } from "gun";
 import { useContextReducer } from "bresnow_utility-react-hooks";
 
 export type ClientContext = {

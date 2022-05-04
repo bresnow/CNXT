@@ -59,11 +59,11 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
         },
 
         password: (alias: string, password: string): Promise<{ ok: boolean; err: boolean; }> => {
-            return new Promise((resolve, reject) => gun.user().auth(alias, password, (ack: any) => {
+            return new Promise((resolve, reject) => gun.user().auth(alias, password, (ack) => {
                 if (Object.getOwnPropertyNames(ack).includes('id')) {
                     resolve({ ok: true, err: false });
                 } else {
-                    resolve({ ok: false, err: (ack).err })
+                    resolve({ ok: false, err: (ack as any).err })
                 }
             }))
         }

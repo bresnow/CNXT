@@ -1,7 +1,7 @@
 node_modules
 radata
 *.tmp
-
+cypress*
 /.cache
 /build
 /public/build

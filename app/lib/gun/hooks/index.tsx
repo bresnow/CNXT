@@ -29,7 +29,7 @@ import {
   useLZObject,
   useSafeCallback,
   useSafeEffect,
-} from "/Volumes/βτεsηΘω./Develop/typescript/@bresnow/utility-hooks";
+} from "bresnow_utility-react-hooks";
 
 // import { useContextReducer } from "bresnow_utility-react-hooks/context-utils";
 import type {
@@ -61,10 +61,11 @@ export const error = (...args: any) =>
 
 export function useGunStatic(
   Gun: IGun,
-  opts?: GunOptions
+  opt?: { gunOptions: GunOptions }
 ): [instance: IGunInstance, sea: ISEA] {
+  let { gunOptions } = opt || {};
   const { data } = useRouteData("/"),
-    gunOptions = data.gunOpts;
+    opts = data.gunOpts;
   let [options] = React.useState<GunOptions>(opts ? opts : gunOptions);
   let gunInstance = Gun(options);
   let [instance] = React.useState(gunInstance);
@@ -73,23 +74,20 @@ export function useGunStatic(
 
 export function useNodeSubscribe(
   cb: (data: any) => void,
-  [gunRef, ...dependencies]: [gunRef: IGunChain<any>, dependencies?: any],
+  [gunRef]: [gunRef: IGunChain<any>, dependencies?: any],
   opts: { unsubscribe: boolean }
 ) {
-  const subscribe = React.useCallback(cb, [dependencies]);
-  const mounted = useIsMounted();
-  const unsubscribe = React.useCallback(() => {
-    if (mounted.current) {
-      (gunRef as IGunChain<any>).off();
-    }
-  }, [gunRef, mounted]);
+  const subscribe = useSafeCallback(cb);
+  const unsubscribe = useSafeCallback(() => {
+    (gunRef as IGunChain<any>).off();
+  });
 
   useSafeEffect(() => {
     (gunRef as IGunChain<any>).on(subscribe);
     if (opts.unsubscribe) {
       return unsubscribe;
     }
-  }, [subscribe]);
+  }, [opts]);
 }
 
 export interface NodeFetcherHook {
@@ -142,7 +140,7 @@ export function useNodeFetcher(
         setValue(d);
       }
     },
-    [gunRef, [] /**secondary deps */],
+    [gunRef],
     { unsubscribe: opt?.unsubscribe ? opt.unsubscribe : true }
   );
 

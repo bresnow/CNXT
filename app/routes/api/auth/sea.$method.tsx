@@ -24,7 +24,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
         keys = await pair();
         session.set("sea", keys);
         if (keys) {
-          let { ok, err } = await auth(keys);
+          let { ok, err } = await auth.pair(keys);
           if (ok) {
             return json(
               {
@@ -44,7 +44,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       case "authenticate": {
         keys = session.get("sea");
         if (keys) {
-          let { ok, err } = await auth(keys);
+          let { ok, err } = await auth.pair(keys);
           if (ok) {
             return json({
               pair: keys,

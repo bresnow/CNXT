@@ -1,9 +1,12 @@
 import type { IGun } from "gun/types";
+import { error } from "~/lib/console-utils";
+import { log } from "~/lib/console-utils";
 export function createGunFetchLoader() {
   return {
     async load(id: string, internalId: string) {
       let cache = (window as any).__remix_dataloader || {};
       let cached = cache[internalId];
+      console.log("WOAH")
       if (cached) {
         if (typeof cached.value !== "undefined") {
           return new Response(JSON.stringify(cached.value));
@@ -15,7 +18,7 @@ export function createGunFetchLoader() {
       }
 
       let url = new URL(
-        id.replace("root", "/").replace("routes/", "/api/gun/"),
+        id,
         window.location.href
       );
       return fetch(url.toString());

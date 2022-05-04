@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/gun/hooks";
+import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/lib/gun/hooks";
 import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
 import {
   ActionFunction,
@@ -23,6 +23,7 @@ import { Card } from "~/components/Card";
 import Container from "~/components/Container";
 import LoginForm from "~/components/LoginForm";
 import Display from "~/components/DisplayHeading";
+import { useGunStatic } from "~/lib/gun/hooks";
 type LoaderData = {
   username: string;
 };
@@ -61,7 +62,7 @@ function SuspendedTest({ getData }: { getData: () => any }) {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData, createUser } = RemixGunContext(Gun);
+  let { formData, createUser, auth } = RemixGunContext(Gun);
   let { alias, password } = await formData(request);
   if (typeof alias !== "string") {
     return json({ ok: false, message: "Invalid alias entry" });
@@ -76,6 +77,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
       message: result,
     });
   }
+  let authenticate = await auth.password(alias, password);
   return json({ ok: true, message: "ok" });
 };
 export default function Profile() {
@@ -89,15 +91,12 @@ export default function Profile() {
     log(ack, "ACK");
   });
   let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
-  const gun = useGunStatic(Gun);
-  const SEA = Gun.SEA;
-  //@ts-ignore
-  const enc = SEA.encrypt({ hello: "world" }, "SECRET", async (data) => {
-    log(data);
-    const dec = await SEA.decrypt(data, "SECRET");
-    log(dec);
-  });
-  gun.get("posts").get("test").put({ hello: "world", username });
+  const [gun] = useGunStatic(Gun);
+
+  gun
+    .get("posts")
+    .get("test")
+    .put({ hello: "world", username, hello_again: "worldFAMAMMA" });
 
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   return (
@@ -123,35 +122,6 @@ export default function Profile() {
       </Container>
     </>
   );
-}
-export function useGunStatic(Gun: IGun, opts?: GunOptions): IGunInstance {
-  const { data } = useRouteData("/"),
-    gunOptions = data.gunOpts;
-  let [options] = React.useState<GunOptions>(opts ? opts : gunOptions);
-  let gunInstance = Gun(options);
-  let [instance] = React.useState(gunInstance);
-  return instance;
-}
-
-export function useNodeSubscribe(
-  cb: (data: any) => void,
-  [gunRef, ...dependencies]: [gunRef: IGunChain<any>, dependencies?: any],
-  opts: { unsubscribe: boolean }
-) {
-  const subscribe = useSafeCallback(cb);
-  const mounted = useIsMounted();
-  const unsubscribe = useSafeCallback(() => {
-    if (mounted.current) {
-      (gunRef as IGunChain<any>).off();
-    }
-  });
-
-  useSafeEffect(() => {
-    (gunRef as IGunChain<any>).on(subscribe);
-    if (opts.unsubscribe) {
-      return unsubscribe;
-    }
-  }, [subscribe]);
 }
 
 export const SectionTitle = ({

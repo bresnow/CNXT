@@ -4,9 +4,10 @@ import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 
 import { useGunLoader } from "./context";
+import { useSafeCallback } from "bresnow_utility-react-hooks";
 export { DataloaderProvider } from "./context";
 
-export function useGunFetcher<T = any>(id: string) {
+export function useGunFetcher<T = any>(path: string) {
   let dataloader = useGunLoader();
   let internalId = useId();
   let { key } = useLocation();
@@ -23,7 +24,7 @@ export function useGunFetcher<T = any>(id: string) {
       promise: Promise<void>;
     };
     defered.promise = dataloader
-      .load(id, internalId)
+      .load(path, internalId)
       .then((response) => response.json())
       .then((value) => {
         defered.value = value;
@@ -34,7 +35,7 @@ export function useGunFetcher<T = any>(id: string) {
         defered.resolved = true;
       });
     return defered;
-  }, [id, key]);
+  }, [path, key]);
 
   return {
     Component() {
@@ -58,7 +59,7 @@ export function useGunFetcher<T = any>(id: string) {
       return (
         <script
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: " " }}
+          dangerouslySetInnerHTML={{ __html: "" }}
         />
       );
     },
