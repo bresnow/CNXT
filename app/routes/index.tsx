@@ -1,6 +1,13 @@
 import React, { Suspense } from "react";
 import { useNodeFetcher, useRouteData, useSEAFetcher } from "~/lib/gun/hooks";
-import Gun, { GunOptions, IGun, IGunChain, IGunInstance, ISEA } from "gun";
+import Gun, {
+  GunOptions,
+  IGun,
+  IGunChain,
+  IGunInstance,
+  ISEA,
+  ISEAPair,
+} from "gun";
 import {
   ActionFunction,
   json,
@@ -62,7 +69,7 @@ function SuspendedTest({ getData }: { getData: () => any }) {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData, createUser, auth } = RemixGunContext(Gun);
+  let { formData, user } = RemixGunContext(Gun);
   let { alias, password } = await formData(request);
   if (typeof alias !== "string") {
     return json({ ok: false, message: "Invalid alias entry" });
@@ -70,21 +77,20 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   if (typeof password !== "string") {
     return json({ ok: false, message: "Invalid password entry" });
   }
-  let { result } = await createUser(alias, password);
+  let result = await user.createUser(alias, password);
   if (!result) {
     return json({
       ok: false,
       message: result,
     });
   }
-  let authenticate = await auth.password(alias, password);
-  return json({ ok: true, message: "ok" });
+  return json({ ok: true, message: result });
 };
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
   let ack = useActionData<{
     ok: boolean;
-    message: string;
+    message: string | ISEAPair;
   }>();
 
   useIf([ack], () => {

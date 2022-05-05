@@ -6,7 +6,7 @@ import { getSession } from "~/session.server";
 import { parseJSON } from "~/lib/parseJSON";
 import { unprocessableEntity } from "~/lib/responses";
 import type { ServerResponse } from "http";
-export function RemixGunContext(Gun: IGun): RmxGunCtx {
+export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
 
     // log((req), "Request")
     const ENV = {
@@ -22,52 +22,46 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
     }
 
     const gun = Gun(gunOpt);
-    // form data values with string type check
-    // async function 
-    // async function getSessionKeyPair(request: Request) {
-    //     let session = await getSession(request.headers.get("Cookie"));
-    //     let keyPair = session.get("sea");
-    //     if (keyPair) {
-    //         let keys = parseJSON(keyPair);
-    //         return keys as ISEAPair
-    //     }
-    // }
 
-    const createUser = async (username: string, password: string): Promise<{ result: string }> =>
-        new Promise((resolve, reject) => gun.user().create(username, password, (ack) => {
-            console.log(ack)
-            if (Object.getOwnPropertyNames(ack).includes('ok')) {
-                resolve({ result: 'ok' })
-            } else {
-                reject({ result: JSON.parse(JSON.stringify(ack)).err })
-            }
-        }));
+
     type T = any
     const SEA = Gun.SEA
     const pair = async () => await SEA.pair()
-    const auth = {
 
-        pair: (pair: ISEAPair): Promise<{ ok: any; err: boolean; }> => {
+    const user = {
+        pair: (pair: ISEAPair) => {
             return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
                 if (Object.getOwnPropertyNames(ack).includes('id')) {
-                    resolve({ ok: ack, err: false });
+
                 } else {
-                    resolve({ ok: false, err: (ack as any).err })
+                    reject((ack as any).err as string)
                 }
             }))
-
         },
-
-        password: (alias: string, password: string): Promise<{ ok: boolean; err: boolean; }> => {
+        createUser: async (username: string, password: string) => {
+            return new Promise((resolve, reject) => gun.user().create(username, password, (ack) => {
+                if (Object.getOwnPropertyNames(ack).includes('ok')) {
+                    gun.user().auth(username, password, (ack) => {
+                        if (Object.getOwnPropertyNames(ack).includes('id')) {
+                            resolve((ack as any).sea as ISEAPair);
+                        } else {
+                            reject((ack as any).err as string)
+                        }
+                    })
+                } else {
+                    reject((ack as any).err as string)
+                }
+            }))
+        },
+        password: (alias: string, password: string) => {
             return new Promise((resolve, reject) => gun.user().auth(alias, password, (ack) => {
                 if (Object.getOwnPropertyNames(ack).includes('id')) {
-                    resolve({ ok: true, err: false });
+                    resolve((ack as any).sea as ISEAPair);
                 } else {
-                    resolve({ ok: false, err: (ack as any).err })
+                    reject((ack as any).err as string)
                 }
             }))
         }
-
     }
 
 
@@ -168,10 +162,9 @@ export function RemixGunContext(Gun: IGun): RmxGunCtx {
 
     return {
         ENV,
-        createUser,
         graph,
         pair,
-        auth,
+        user,
         formData: async (request: Request) => {
             return Object.fromEntries(await request.formData())
 

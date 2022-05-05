@@ -6,7 +6,6 @@ export function createGunFetchLoader() {
     async load(id: string, internalId: string) {
       let cache = (window as any).__remix_dataloader || {};
       let cached = cache[internalId];
-      console.log("WOAH")
       if (cached) {
         if (typeof cached.value !== "undefined") {
           return new Response(JSON.stringify(cached.value));
