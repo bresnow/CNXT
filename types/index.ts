@@ -23,12 +23,11 @@ export interface RmxGunCtx {
         APP_KEY_PAIR: ISEAPair;
     },
     graph: ChainCtx;
-    user: {
-        pair: (pair: ISEAPair) => Promise<unknown>;
-        createUser: (username: string, password: string) => Promise<unknown>
+    user(): Promise<{
+        authPair: (pair: ISEAPair) => Promise<unknown>;
         password: (alias: string, password: string) => Promise<unknown>;
-    }
-    pair: () => Promise<ISEAPair>,
+        createUser: (alias: string, password: string) => Promise<unknown>;
+    }>
     formData: (request: any) => Promise<{ [x: string]: FormDataEntryValue }>,
     createToken: (sessionKey?: string) => Promise<string>,
     verifyToken: (request: Request, sessionKey?: string) => Promise<void>,

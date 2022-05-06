@@ -1,5 +1,5 @@
 import type { ChainCtx, RmxGunCtx, Nodevalues } from "types";
-import type { GunCallbackUserCreate, GunOptions, IGun, IGunChain, ISEAPair } from "gun/types";
+import type { GunCallbackUserCreate, GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import type { DataFunctionArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { getSession } from "~/session.server";
@@ -24,46 +24,86 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
     const gun = Gun(gunOpt);
 
 
+
+
+    /**
+     * Upgrade from Gun's user api
+     * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
+     */
+    const aliasAvailable = (alias: string) => {
+        return new Promise((resolve, reject) => {
+            gun.get(`~@${alias}`).once((exists) => {
+                if (exists) {
+                    reject('alias already exists')
+                }
+                resolve('YES')
+            })
+        })
+    }
     type T = any
     const SEA = Gun.SEA
-    const pair = async () => await SEA.pair()
+    const pair = SEA.pair, encrypt = SEA.encrypt, decrypt = SEA.decrypt, sign = SEA.sign, verify = SEA.verify, secret = SEA.secret, certify = SEA.certify;
 
-    const user = {
-        pair: (pair: ISEAPair) => {
-            return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
-                if (Object.getOwnPropertyNames(ack).includes('id')) {
-
-                } else {
-                    reject((ack as any).err as string)
-                }
-            }))
-        },
-        createUser: async (username: string, password: string) => {
-            return new Promise((resolve, reject) => gun.user().create(username, password, (ack) => {
-                if (Object.getOwnPropertyNames(ack).includes('ok')) {
-                    gun.user().auth(username, password, (ack) => {
-                        if (Object.getOwnPropertyNames(ack).includes('id')) {
-                            resolve((ack as any).sea as ISEAPair);
-                        } else {
-                            reject((ack as any).err as string)
+    async function user() {
+        let session = await getSession();
+        let usr = await user()
+        return {
+            authPair: (pair: ISEAPair) => {
+                return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
+                    if (Object.getOwnPropertyNames(ack).includes('err')) {
+                        let err = (ack as any).err as string
+                        reject(err)
+                    } else {
+                        let sea = (ack as any).sea as ISEAPair
+                        let userInfo = JSON.stringify((ack as any).put as GunUser)
+                        session.set(`user_info`, userInfo)
+                        session.set(`${sea.pub}_key_pair`, sea)
+                        resolve(userInfo)
+                    }
+                }))
+            },
+            /**
+             * authenticate with username and password
+             * If alias is available it automaticatically creates a new user... likewise reasoning for login
+             */
+            password: (alias: string, password: string) => {
+                return new Promise((resolve, reject) => gun.user().auth(alias, password, async (ack) => {
+                    if ((await aliasAvailable(alias))) {
+                        let signUp = await usr.createUser(alias, password)
+                        if (signUp) {
+                            resolve(signUp)
                         }
-                    })
-                } else {
-                    reject((ack as any).err as string)
-                }
-            }))
-        },
-        password: (alias: string, password: string) => {
-            return new Promise((resolve, reject) => gun.user().auth(alias, password, (ack) => {
-                if (Object.getOwnPropertyNames(ack).includes('id')) {
-                    resolve((ack as any).sea as ISEAPair);
-                } else {
-                    reject((ack as any).err as string)
-                }
-            }))
+                        reject(signUp)
+                    }
+                    if (Object.getOwnPropertyNames(ack).includes('sea')) {
+                        let sea = (ack as any).sea as ISEAPair
+                        let userInfo = JSON.stringify((ack as any).put as GunUser)
+                        session.set(`user_info`, userInfo)
+                        session.set(`${alias}_key_pair`, sea)
+                        resolve(userInfo);
+                    }
+                    if (Object.getOwnPropertyNames(ack).includes('err')) {
+                        let err = (ack as any).err as string
+                        if (err === '')
+                            reject((ack as any).err as string)
+                    }
+                }))
+            },
+            /**
+             * 
+           create user with alias and password then authenticate.
+             */
+            createUser: (alias: string, password: string) => {
+                return new Promise((resolve, reject) => gun.user().create(alias, password, async (ack) => {
+                    if (Object.getOwnPropertyNames(ack).includes('ok')) {
+
+                    } else {
+                        reject((ack as any).err as string)
+                    }
+                }))
+            }
         }
     }
-
 
 
     /**
@@ -163,7 +203,6 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
     return {
         ENV,
         graph,
-        pair,
         user,
         formData: async (request: Request) => {
             return Object.fromEntries(await request.formData())
