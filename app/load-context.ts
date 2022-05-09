@@ -49,10 +49,10 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
 
     async function keyPairAuth(pair: ISEAPair) {
         let session = await getSession(request.headers.get("Cookie") ?? undefined);
-        return new Promise((resolve) => gun.user().auth(pair, (ack) => {
+        return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
             if (errorCheck(ack)) {
                 let err = (ack as any).err as string
-                resolve(err)
+                reject(err)
             } else {
                 let sea = (ack as any).sea as ISEAPair
                 let userInfo = (ack as any).put as GunUser
@@ -139,14 +139,14 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
                 put: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.put(data, (ack: any) => {
-                        ack.ok ? resolve({ result: `node ${path} -  values updated to ${data}` }) : resolve({ result: ack.err });
+                        ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
                 })
                 ,
                 set: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.set(data, (ack: any) => {
-                        ack.ok ? resolve({ result: `node ${path} -  values updated to ${data}` }) : resolve({ result: ack.err });
+                        ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
                 })
                 ,
@@ -158,7 +158,7 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
                         if (!object) {
                             resolve(undefined);
                         }
-                        let set = await Promise.all(
+                        let set = await Promise.allSettled(
                             Object.keys(object).map(async (key) => {
                                 // @ts-ignore
                                 let data = await chainref.get({ "#": key });

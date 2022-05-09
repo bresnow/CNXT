@@ -23,8 +23,8 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   try {
     let values = await formData();
     try {
-      let { result } = await graph.get(path).put(values);
-      return json({ result });
+      let message = await graph.get(path).put(values);
+      return json({ message });
     } catch (error) {
       return json({ error });
     }
