@@ -35,12 +35,17 @@ type LoaderData = {
   username: string;
 };
 
-export let loader: LoaderFunction = () => {
-  return {
-    username: "Remix",
-  };
+export let loader: LoaderFunction = async ({ params, request, context }) => {
+  let { RemixGunContext } = context as LoadCtx;
+  let { graph } = RemixGunContext(Gun, { request, params });
+  return null;
 };
 
+export let action: ActionFunction = async ({ params, request, context }) => {
+  let { RemixGunContext } = context as LoadCtx;
+  let { graph, formData } = RemixGunContext(Gun, { request, params });
+  return null;
+};
 function SuspendedData({ getData }: { getData: () => any }) {
   let { title, textarea, pageTitle, src } = getData();
   let img = { src: "/github/rmix-gun.png", alt: "test" };
@@ -67,25 +72,6 @@ function SuspendedTest({ getData }: { getData: () => any }) {
   );
 }
 
-export let action: ActionFunction = async ({ params, request, context }) => {
-  let { RemixGunContext } = context as LoadCtx;
-  let { formData, user } = RemixGunContext(Gun);
-  let { alias, password } = await formData(request);
-  if (typeof alias !== "string") {
-    return json({ ok: false, message: "Invalid alias entry" });
-  }
-  if (typeof password !== "string") {
-    return json({ ok: false, message: "Invalid password entry" });
-  }
-  let result = await user.createUser(alias, password);
-  if (!result) {
-    return json({
-      ok: false,
-      message: result,
-    });
-  }
-  return json({ ok: true, message: result });
-};
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
   let ack = useActionData<{
@@ -124,7 +110,6 @@ export default function Profile() {
             <SuspendedTest getData={testLoader.load} />
           </Suspense>
         </Container>
-        <LoginForm />
       </Container>
     </>
   );

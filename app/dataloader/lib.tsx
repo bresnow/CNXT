@@ -3,19 +3,16 @@ import { useLocation } from "remix";
 import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 
-import { useGunLoader } from "./context";
+import { useGunFetchLoader } from "./context";
 import { useSafeCallback } from "bresnow_utility-react-hooks";
 export { DataloaderProvider } from "./context";
 
 export function useGunFetcher<T = any>(path: string) {
-  let dataloader = useGunLoader();
+  let dataloader = useGunFetchLoader();
   let internalId = useId();
   let { key } = useLocation();
   let defered = useMemo(() => {
-    invariant(
-      dataloader,
-      "useLoader must be provided with a DataloaderProvider"
-    );
+    invariant(dataloader, "Context Provider is undefined for useGunFetcher");
 
     let defered = { resolved: false } as {
       resolved: boolean;
@@ -49,7 +46,7 @@ export function useGunFetcher<T = any>(path: string) {
         return (
           <script
             dangerouslySetInnerHTML={{
-              __html: `window.__remix_dataloader = window.__remix_dataloader||{};window.__remix_dataloader[${JSON.stringify(
+              __html: `window.__remix_gun = window.__remix_gun||{};window.__remix_gun[${JSON.stringify(
                 internalId
               )}] = ${serialized};`,
             }}

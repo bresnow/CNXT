@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FormSubscribe from "./FormSubscribe";
+import FormBuilder from "./FormBuilder";
 import Ddm from "./DropDownMenu";
 import { Link } from "remix";
 import InputText from "./InputText";
@@ -73,13 +73,13 @@ const Header = (props: Props) => {
             <div className="block">
               {props.withSearchBar && (
                 <div className="md:block -mr-2 flex">
-                  <FormSubscribe
+                  {/* <FormBuilder
                     submitLabel="Search"
                     input={[]}
                     onSubmit={function () {
                       throw new Error("Function not implemented.");
                     }}
-                  />
+                  /> */}
                 </div>
               )}
               <div className="ml-4 flex items-center md:ml-6">
@@ -196,13 +196,13 @@ const Header = (props: Props) => {
             </div>
             {props.withSearchBar && (
               <div className="p-2 flex">
-                <FormSubscribe
+                {/* <FormBuilder
                   submitLabel="Search"
                   input={[]}
                   onSubmit={function () {
                     throw new Error("Function not implemented.");
                   }}
-                />
+                /> */}
               </div>
             )}
           </div>

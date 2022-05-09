@@ -1,7 +1,6 @@
 import { createContext, useContext } from "react";
 import type { FC } from "react";
-import type { IGunChain, ISEAPair } from "gun";
-import { useContextReducer } from "bresnow_utility-react-hooks";
+
 
 export type ClientContext = {
   load: (id: string, internalId: string) => Promise<Response>;
@@ -15,4 +14,4 @@ export let DataloaderProvider: FC<{ dataloader: ClientContext }> = ({
   return <context.Provider value={dataloader}>{children}</context.Provider>;
 };
 
-export let useGunLoader = () => useContext(context);
+export let useGunFetchLoader = () => useContext(context);

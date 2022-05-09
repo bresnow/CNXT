@@ -3,7 +3,7 @@ import { LoadCtx } from "types";
 import Gun from "gun";
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph } = RemixGunContext(Gun);
+  let { graph } = RemixGunContext(Gun, { request, params });
   let path = params.path;
   if (typeof path === "string") {
     let data = await graph.get(path).val();
@@ -18,25 +18,21 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph, formData } = RemixGunContext(Gun);
-  let path = params.path;
-  let values = await formData(request);
-  let obj = {}
-  if (typeof path === "string") {
-    for (var key in values) {
-      if (typeof values[key] !== 'string') {
-        return json({ err: ` Invalid entry at: ${key}` });
-      } Object.assign(obj, { [key]: values[key] })
+  let { graph, formData } = RemixGunContext(Gun, { request, params });
+  let path = params.path as string;
+  try {
+    let values = await formData();
+    try {
+      let { result } = await graph.get(path).put(values);
+      return json({ result });
+    } catch (error) {
+      return json({ error });
     }
-
-
-    if (Object.values(obj).length > 0) {
-      let { ok } = await graph.get(`${path}`).put(obj);
-      if (ok) {
-        return json({ message: "PUT SUCCESSFUL" });
-      }
-      return json({ err: "PUT FAILED" });
-    }
-    return json({ err: "NO VALUES TO PUT" });
+  } catch (error) {
+    return json({ error });
   }
+
+
 }
+
+

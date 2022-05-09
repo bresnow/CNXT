@@ -1,3 +1,10 @@
+export const errorCheck = (promise: any) => {
+    let prop = "err" || "ERR" || "error" || "ERROR"
+    if (Object.getOwnPropertyNames(promise).includes(prop)) {
+        return true
+    }
+    return false
+}
 export const checkIf = {
     isObject: function (value: unknown) {
         return !!(value && typeof value === "object" && !Array.isArray(value));

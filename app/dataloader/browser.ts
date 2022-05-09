@@ -4,7 +4,7 @@ import { log } from "~/lib/console-utils";
 export function createGunFetchLoader() {
   return {
     async load(id: string, internalId: string) {
-      let cache = (window as any).__remix_dataloader || {};
+      let cache = (window as any).__remix_gun || {};
       let cached = cache[internalId];
       if (cached) {
         if (typeof cached.value !== "undefined") {

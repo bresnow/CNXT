@@ -1,6 +1,6 @@
 import type { IGun, IGunChain } from "gun/types";
 import type { ISEAPair } from "gun/types";
-import type { DataFunctionArgs } from "@remix-run/server-runtime";
+import type { Params } from "react-router";
 import type { ServerResponse } from "http";
 export * from "./loaders"
 
@@ -8,13 +8,19 @@ export * from "./loaders"
 export type Nodevalues = { [x: string | number]: any }
 export interface ChainCtx {
     get: (path: string) => {
-        val: () => Promise<Nodevalues | undefined>, put: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<{ ok: boolean; result: string }>, set: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<{ ok: boolean; result: string }>, map: (callback?: (args?: any) => any) => Promise<Nodevalues[] | undefined>
+        val: () => Promise<Nodevalues | undefined>, put: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<{ result: string }>, set: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<{ result: string }>, map: (callback?: (args?: any) => any) => Promise<Nodevalues[] | undefined>
     },
     options: (peers: string | string[], remove?: boolean) => any,
 
 }
+export interface UserAuth {
+    keyPairAuth: (pair: ISEAPair) => Promise<unknown>;
+    credentials: (alias: string, password: string) => Promise<unknown>;
+    logout(): Promise<Response>
 
-export type LoadCtx = { RemixGunContext: (Gun: IGun) => RmxGunCtx, res: ServerResponse }
+}
+
+export type LoadCtx = { RemixGunContext: (Gun: IGun, { request, params }: { request: Request, params: Params }) => RmxGunCtx, res: ServerResponse }
 export interface RmxGunCtx {
     ENV: {
         DOMAIN: string | undefined;
@@ -23,13 +29,9 @@ export interface RmxGunCtx {
         APP_KEY_PAIR: ISEAPair;
     },
     graph: ChainCtx;
-    user(): Promise<{
-        authPair: (pair: ISEAPair) => Promise<unknown>;
-        password: (alias: string, password: string) => Promise<unknown>;
-        createUser: (alias: string, password: string) => Promise<unknown>;
-    }>
-    formData: (request: any) => Promise<{ [x: string]: FormDataEntryValue }>,
-    createToken: (sessionKey?: string) => Promise<string>,
-    verifyToken: (request: Request, sessionKey?: string) => Promise<void>,
+    user: UserAuth
+    formData: () => Promise<Record<string, string>>;
+    // createToken: (sessionKey?: string) => Promise<string>,
+    // verifyToken: (request: Request, sessionKey?: string) => Promise<void>,
 };
 

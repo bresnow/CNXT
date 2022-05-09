@@ -1,13 +1,14 @@
 import type { ChainCtx, RmxGunCtx, Nodevalues } from "types";
-import type { GunCallbackUserCreate, GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
+import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import type { DataFunctionArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { getSession } from "~/session.server";
+import { destroySession, getSession } from "~/session.server";
 import { parseJSON } from "~/lib/parseJSON";
-import { unprocessableEntity } from "~/lib/responses";
-import type { ServerResponse } from "http";
-export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
-
+import { errorCheck } from "./lib/utils/helpers";
+import { redirect } from "remix";
+import invariant from "@remix-run/react/invariant";
+import { Params } from "react-router";
+export function RemixGunContext(Gun: IGun, { request, params }: { request: Request, params: Params }): RmxGunCtx {
     // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
@@ -21,7 +22,7 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
         radisk: true,
     }
 
-    const gun = Gun(gunOpt);
+    let gun = Gun(gunOpt);
 
 
 
@@ -34,9 +35,9 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
         return new Promise((resolve, reject) => {
             gun.get(`~@${alias}`).once((exists) => {
                 if (exists) {
-                    reject('alias already exists')
+                    resolve(false)
                 }
-                resolve('YES')
+                resolve(true)
             })
         })
     }
@@ -44,67 +45,75 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
     const SEA = Gun.SEA
     const pair = SEA.pair, encrypt = SEA.encrypt, decrypt = SEA.decrypt, sign = SEA.sign, verify = SEA.verify, secret = SEA.secret, certify = SEA.certify;
 
-    async function user() {
-        let session = await getSession();
-        let usr = await user()
-        return {
-            authPair: (pair: ISEAPair) => {
-                return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
-                    if (Object.getOwnPropertyNames(ack).includes('err')) {
-                        let err = (ack as any).err as string
-                        reject(err)
-                    } else {
-                        let sea = (ack as any).sea as ISEAPair
-                        let userInfo = JSON.stringify((ack as any).put as GunUser)
-                        session.set(`user_info`, userInfo)
-                        session.set(`${sea.pub}_key_pair`, sea)
-                        resolve(userInfo)
-                    }
-                }))
-            },
-            /**
-             * authenticate with username and password
-             * If alias is available it automaticatically creates a new user... likewise reasoning for login
-             */
-            password: (alias: string, password: string) => {
-                return new Promise((resolve, reject) => gun.user().auth(alias, password, async (ack) => {
-                    if ((await aliasAvailable(alias))) {
-                        let signUp = await usr.createUser(alias, password)
-                        if (signUp) {
-                            resolve(signUp)
-                        }
-                        reject(signUp)
-                    }
-                    if (Object.getOwnPropertyNames(ack).includes('sea')) {
-                        let sea = (ack as any).sea as ISEAPair
-                        let userInfo = JSON.stringify((ack as any).put as GunUser)
-                        session.set(`user_info`, userInfo)
-                        session.set(`${alias}_key_pair`, sea)
-                        resolve(userInfo);
-                    }
-                    if (Object.getOwnPropertyNames(ack).includes('err')) {
-                        let err = (ack as any).err as string
-                        if (err === '')
-                            reject((ack as any).err as string)
-                    }
-                }))
-            },
-            /**
-             * 
-           create user with alias and password then authenticate.
-             */
-            createUser: (alias: string, password: string) => {
-                return new Promise((resolve, reject) => gun.user().create(alias, password, async (ack) => {
-                    if (Object.getOwnPropertyNames(ack).includes('ok')) {
 
-                    } else {
-                        reject((ack as any).err as string)
-                    }
-                }))
+
+    async function keyPairAuth(pair: ISEAPair) {
+        let session = await getSession(request.headers.get("Cookie") ?? undefined);
+        return new Promise((resolve) => gun.user().auth(pair, (ack) => {
+            if (errorCheck(ack)) {
+                let err = (ack as any).err as string
+                resolve(err)
+            } else {
+                let sea = (ack as any).sea as ISEAPair
+                let userInfo = (ack as any).put as GunUser
+                session.set(`user_info`, JSON.stringify(userInfo))
+                session.set(`key_pair`, sea)
+                resolve(userInfo)
             }
-        }
+        }))
+    }
+    /**
+     * authenticate with username and password
+     * If alias is available it automaticatically creates a new user... likewise reasoning for login
+     */
+    async function credentials(alias: string, password: string) {
+        let session = await getSession(request.headers.get("Cookie"));
+        return new Promise((resolve, reject) => gun.user().auth(alias, password, async (ack) => {
+            if ((await aliasAvailable(alias))) {
+                try {
+                    let signUp = await createUser(alias, password)
+                    resolve(signUp)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+            if (Object.getOwnPropertyNames(ack).includes('sea')) {
+                let sea = (ack as any).sea as ISEAPair
+                let userInfo = (ack as any).put as GunUser
+                session.set(`user_info`, userInfo)
+                session.set(`key_pair`, sea)
+                resolve({ alias: userInfo.alias, pub: userInfo.pub, epub: userInfo.epub });
+            }
+            if (errorCheck(ack)) {
+                let err = (ack as any).err as string
+                reject(err)
+            }
+        }))
+    }
+    /**
+     * 
+   create user with alias and password then authenticate.
+     */
+    async function createUser(alias: string, password: string) {
+        return new Promise((resolve, reject) => gun.user().create(alias, password, async (ack) => {
+            if (!errorCheck(ack)) {
+                resolve(ack)
+            } else {
+                let err = (ack as any).err as string
+                reject(err)
+            }
+        }))
     }
 
+
+    async function logout() {
+        const session = await getSession(request.headers.get("Cookie"));
+        return redirect(request.headers.get("Referer") ?? "/", {
+            headers: {
+                "Set-Cookie": await destroySession(session),
+            },
+        });
+    }
 
     /**
      * * @param path - Path to the desired node. Each node label separated by forward slash  "path/to/the/node"
@@ -130,14 +139,14 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
                 put: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.put(data, (ack: any) => {
-                        ack.ok ? resolve({ ok: true, result: `node ${path} -  values updated to ${data}` }) : resolve({ ok: false, result: ack.err });
+                        ack.ok ? resolve({ result: `node ${path} -  values updated to ${data}` }) : resolve({ result: ack.err });
                     })
                 })
                 ,
                 set: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.set(data, (ack: any) => {
-                        ack.ok ? resolve({ ok: true, result: `node ${path} -  values updated to ${data}` }) : resolve({ ok: false, result: ack.err });
+                        ack.ok ? resolve({ result: `node ${path} -  values updated to ${data}` }) : resolve({ result: ack.err });
                     })
                 })
                 ,
@@ -187,11 +196,11 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
                         mesh.bye(peer);
                     });
                 } mesh.bye(peers);
-                return json({ message: `Peers ${peers} removed` });
+                return { message: `Peers ${peers} removed` };
             }
             // Ask local peer to connect to another peer. //
             mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
-            return json({ message: `Peers ${peers} added` });
+            return { message: `Peers ${peers} added` };
         }
 
 
@@ -203,44 +212,57 @@ export function RemixGunContext(Gun: IGun, args?: DataFunctionArgs): RmxGunCtx {
     return {
         ENV,
         graph,
-        user,
-        formData: async (request: Request) => {
-            return Object.fromEntries(await request.formData())
+        user: { keyPairAuth, credentials, logout },
+        formData: async () => {
 
-        },
-        createToken: async (sessionKey = "verify") => {
-            let session = await getSession();
-            let token = (await SEA.pair()).epub
-            session.set(sessionKey, token);
-            return token;
-        },
-        verifyToken: async (request: Request, sessionKey = "verify") => {
+            let values = Object.fromEntries(await request.formData())
+            let obj: Record<string, string> = {}
+            return new Promise((resolve, reject) => {
+                for (var key in values) {
+                    if (typeof values[key] !== 'string') {
+                        reject({ [key]: `Invalid value type: ${typeof values[key]}` })
+                    } Object.assign(obj, { [key]: values[key] })
+                }
+                resolve(obj)
+            })
 
-            if (request.bodyUsed) {
-                throw new Error(
-                    "The body of the request was read before calling verifyToken. Ensure you clone it before reading it."
-                );
-            }
-            let session = await getSession();
-            let formData = await request.clone().formData();
 
-            if (!session.has(sessionKey)) {
-                throw unprocessableEntity({
-                    message: "Can't find token in session.",
-                });
-            }
 
-            if (!formData.get(sessionKey)) {
-                throw unprocessableEntity({
-                    message: "Can't find token in body.",
-                });
-            }
+        }
+        // createToken: async (sessionKey = "verify") => {
+        //     let session = await getSession();
+        //     let token = (await SEA.pair()).epub
+        //     session.set(sessionKey, token);
+        //     return token;
+        // },
+        // verifyToken: async (request: Request, sessionKey = "verify") => {
 
-            if (formData.get(sessionKey) !== session.get(sessionKey)) {
-                throw unprocessableEntity({
-                    message: "Can't verify token authenticity.",
-                });
-            }
-        },
+        //     if (request.bodyUsed) {
+        //         throw new Error(
+        //             "The body of the request was read before calling verifyToken. Ensure you clone it before reading it."
+        //         );
+        //     }
+        //     let session = await getSession();
+        //     let formData = await request.clone().formData();
+
+        //     if (!session.has(sessionKey)) {
+        //         throw unprocessableEntity({
+        //             message: "Can't find token in session.",
+        //         });
+        //     }
+
+        //     if (!formData.get(sessionKey)) {
+        //         throw unprocessableEntity({
+        //             message: "Can't find token in body.",
+        //         });
+        //     }
+
+        //     if (formData.get(sessionKey) !== session.get(sessionKey)) {
+        //         throw unprocessableEntity({
+        //             message: "Can't verify token authenticity.",
+        //         });
+        //     }
+        // },
     }
+
 }
