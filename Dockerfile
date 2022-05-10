@@ -5,7 +5,7 @@ ENV PEER_DOMAIN=${PEER_DOMAIN}
 ENV DOMAIN=${DOMAIN}
 
 RUN apk add --no-cache git
-RUN git clone https://github.com/bresnow/remix.gun-react-18-streaming /app
+RUN git clone https://github.com/bresnow/remix.gun-react-18-streaming.git /app
 
 WORKDIR  /app
 RUN yarn \
