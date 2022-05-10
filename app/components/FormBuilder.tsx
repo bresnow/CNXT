@@ -1,7 +1,41 @@
 import React from "react";
 import { Form } from "remix";
 import InputText, { InputTextProps } from "./InputText";
-
+interface ButtonProps {
+  rounded?: boolean;
+  color?:
+    | "white"
+    | "gray"
+    | "red"
+    | "yellow"
+    | "green"
+    | "blue"
+    | "purple"
+    | "pink"
+    | "indigo";
+  icon?: JSX.Element;
+  disabled?: boolean;
+  submit?: "submit" | "reset" | "button";
+  isFat?: boolean;
+  label?: string;
+  onClick?: () => void;
+}
+const colors = {
+  white:
+    "bg-white hover:bg-gray-100 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-indigo-500",
+  gray: "bg-gray-600 hover:bg-gray-700 focus:ring-gray-500 focus:ring-offset-gray-200",
+  red: "bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-red-200",
+  yellow:
+    "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500 focus:ring-offset-yellow-200",
+  green:
+    "bg-green-500 hover:bg-green-700 focus:ring-green-500 focus:ring-offset-green-200",
+  blue: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200",
+  indigo:
+    "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200",
+  purple:
+    "bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200",
+  pink: "bg-pink-600 hover:bg-pink-700 focus:ring-pink-500 focus:ring-offset-pink-200",
+};
 const FormBuilder = () => {
   return {
     Form({
@@ -9,18 +43,23 @@ const FormBuilder = () => {
       ariaDescribed,
       method,
       action,
+      className,
     }: {
       children: React.PropsWithChildren<any>;
       ariaDescribed?: string;
       method?: "get" | "post";
       action?: string;
+      className?: string;
     }) {
       return (
         <Form
           method={method ?? "post"}
           action={action && action}
           aria-describedby={ariaDescribed}
-          className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center"
+          className={
+            className ??
+            "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
+          }
         >
           {children}
         </Form>
@@ -44,31 +83,25 @@ const FormBuilder = () => {
         />
       );
     },
-    Submit({
-      label,
-      onSubmit,
-      className,
-      disabled,
-      name,
-    }: {
-      label: string;
-      onSubmit: () => any;
-      className?: string;
-      disabled?: boolean;
-      name?: string;
-    }) {
+    Submit(props: ButtonProps) {
       return (
         <button
-          onSubmit={onSubmit()}
-          className={
-            className ??
-            `flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200`
-          }
-          type="submit"
-          disabled={disabled}
-          name={name && name}
+          onClick={props.onClick}
+          type={props.submit ?? "submit"}
+          disabled={props.disabled}
+          className={`${props.isFat ? "py-3 px-4 " : "py-2 px-2 "} ${
+            props.icon ? "flex justify-center items-center " : ""
+          } ${
+            colors[props.color ?? "indigo"]
+          } text-white w-full transition ease-in duration-200 hover:mb-2 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+            props.disabled ? " opacity-70 cursor-not-allowed" : ""
+          }${!props.label ? " w-8 h-8" : ""} ${
+            props.rounded ? "rounded-full" : "rounded-lg "
+          } mx-auto mt-1  `}
         >
-          {label}
+          {props.icon && props.icon}
+
+          {props.label && props.label}
         </button>
       );
     },
@@ -90,7 +123,7 @@ const FormBuilder = () => {
             onClick={onClick}
             className={`w-20 h-8 flex items-center transition-all duration-200 rounded-full border-l-2 border-b-2 border-black shadow-xl mx-3 px-1 ${
               state
-                ? "bg-gradient-to-b from-blue-200 to-purple-50 "
+                ? "bg-gradient-to-b from-blue-200 to-primary"
                 : "bg-gradient-to-b from-red-200 to-red-50 "
             }`}
           >

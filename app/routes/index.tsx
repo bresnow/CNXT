@@ -33,6 +33,7 @@ import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
 import { errorCheck } from "~/lib/utils/helpers";
+import { parseJSON } from "~/lib/parseJSON";
 
 // check if str meets the requirements
 function validPropName(str: string) {
@@ -76,43 +77,62 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   }
 };
 function WelcomeCard() {
-  let { title, textarea, pageTitle, src } = useLoaderData();
+  let { title, pageText, pageTitle, src } = useLoaderData();
   let img = { src, alt: "RemixGun" };
   return (
-    <Container
-      className={
-        "bg-slate-900 grid mx-auto p-10 text-gray-400 w-1/2 border-neutral-900"
-      }
+    <div
+      className="w-full mx-auto rounded-xl mt-5 p-5  relative"
+      style={{
+        minHeight: "320px",
+        minWidth: "420px",
+        maxWidth: "520px",
+      }}
     >
       <SectionTitle
         heading={pageTitle}
-        description={textarea}
+        description={pageText}
         align={"center"}
         color={"primary"}
         showDescription={true}
       />
       <Card image={img} name={pageTitle} label={title} />
-    </Container>
+    </div>
   );
 }
 function SuspendedTest({ getData }: { getData: () => any }) {
-  let data = getData();
+  function RenderedData() {
+    let data = getData();
+    const noMeta = () => {
+      delete data._;
+      return data;
+    };
 
-  return (
-    <pre>
-      <code>{JSON.stringify(data, null, 2)}</code>
-    </pre>
-  );
+    return (
+      <div>
+        <div className="grid grid-cols-1 gap-4 p-4">
+          <div className="col-span-1">
+            <h5>Node Metadata</h5>
+            <pre className=" bg-orange-300 text-primary rounded-md">
+              <code>{JSON.stringify(data._, null, 2)}</code>
+            </pre>
+          </div>
+        </div>
+        <pre>{JSON.stringify(noMeta(), null, 2)}</pre>
+      </div>
+    );
+  }
+
+  return <RenderedData />;
 }
 
 export default function Profile() {
   let action = useActionData<
     | {
-        error: { key?: string; value?: string };
+        error: { key?: string; value?: string; form: string };
       }
     | Record<string, string>
   >();
-  let err = action && action.error ? true : false;
+  let err = action && action.error;
   const [gun] = useGunStatic(Gun);
   const Playground = FormBuilder();
 
@@ -121,33 +141,41 @@ export default function Profile() {
   });
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   return (
-    <>
+    <div className="pt-16 grid md:grid-cols-2 sm:grid-cols-1 gap-8 overflow-visible">
+      {action?.error && (
+        <div>
+          <h5 className="text-red-500">{JSON.stringify(action?.error)}</h5>
+        </div>
+      )}
       <WelcomeCard />
-      <Container
-        className={
-          "bg-slate-900 grid mx-auto p-10 text-gray-400 w-1/2 border-neutral-900"
-        }
+      <div
+        className="w-full mx-auto rounded-xl mt-5 p-5  relative"
+        style={{
+          minHeight: "320px",
+          minWidth: "420px",
+          maxWidth: "520px",
+        }}
       >
+        <Playground.Form method={"post"}>
+          <Playground.Input
+            type="text"
+            name="key"
+            label="Key"
+            // error={err.key}
+          />
+          <Playground.Input
+            type="text"
+            name="value"
+            label="Value"
+            // error={err.value}
+          />
+          <Playground.Submit label={"Submit"} />
+        </Playground.Form>
         <Suspense fallback="Loading Data....">
           <SuspendedTest getData={testLoader.load} />
         </Suspense>
-      </Container>
-
-      <Container rounded={true} className="bg-slate-500 grid-cols-3">
-        <Container rounded={true} className="bg-slate-500 grid-cols-1">
-          <Container
-            rounded={true}
-            className="bg-slate-500 grid-cols-1 mx-auto"
-          >
-            <Playground.Form method={"post"}>
-              <Playground.Input type="text" name="key" label="Key" />
-              <Playground.Input type="text" name="value" label="Value" />
-              <Playground.Submit label={"Submit"} onSubmit={noop} />
-            </Playground.Form>
-          </Container>
-        </Container>
-      </Container>
-    </>
+      </div>
+    </div>
   );
 }
 

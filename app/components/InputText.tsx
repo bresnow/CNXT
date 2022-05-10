@@ -3,7 +3,7 @@ export interface InputTextProps {
   textArea?: boolean;
   label?: string;
   required?: boolean;
-  error?: string;
+  error?: string | undefined;
   icon?: JSX.Element;
   helper?: string | JSX.Element;
   placeholder?: string;
@@ -52,7 +52,7 @@ const InputText = (props: InputTextProps) => {
               : !props.square
               ? " rounded-lg border-transparent"
               : ""
-          } bg-zinc-700 pl-3 pr-10 h-10 rounded-md w-full shadow-xl `}
+          } bg-zinc-500 pl-3 pr-10 h-10 rounded-md w-full shadow-xl `}
           type={props.type || "text"}
           name={props.name}
           placeholder={props.placeholder}

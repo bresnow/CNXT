@@ -16,6 +16,7 @@ import { LoadCtx } from "types";
 import LoginForm from "~/components/LoginForm";
 import { errorCheck } from "~/lib/utils/helpers";
 import { parseJSON } from "~/lib/parseJSON";
+import FormBuilder from "~/components/FormBuilder";
 
 type BlogNoSideBar = {
   sectionTitle: {
@@ -59,9 +60,14 @@ function AuthResponse({ useActionData }: { useActionData: () => any }) {
 }
 
 export default function Login() {
+  let Login = FormBuilder();
   return (
     <>
-      <LoginForm />
+      <Login.Form method={"post"}>
+        <Login.Input type="text" name="alias" label="Alias" />
+        <Login.Input type="password" name="password" label="Password" />
+        <Login.Submit label={"Authenticate"} />
+      </Login.Form>
       <AuthResponse useActionData={useActionData} />
     </>
   );
