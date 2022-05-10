@@ -56,8 +56,8 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { ENV, graph } = RemixGunContext(Gun, request);
   let meta = await graph.get(`pages.root.meta`).val();
   let peerList = {
-    DOMAIN: `http://${ENV.DOMAIN}:${ENV.CLIENT}/gun`,
-    PEER: `http://${ENV.PEER_DOMAIN}/gun`,
+    DOMAIN: `https://${ENV.DOMAIN}:${ENV.CLIENT}/gun`,
+    PEER: `https://${ENV.PEER_DOMAIN}/gun`,
   };
   let gunOpts = {
     peers: [`${peerList.DOMAIN}`],

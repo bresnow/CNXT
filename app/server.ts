@@ -41,7 +41,7 @@ let remixHandler = createRequestHandler(
 let cwd = process.cwd();
 let requestListener: RequestListener = async (req, res) => {
   try {
-    let url = new URL(req.url || "/", `http://${req.headers.host}`);
+    let url = new URL(req.url || "/", `https://${req.headers.host}`);
     path.resolve();
 
     let filepath = path.resolve(cwd, path.join("public", url.pathname));
@@ -66,7 +66,7 @@ let requestListener: RequestListener = async (req, res) => {
   } catch (error) { }
 
   try {
-    let url = new URL(req.url || "/", `http://${req.headers.host}`);
+    let url = new URL(req.url || "/", `https://${req.headers.host}`);
 
     let headers = new Headers();
     for (let [key, value] of Object.entries(req.headers)) {
@@ -118,7 +118,7 @@ const getServeUrl = () => {
   if (process.env.NODE_ENV === "development") {
     return `http://0.0.0.0:${env.CLIENT}/gun`;
   }
-  return `http://${env.DOMAIN}:${env.CLIENT}/gun`
+  return `https://${env.DOMAIN}:${env.CLIENT}/gun`
 }
 
 const gun = Gun({

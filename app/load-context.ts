@@ -14,7 +14,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
         APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
     };
     const gunOpt: GunOptions = {
-        peers: [`http://0.0.0.0:${ENV.CLIENT}/gun`],
+        peers: [`https://0.0.0.0:${ENV.CLIENT}/gun`],
         localStorage: false,
         radisk: true,
     }
