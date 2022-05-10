@@ -12,5 +12,4 @@ RUN yarn \
     && yarn purge \
     && yarn build 
 
-RUN rm -rf app 
 CMD ["yarn", "start"] 
