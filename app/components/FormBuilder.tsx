@@ -1,5 +1,6 @@
 import React from "react";
 import { Form } from "remix";
+import { log } from "~/lib/console-utils";
 import InputText, { InputTextProps } from "./InputText";
 interface ButtonProps {
   rounded?: boolean;
@@ -51,6 +52,10 @@ const FormBuilder = () => {
       action?: string;
       className?: string;
     }) {
+      const childMap = React.Children.map(children, (child) => {
+        let clone = React.cloneElement(child, {});
+        return clone;
+      });
       return (
         <Form
           method={method ?? "post"}
@@ -61,7 +66,7 @@ const FormBuilder = () => {
             "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
           }
         >
-          {children}
+          {childMap}
         </Form>
       );
     },

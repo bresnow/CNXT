@@ -24,11 +24,10 @@ import {
   useSafeEffect,
 } from "bresnow_utility-react-hooks";
 import { SecureFrameWrapper } from "~/lib/SR";
-import { error, log } from "~/lib/console-utils";
+import { log } from "~/lib/console-utils";
 import { LoadCtx } from "types";
 import { Card } from "~/components/Card";
 import Container from "~/components/Container";
-import LoginForm from "~/components/LoginForm";
 import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
@@ -51,28 +50,35 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     return json({ error });
   }
 };
+let error: LoadError = {};
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { formData } = RemixGunContext(Gun, request);
-  let error: LoadError = {};
   try {
     let { key, value } = await formData();
 
     if (!validPropName(key)) {
-      error.key =
-        "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
+      error = {
+        key: "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/",
+        value: error.value,
+        form: error.form,
+      };
     }
     if (typeof value !== "string" || value.length < 1 || value.length > 240) {
-      error.value =
-        "Property values must be greater than 1 and less than 240 characters";
+      error = {
+        key: error.key,
+        value:
+          "Property values must be greater than 1 and less than 240 characters",
+        form: error.form,
+      };
     }
 
-    if (Object.keys(error).length > 0) {
+    if (Object.values(error).length > 0) {
       return json({ error });
     }
     return json({ [key]: value });
   } catch (err) {
-    let error: LoadError = { form: "Form data not found" };
+    error = { key: error.key, value: error.value, form: "Form data not found" };
     return json({ error });
   }
 };
@@ -126,30 +132,21 @@ function SuspendedTest({ getData }: { getData: () => any }) {
 }
 
 export default function Profile() {
-  let action = useActionData<
-    | {
-        error: { key?: string; value?: string; form: string };
-      }
-    | Record<string, string>
-  >();
-  let err = action && action.error;
-  const [gun] = useGunStatic(Gun);
+  let action = useActionData<Record<string, any>>();
+  const [gun, SEA] = useGunStatic(Gun);
   const Playground = FormBuilder();
-
-  useIf([!err], () => {
+  // SEA.pair((pair) => {
+  //   console.log(pair);
+  // });
+  useIf([action, !action?.error], () => {
     gun.get("posts").get("test").put(action);
   });
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   return (
-    <div className="pt-16 grid md:grid-cols-2 sm:grid-cols-1 gap-8 overflow-visible">
-      {action?.error && (
-        <div>
-          <h5 className="text-red-500">{JSON.stringify(action?.error)}</h5>
-        </div>
-      )}
+    <>
       <WelcomeCard />
       <div
-        className="w-full mx-auto rounded-xl mt-5 p-5  relative"
+        className="w-full mx-auto rounded-xl gap-4  p-4 relative"
         style={{
           minHeight: "320px",
           minWidth: "420px",
@@ -160,14 +157,14 @@ export default function Profile() {
           <Playground.Input
             type="text"
             name="key"
-            label="Key"
-            // error={err.key}
+            label={"Key"}
+            error={action?.error.key && action.error.key}
           />
           <Playground.Input
             type="text"
             name="value"
-            label="Value"
-            // error={err.value}
+            label={"Value"}
+            error={action?.error.value && action.error.value}
           />
           <Playground.Submit label={"Submit"} />
         </Playground.Form>
@@ -175,7 +172,7 @@ export default function Profile() {
           <SuspendedTest getData={testLoader.load} />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -17,7 +17,7 @@
     "dev:remix": "cross-env NODE_ENV=development remix watch",
     "purge": "rm -rf radata *.tmp",
     "cypress:open": "cypress open",
-    "start": "cross-env-shell NODE_ENV=production  DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN NODE_ENV=production node ./build/index.js"
+    "start": "cross-env-shell APP_KEY_PAIR=$APP_KEY_PAIR DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN NODE_ENV=production node ./build/index.js"
   },
   "dependencies": {
     "@remix-run/node": "0.0.0-experimental-4e814511",

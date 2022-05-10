@@ -1,0 +1,46 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check for exisiting directory
+        run: "(test -d ~/remix.gun-react-18-streaming && rm -rf ~/remix.gun-react-18-streaming) || echo app does not exist, skipping step"
+
+      - name: Clone Repository
+        run: |
+          git clone https://github.com/bresnow/remix.gun-react-18-streaming.git 
+          cd ~/remix.gun-react-18-streaming
+
+      - name: Build Docker Image & Push to Github Registry
+        env:
+          VERSION: latest
+
+        run: |
+          docker build -t bresnow/remix.gun-react-18-streaming:${{ env.VERSION }} .
+          docker push bresnow/remix.gun-react-18-streaming:${{ env.VERSION }}
+
+      - name: Deploy Docker Swarm Script
+        run: |
+          export APP_KEY_PAIR=${{secrets.APP_KEY_PAIR}}
+          docker stack rm remix.gun-react-18-streaming
+          docker stack deploy -c docker_stack.yml remix.gun-react-18-streaming
+
+      - name: Clean Up
+        run: |
+          rm -rf ~/remix.gun-react-18-streaming
+          docker image prune 
+          docker volume prune

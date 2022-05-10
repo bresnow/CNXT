@@ -53,9 +53,9 @@ services:
   # FRONTEND
 
   fltngmmth:
-    image: bresnow/fltngmmth_dev:latest
+    image: bresnow/remix.gun-react-18-streaming:latest
     deploy:
-      replicas: 5
+      replicas: 3
       placement:
         constraints:
           - node.labels.traefik-public.traefik-public-certificates == true
@@ -63,10 +63,10 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.fltngmmthhttp.rule=Host(`${DOMAIN:-fltngmmth.com}`)
+        - traefik.http.routers.fltngmmthhttp.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
         - traefik.http.routers.fltngmmthhttp.entrypoints=http
         - traefik.http.routers.fltngmmthhttp.middlewares=https-redirect
-        - traefik.http.routers.fltngmmthhttps.rule=Host(`${DOMAIN:-fltngmmth.com}`)
+        - traefik.http.routers.fltngmmthhttps.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
         - traefik.http.routers.fltngmmthhttps.entrypoints=https
         - traefik.http.routers.fltngmmthhttps.tls.certresolver=http
         - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
@@ -80,9 +80,9 @@ services:
 
       #PEER DB
   peer:
-    image: bresnow/fltngmmth_dev:latest
+    image: bresnow/remix.gun-react-18-streaming:latest
     deploy:
-      replicas: 5
+      replicas: 3
       placement:
         constraints:
           - node.labels.traefik-public.traefik-public-certificates == true
@@ -99,7 +99,7 @@ services:
         - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT:-3334}
     environment:
       - APP_KEY_PAIR=${APP_KEY_PAIR:-'{pub:eg_p623RQuvf1gQzdR18UcXPp7NxVdSCBrftu04Szrw.Ub3hW6sAmM1xLc3aJvI5cJpK7gcaZnWPtM1lN753VSU,priv:gBswoGQmJXAx5LAABkAN4lbcWH2QhIPFFJtFQ0SEsK0}'}
-      - PEER_DOMAIN=${PEER_DOMAIN:-'fltngmmth.com'}
+      - PEER_DOMAIN=${PEER_DOMAIN:-'remix-gun.fltngmmth.com'}
       - CLIENT_PORT=${CLIENT_PORT:-3334}
       - DOMAIN=${DOMAIN:-'peer.fltngmmth.com'}
     networks:
