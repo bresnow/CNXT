@@ -53,7 +53,7 @@ services:
   # FRONTEND
 
   fltngmmth:
-    image: bresnow/remix.gun-react-18-streaming:latest
+    image: bresnow/remix-gun:latest
     deploy:
       replicas: 3
       placement:
@@ -80,7 +80,7 @@ services:
 
       #PEER DB
   peer:
-    image: bresnow/remix.gun-react-18-streaming:latest
+    image: bresnow/remix-gun:latest
     deploy:
       replicas: 3
       placement:

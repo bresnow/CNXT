@@ -30,14 +30,13 @@ jobs:
           VERSION: latest
 
         run: |
-          docker build -t bresnow/remix.gun-react-18-streaming:${{ env.VERSION }} .
-          docker push bresnow/remix.gun-react-18-streaming:${{ env.VERSION }}
+          docker build -t bresnow/remix-gun:${{ env.VERSION }} .
+          docker push bresnow/remix-gun:${{ env.VERSION }}
 
       - name: Deploy Docker Swarm Script
         run: |
           export APP_KEY_PAIR=${{secrets.APP_KEY_PAIR}}
-          docker stack rm remix.gun-react-18-streaming
-          docker stack deploy -c docker_stack.yml remix.gun-react-18-streaming
+          docker stack deploy -c docker_stack.yml remix-gun
 
       - name: Clean Up
         run: |
