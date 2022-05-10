@@ -39,7 +39,11 @@ function validPropName(str: string) {
   return /^(?![0-9])[a-zA-Z0-9$_]+$/.test(str);
 }
 const noop = () => {};
-type LoadError = { key?: string; value?: string; form?: string };
+type LoadError = {
+  _key?: string | undefined;
+  _value?: string | undefined;
+  _form?: string | undefined;
+};
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { graph } = RemixGunContext(Gun, request);
@@ -50,36 +54,42 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     return json({ error });
   }
 };
-let error: LoadError = {};
 export let action: ActionFunction = async ({ params, request, context }) => {
+  let error: LoadError = {};
   let { RemixGunContext } = context as LoadCtx;
   let { formData } = RemixGunContext(Gun, request);
   try {
     let { key, value } = await formData();
 
     if (!validPropName(key)) {
-      error = {
-        key: "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/",
-        value: error.value,
-        form: error.form,
-      };
+      error._key =
+        "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
     }
     if (typeof value !== "string" || value.length < 1 || value.length > 240) {
-      error = {
-        key: error.key,
-        value:
-          "Property values must be greater than 1 and less than 240 characters",
-        form: error.form,
-      };
+      error._value =
+        "Property values must be greater than 1 and less than 240 characters";
     }
 
+    const data = { [key]: value };
+    const action = { data, error };
+
     if (Object.values(error).length > 0) {
-      return json({ error });
+      return json(error, {
+        status: 400,
+        headers: { "Cache-Control": "no-cache" },
+      });
     }
-    return json({ [key]: value });
+
+    return json(data, {
+      status: 201,
+      headers: { "Cache-Control": "max-age=300000, must-revalidate" },
+    });
   } catch (err) {
-    error = { key: error.key, value: error.value, form: "Form data not found" };
-    return json({ error });
+    error._form = "Form data not found";
+    return json(error, {
+      status: 400,
+      headers: { "Cache-Control": "no-cache" },
+    });
   }
 };
 function WelcomeCard() {
@@ -113,6 +123,9 @@ function SuspendedTest({ getData }: { getData: () => any }) {
       return data;
     };
 
+    if (data.error) {
+    }
+
     return (
       <div>
         <div className="grid grid-cols-1 gap-4 p-4">
@@ -132,15 +145,14 @@ function SuspendedTest({ getData }: { getData: () => any }) {
 }
 
 export default function Profile() {
-  let action = useActionData<Record<string, any>>();
-  const [gun, SEA] = useGunStatic(Gun);
+  let action = useActionData<Record<string, string> | LoadError>();
+  const [gun] = useGunStatic(Gun);
   const Playground = FormBuilder();
-  // SEA.pair((pair) => {
-  //   console.log(pair);
-  // });
-  useIf([action, !action?.error], () => {
+  useIf([action, !action?._key, !action?._value, !action?._form], () => {
+    log("action", action);
     gun.get("posts").get("test").put(action);
   });
+
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   return (
     <>
@@ -158,13 +170,13 @@ export default function Profile() {
             type="text"
             name="key"
             label={"Key"}
-            error={action?.error.key && action.error.key}
+            error={action?._key}
           />
           <Playground.Input
             type="text"
             name="value"
             label={"Value"}
-            error={action?.error.value && action.error.value}
+            error={action?._value}
           />
           <Playground.Submit label={"Submit"} />
         </Playground.Form>

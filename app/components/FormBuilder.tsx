@@ -45,28 +45,40 @@ const FormBuilder = () => {
       method,
       action,
       className,
+      reloadDocument,
+      encType,
+      replace,
+      onSubmit,
     }: {
       children: React.PropsWithChildren<any>;
       ariaDescribed?: string;
       method?: "get" | "post";
       action?: string;
       className?: string;
+      reloadDocument?: boolean;
+      encType?: "multipart/form-data" | "application/x-www-form-urlencoded";
+      replace?: boolean;
+      onSubmit?: () => void;
     }) {
-      const childMap = React.Children.map(children, (child) => {
-        let clone = React.cloneElement(child, {});
-        return clone;
-      });
+      // const childMap = React.Children.map(children, (child) => {
+      //   let clone = React.cloneElement(child, {});
+      //   return clone;
+      // });
       return (
         <Form
           method={method ?? "post"}
           action={action && action}
           aria-describedby={ariaDescribed}
+          reloadDocument={reloadDocument}
+          encType={encType ? encType : "application/x-www-form-urlencoded"}
+          replace={replace}
+          onSubmit={onSubmit}
           className={
             className ??
             "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
           }
         >
-          {childMap}
+          {children}
         </Form>
       );
     },
@@ -76,7 +88,7 @@ const FormBuilder = () => {
           type={prop?.type}
           label={prop?.label}
           required={prop?.required}
-          error={prop?.error}
+          error={prop?.error ? prop.error : undefined}
           icon={prop?.icon}
           helper={prop?.helper}
           name={prop?.name}
