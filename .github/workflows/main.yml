@@ -18,11 +18,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Check for exisiting directory
-        run: "(test -d ~/remix.gun-react-18-streaming && rm -rf ~/remix.gun-react-18-streaming) || echo app does not exist, skipping step"
+        run: "(test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist, skipping step"
 
       - name: Clone Repository
         run: |
-          git clone https://github.com/bresnow/remix.gun-react-18-streaming 
+          git clone https://github.com/bresnow/remix.gun-react-18-streaming ~/remix_gun
           cd ~/remix.gun-react-18-streaming
 
       - name: Build Docker Image & Push to Github Registry
@@ -41,6 +41,6 @@ jobs:
 
       - name: Clean Up
         run: |
-          rm -rf ~/remix.gun-react-18-streaming
+          rm -rf ~/remix_gun
           docker image prune 
           docker volume prune
