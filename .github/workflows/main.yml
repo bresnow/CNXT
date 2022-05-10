@@ -22,7 +22,7 @@ jobs:
 
       - name: Clone Repository
         run: |
-          git clone https://github.com/bresnow/remix.gun-react-18-streaming.git 
+          git clone https://github.com/bresnow/remix.gun-react-18-streaming 
           cd ~/remix.gun-react-18-streaming
 
       - name: Build Docker Image & Push to Github Registry
