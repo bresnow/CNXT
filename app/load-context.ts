@@ -1,14 +1,11 @@
 import type { ChainCtx, RmxGunCtx, Nodevalues } from "types";
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
-import type { DataFunctionArgs } from "@remix-run/server-runtime";
-import { json } from "@remix-run/server-runtime";
 import { destroySession, getSession } from "~/session.server";
 import { parseJSON } from "~/lib/parseJSON";
 import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
-import invariant from "@remix-run/react/invariant";
 import { Params } from "react-router";
-export function RemixGunContext(Gun: IGun, { request, params }: { request: Request, params: Params }): RmxGunCtx {
+export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
@@ -21,12 +18,7 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
         localStorage: false,
         radisk: true,
     }
-
     let gun = Gun(gunOpt);
-
-
-
-
     /**
      * Upgrade from Gun's user api
      * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
@@ -44,8 +36,6 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
     type T = any
     const SEA = Gun.SEA
     const pair = SEA.pair, encrypt = SEA.encrypt, decrypt = SEA.decrypt, sign = SEA.sign, verify = SEA.verify, secret = SEA.secret, certify = SEA.certify;
-
-
 
     async function keyPairAuth(pair: ISEAPair) {
         let session = await getSession(request.headers.get("Cookie") ?? undefined);
@@ -114,37 +104,31 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
             },
         });
     }
-
     /**
      * * @param path - Path to the desired node. Each node label separated by forward slash  "path/to/the/node"
      * @param keys - optional Keypair to authorize node access
      * @returns - get: get data from node, map - map numerical sets as an array , put: update node with data with option to set data as a numerical set,
      */
     const graph: ChainCtx = {
-
         get: (path: string) => {
-
             let chainref: IGunChain<T>
             chainref = (gun as any).path(`${path}`)
             return {
                 val: () => new Promise((resolve, reject) =>
                     chainref.once((data) => {
                         if (!data) {
-                            resolve(undefined)
+                            reject("No data found")
                         }
-                        // let dcomped = lzObject.decompress(data, { output: "utf16" })
                         resolve(data)
                     })
                 ),
                 put: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-                    // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.put(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
                 })
                 ,
                 set: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-                    // let pressed = lzObject.compress(data, { output: "utf16" });
                     chainref.set(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
@@ -156,18 +140,17 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
 
                     return new Promise(async (resolve, reject) => {
                         if (!object) {
-                            resolve(undefined);
+                            reject("No data set");
                         }
                         let set = await Promise.allSettled(
                             Object.keys(object).map(async (key) => {
                                 // @ts-ignore
                                 let data = await chainref.get({ "#": key });
-                                // let dcomped = lzObject.decompress(data, { output: "utf16" })
                                 return data
                             })
                         );
                         if (!set) {
-                            resolve(undefined);
+                            reject("Error getting data - set is undefined");
                         }
                         if (callback) {
                             let cbd = callback(set)
@@ -214,7 +197,6 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
         graph,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
-
             let values = Object.fromEntries(await request.formData())
             let obj: Record<string, string> = {}
             return new Promise((resolve, reject) => {
@@ -225,9 +207,6 @@ export function RemixGunContext(Gun: IGun, { request, params }: { request: Reque
                 }
                 resolve(obj)
             })
-
-
-
         }
         // createToken: async (sessionKey = "verify") => {
         //     let session = await getSession();

@@ -20,7 +20,7 @@ export interface UserAuth {
 
 }
 
-export type LoadCtx = { RemixGunContext: (Gun: IGun, { request, params }: { request: Request, params: Params }) => RmxGunCtx, res: ServerResponse }
+export type LoadCtx = { RemixGunContext: (Gun: IGun, request: Request) => RmxGunCtx, res: ServerResponse }
 export interface RmxGunCtx {
     ENV: {
         DOMAIN: string | undefined;

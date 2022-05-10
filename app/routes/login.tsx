@@ -32,7 +32,7 @@ type BlogNoSideBar = {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData, user } = RemixGunContext(Gun, { request, params });
+  let { formData, user } = RemixGunContext(Gun, request);
   let { alias, password } = await formData();
   if (typeof alias !== "string") {
     return json({ err: "Invalid alias entry" });

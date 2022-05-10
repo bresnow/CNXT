@@ -3,14 +3,15 @@ import { LoadCtx } from "types";
 import Gun from "gun";
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph } = RemixGunContext(Gun, { request, params });
+  let { graph } = RemixGunContext(Gun, request);
   let path = params.path;
   if (typeof path === "string") {
-    let data = await graph.get(path).val();
-    if (data) {
+    try {
+      let data = await graph.get(path).val();
       return json(data);
+    } catch (error) {
+      return json({ error });
     }
-    return json({ err: `no data at node path ${path}` });
   }
   return json({ err: "node path invalid" });
 };
@@ -18,7 +19,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph, formData } = RemixGunContext(Gun, { request, params });
+  let { graph, formData } = RemixGunContext(Gun, request);
   let path = params.path as string;
   try {
     let values = await formData();

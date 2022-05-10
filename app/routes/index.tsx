@@ -24,33 +24,66 @@ import {
   useSafeEffect,
 } from "bresnow_utility-react-hooks";
 import { SecureFrameWrapper } from "~/lib/SR";
-import { log } from "~/lib/console-utils";
+import { error, log } from "~/lib/console-utils";
 import { LoadCtx } from "types";
 import { Card } from "~/components/Card";
 import Container from "~/components/Container";
 import LoginForm from "~/components/LoginForm";
 import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
-type LoaderData = {
-  username: string;
-};
+import FormBuilder from "~/components/FormBuilder";
+import { errorCheck } from "~/lib/utils/helpers";
 
+// check if str meets the requirements
+function validPropName(str: string) {
+  return /^(?![0-9])[a-zA-Z0-9$_]+$/.test(str);
+}
+const noop = () => {};
+type LoadError = { key?: string; value?: string; form?: string };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph } = RemixGunContext(Gun, { request, params });
-  return null;
+  let { graph } = RemixGunContext(Gun, request);
+  try {
+    let data = await graph.get("pages.index").val();
+    return json(data);
+  } catch (error) {
+    return json({ error });
+  }
 };
-
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph, formData } = RemixGunContext(Gun, { request, params });
-  return null;
+  let { formData } = RemixGunContext(Gun, request);
+  let error: LoadError = {};
+  try {
+    let { key, value } = await formData();
+
+    if (!validPropName(key)) {
+      error.key =
+        "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
+    }
+    if (typeof value !== "string" || value.length < 1 || value.length > 240) {
+      error.value =
+        "Property values must be greater than 1 and less than 240 characters";
+    }
+
+    if (Object.keys(error).length > 0) {
+      return json({ error });
+    }
+    return json({ [key]: value });
+  } catch (err) {
+    let error: LoadError = { form: "Form data not found" };
+    return json({ error });
+  }
 };
-function SuspendedData({ getData }: { getData: () => any }) {
-  let { title, textarea, pageTitle, src } = getData();
-  let img = { src: "/github/rmix-gun.png", alt: "test" };
+function WelcomeCard() {
+  let { title, textarea, pageTitle, src } = useLoaderData();
+  let img = { src, alt: "RemixGun" };
   return (
-    <>
+    <Container
+      className={
+        "bg-slate-900 grid mx-auto p-10 text-gray-400 w-1/2 border-neutral-900"
+      }
+    >
       <SectionTitle
         heading={pageTitle}
         description={textarea}
@@ -59,7 +92,7 @@ function SuspendedData({ getData }: { getData: () => any }) {
         showDescription={true}
       />
       <Card image={img} name={pageTitle} label={title} />
-    </>
+    </Container>
   );
 }
 function SuspendedTest({ getData }: { getData: () => any }) {
@@ -73,42 +106,45 @@ function SuspendedTest({ getData }: { getData: () => any }) {
 }
 
 export default function Profile() {
-  let { username } = useLoaderData<LoaderData>();
-  let ack = useActionData<{
-    ok: boolean;
-    message: string | ISEAPair;
-  }>();
-
-  useIf([ack], () => {
-    log(ack, "ACK");
-  });
-  let postsLoader = useGunFetcher<any>("/api/gun/pages.index");
+  let action = useActionData<
+    | {
+        error: { key?: string; value?: string };
+      }
+    | Record<string, string>
+  >();
+  let err = action && action.error ? true : false;
   const [gun] = useGunStatic(Gun);
+  const Playground = FormBuilder();
 
-  gun
-    .get("posts")
-    .get("test")
-    .put({ hello: "world", username, hello_again: "worldFAMAMMA" });
-
+  useIf([!err], () => {
+    gun.get("posts").get("test").put(action);
+  });
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
   return (
     <>
-      {" "}
+      <WelcomeCard />
       <Container
         className={
           "bg-slate-900 grid mx-auto p-10 text-gray-400 w-1/2 border-neutral-900"
         }
       >
-        <Suspense fallback="Loading Data...">
-          <SuspendedData getData={postsLoader.load} />
-          <postsLoader.Component />
+        <Suspense fallback="Loading Data....">
+          <SuspendedTest getData={testLoader.load} />
         </Suspense>
       </Container>
-      <Container rounded={true} className="bg-slate- grid grid-cols-2">
-        <Container rounded={true} className="bg-slate- grid grid-cols">
-          <Suspense fallback="Loading Data....">
-            <SuspendedTest getData={testLoader.load} />
-          </Suspense>
+
+      <Container rounded={true} className="bg-slate-500 grid-cols-3">
+        <Container rounded={true} className="bg-slate-500 grid-cols-1">
+          <Container
+            rounded={true}
+            className="bg-slate-500 grid-cols-1 mx-auto"
+          >
+            <Playground.Form method={"post"}>
+              <Playground.Input type="text" name="key" label="Key" />
+              <Playground.Input type="text" name="value" label="Value" />
+              <Playground.Submit label={"Submit"} onSubmit={noop} />
+            </Playground.Form>
+          </Container>
         </Container>
       </Container>
     </>
