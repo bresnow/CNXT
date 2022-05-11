@@ -30,11 +30,19 @@ export const links: LinksFunction = () => {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { ENV, graph, gunOpts } = RemixGunContext(Gun, request);
+  let { ENV, graph } = RemixGunContext(Gun, request);
   let meta = await graph.get(`pages.root.meta`).val();
   let peerList = {
-    DOMAIN: `https://${ENV.DOMAIN}/gun`,
+    DOMAIN:
+      process.env.NODE_ENV === "production"
+        ? `https://${ENV.DOMAIN}/gun`
+        : `http://0.0.0.0:${ENV.CLIENT}/gun`,
     PEER: `https://${ENV.PEER_DOMAIN}/gun`,
+  };
+  let gunOpts = {
+    peers: [`${peerList.DOMAIN}`, `${peerList.PEER}`],
+    radisk: true,
+    localStorage: false,
   };
 
   return json({

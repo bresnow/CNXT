@@ -199,7 +199,6 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     return {
         ENV,
         graph,
-        gunOpts,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
             let values = Object.fromEntries(await request.formData())

@@ -1,4 +1,4 @@
-import type { GunOptions, IGun, IGunChain } from "gun/types";
+import type { IGun, IGunChain } from "gun/types";
 import type { ISEAPair } from "gun/types";
 import type { Params } from "react-router";
 import type { ServerResponse } from "http";
@@ -28,7 +28,6 @@ export interface RmxGunCtx {
         CLIENT: string | undefined;
         APP_KEY_PAIR: ISEAPair;
     },
-    gunOpts: GunOptions,
     graph: ChainCtx;
     user: UserAuth
     formData: () => Promise<Record<string, string>>;
