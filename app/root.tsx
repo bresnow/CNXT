@@ -78,13 +78,6 @@ export type RootLoaderData = {
   links: MenuLinks;
 };
 
-/** Dynamically load meta tags from root loader*/
-export const meta: MetaFunction = () => {
-  const matches = useMatches();
-  console.log("matches", matches);
-  let root = matches.find((match) => match.id === "root");
-  return root?.data?.meta;
-};
 export type MenuLinks = {
   id?: string;
   link: string;
