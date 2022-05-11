@@ -1,5 +1,4 @@
 import {
-  Form,
   json,
   Link,
   Links,
@@ -7,40 +6,18 @@ import {
   Meta,
   Outlet,
   Scripts,
-  useMatches,
   ScrollRestoration,
   useLoaderData,
-  useLocation,
+  useMatches,
 } from "remix";
-import type {
-  AppData,
-  HtmlMetaDescriptor,
-  LinkDescriptor,
-  MetaDescriptor,
-} from "@remix-run/server-runtime";
-
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { LoadCtx, Nodevalues, RmxGunCtx } from "types";
+import { LoadCtx } from "types";
 import styles from "./tailwind.css";
-import { ButtonHTMLAttributes, useId } from "react";
-import { log } from "./lib/console-utils";
-import Gun, { ISEAPair } from "gun";
-
+import Gun, { GunOptions, ISEAPair } from "gun";
 import srStyles from "~/lib/SR/sr.css";
-import { useSafeEffect } from "bresnow_utility-react-hooks";
-import { matches } from "lodash";
-import { useRouteData } from "~/lib/gun/hooks";
-import { RouteHandle } from "@remix-run/react/routeModules";
-import BDSLogo from "./components/svg/BDS";
 import React from "react";
-import useSticky from "./lib/utils/useSticky";
-import {
-  getClosest,
-  getSiblings,
-  slideToggle,
-  slideUp,
-} from "./lib/utils/mobile-nav-utils";
-import Button from "./components/Button";
+import { useRouteData } from "./lib/gun/hooks";
+
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: srStyles },
@@ -103,8 +80,13 @@ export type RootLoaderData = {
   };
   links: MenuLinks;
 };
+
+/** Dynamically load meta tags from root loader*/
 export const meta: MetaFunction = () => {
-  return { title: "Remix Gun", description: "Remix Gun" };
+  const matches = useMatches();
+  console.log("matches", matches);
+  let root = matches.find((match) => match.id === "root");
+  return root?.data?.meta;
 };
 export type MenuLinks = {
   id?: string;

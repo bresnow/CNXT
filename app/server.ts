@@ -118,7 +118,7 @@ const getServeUrl = () => {
   if (process.env.NODE_ENV === "development") {
     return `https://0.0.0.0:${env.CLIENT}/gun`;
   }
-  return `https://${env.DOMAIN}:${env.CLIENT}/gun`
+  return `https://${env.DOMAIN}/gun`
 }
 
 const gun = Gun({
