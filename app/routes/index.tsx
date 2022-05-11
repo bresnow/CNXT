@@ -60,9 +60,9 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   try {
     let formDataValue = await formData();
     let [keyEntry, valueEntry] = Object.entries(formDataValue);
-    let key = keyEntry[1];
+    let keyVal = keyEntry[1];
     let value = valueEntry[1];
-    if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(key)) {
+    if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(keyVal)) {
       error._key =
         "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
     }
@@ -76,13 +76,14 @@ export let action: ActionFunction = async ({ params, request, context }) => {
     if (Object.values(error).length > 0) {
       return json<LoadError>({ error });
     }
-    return json({ [key]: value });
+    return json({ [keyVal]: value });
   } catch (err) {
     for (let key in err as any) {
       error._form = (err as any)[key];
       return json<LoadError>({ error });
     }
   }
+  return null;
 };
 function WelcomeCard() {
   let { title, pageText, pageTitle, src } = useLoaderData();
