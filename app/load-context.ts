@@ -13,12 +13,16 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
         CLIENT: process.env.CLIENT_PORT,
         APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
     };
-    const gunOpt: GunOptions = {
-        peers: [`https://0.0.0.0:${ENV.CLIENT}/gun`],
+    let peerList = {
+        DOMAIN: `https://${ENV.DOMAIN}/gun`,
+        PEER: `https://${ENV.PEER_DOMAIN}/gun`,
+    };
+    const gunOpts: GunOptions = {
+        peers: [peerList.DOMAIN, peerList.PEER],
         localStorage: false,
         radisk: true,
     }
-    let gun = Gun(gunOpt);
+    let gun = Gun(gunOpts);
     /**
      * Upgrade from Gun's user api
      * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
@@ -195,6 +199,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     return {
         ENV,
         graph,
+        gunOpts,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
             let values = Object.fromEntries(await request.formData())
