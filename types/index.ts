@@ -5,10 +5,10 @@ import type { ServerResponse } from "http";
 export * from "./loaders"
 
 
-export type Nodevalues = { [x: string | number]: any }
+export type NodeValues = Record<string, string>
 export interface ChainCtx {
     get: (path: string) => {
-        val: () => Promise<Nodevalues | undefined>, put: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<string>, set: (data: Nodevalues | IGunChain<Record<string, any>, any>) => Promise<string>, map: (callback?: (args?: any) => any) => Promise<Nodevalues[] | undefined>
+        val: () => Promise<NodeValues | undefined>, put: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, set: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, map: (callback?: (args?: any) => any) => Promise<NodeValues[] | undefined>
     },
     options: (peers: string | string[], remove?: boolean) => any,
 

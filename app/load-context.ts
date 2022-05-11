@@ -1,4 +1,4 @@
-import type { ChainCtx, RmxGunCtx, Nodevalues } from "types";
+import type { ChainCtx, RmxGunCtx, NodeValues } from "types";
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import { destroySession, getSession } from "~/session.server";
 import { parseJSON } from "~/lib/parseJSON";
@@ -126,13 +126,13 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
                         resolve(data)
                     })
                 ),
-                put: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
+                put: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     chainref.put(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
                 })
                 ,
-                set: async (data: Nodevalues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
+                set: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
                     chainref.set(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
@@ -146,7 +146,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
                         if (!object) {
                             reject("No data set");
                         }
-                        let set = await Promise.allSettled(
+                        let set: NodeValues[] = await Promise.all(
                             Object.keys(object).map(async (key) => {
                                 // @ts-ignore
                                 let data = await chainref.get({ "#": key });

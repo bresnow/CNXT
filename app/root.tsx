@@ -11,7 +11,7 @@ import {
   useMatches,
 } from "remix";
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { LoadCtx } from "types";
+import { LoadCtx, NodeValues } from "types";
 import styles from "./tailwind.css";
 import Gun, { GunOptions, ISEAPair } from "gun";
 import srStyles from "~/lib/SR/sr.css";
@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     localStorage: false,
   };
 
-  return json({
+  return json<RootLoaderData>({
     meta,
     gunOpts,
     ENV,
@@ -62,8 +62,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   });
 };
 export type RootLoaderData = {
-  peers: string[];
-  meta: { title: string; description: string };
+  meta: Record<string, string> | undefined;
   gunOpts: {
     peers: string[];
     radisk: boolean;
@@ -78,6 +77,14 @@ export type RootLoaderData = {
   links: MenuLinks;
 };
 
+/** Dynamically load meta tags from root loader*/
+export const meta: MetaFunction = () => {
+  const matches = useMatches();
+  console.log("matches", matches);
+  let root = matches.find((match) => match.id === "root");
+  const metaDoc: NodeValues = root?.data?.meta;
+  return metaDoc;
+};
 export type MenuLinks = {
   id?: string;
   link: string;
