@@ -34,15 +34,14 @@ import FormBuilder from "~/components/FormBuilder";
 import { errorCheck } from "~/lib/utils/helpers";
 import { parseJSON } from "~/lib/parseJSON";
 
-// check if str meets the requirements
-function validPropName(str: string) {
-  return /^(?![0-9])[a-zA-Z0-9$_]+$/.test(str);
-}
 const noop = () => {};
-type LoadError = {
+type ErrObj = {
   _key?: string | undefined;
   _value?: string | undefined;
   _form?: string | undefined;
+};
+type LoadError = {
+  error: ErrObj;
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
@@ -55,13 +54,15 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   }
 };
 export let action: ActionFunction = async ({ params, request, context }) => {
-  let error: LoadError = {};
   let { RemixGunContext } = context as LoadCtx;
   let { formData } = RemixGunContext(Gun, request);
+  let error: ErrObj = {};
   try {
-    let { key, value } = await formData();
-    log(key, value, "key, value");
-    if (!validPropName(key)) {
+    let formDataValue = await formData();
+    let [keyEntry, valueEntry] = Object.entries(formDataValue);
+    let key = keyEntry[1];
+    let value = valueEntry[1];
+    if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(key)) {
       error._key =
         "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
     }
@@ -70,24 +71,16 @@ export let action: ActionFunction = async ({ params, request, context }) => {
         "Property values must be greater than 1 and less than 240 characters";
     }
 
-    const data = { [key]: value };
-    const action = { data, error };
+    console.log(formDataValue, "DATA");
 
     if (Object.values(error).length > 0) {
-      return json(error, {
-        status: 400,
-      });
+      return json<LoadError>({ error });
     }
-
-    return json(data, {
-      status: 201,
-    });
+    return json({ [key]: value });
   } catch (err) {
     for (let key in err as any) {
       error._form = (err as any)[key];
-      return json(error, {
-        status: 400,
-      });
+      return json<LoadError>({ error });
     }
   }
 };
@@ -114,19 +107,29 @@ function WelcomeCard() {
     </div>
   );
 }
-function SuspendedTest({ getData }: { getData: () => any }) {
+function SuspendedTest({
+  getData,
+  error,
+}: {
+  getData: () => any;
+  error?: any;
+}) {
   function RenderedData() {
     let data = getData();
     const noMeta = () => {
       delete data._;
       return data;
     };
-
-    if (data.error) {
-    }
-
     return (
       <div>
+        {error && (
+          <div className="col-span-1">
+            <h5>ERROR</h5>
+            <pre className=" bg-red-500 text-secondary-100  text-sm rounded-md">
+              <code>{JSON.stringify(error, null, 2)}</code>
+            </pre>
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-4 p-4">
           <div className="col-span-1">
             <h5>Node Metadata</h5>
@@ -139,7 +142,6 @@ function SuspendedTest({ getData }: { getData: () => any }) {
       </div>
     );
   }
-
   return <RenderedData />;
 }
 
@@ -147,12 +149,13 @@ export default function Profile() {
   let action = useActionData<Record<string, string> | LoadError>();
   const [gun] = useGunStatic(Gun);
   const Playground = FormBuilder();
-  useIf([action, !action?._key, !action?._value, !action?._form], () => {
+  useIf([action, !action?.error], () => {
     log("action", action);
     gun.get("posts").get("test").put(action);
   });
 
   let testLoader = useGunFetcher<any>("/api/gun/posts.test");
+  let [keyErr, valErr] = Object.values(action?.error ?? {});
   return (
     <>
       <WelcomeCard />
@@ -170,14 +173,14 @@ export default function Profile() {
             required
             name="key"
             label={"Key"}
-            error={action?._key}
+            error={keyErr}
           />
           <Playground.Input
             type="text"
             required
             name="value"
             label={"Value"}
-            error={action?._value}
+            error={valErr}
           />
           <Playground.Submit label={"Submit"} />
         </Playground.Form>
