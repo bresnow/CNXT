@@ -8,9 +8,9 @@ import { Params } from "react-router";
 export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     // log((req), "Request")
     const ENV = {
-        DOMAIN: process.env.DOMAIN,
+        DOMAIN: process.env.DOMAIN || '0.0.0.0',
         PEER_DOMAIN: process.env.PEER_DOMAIN,
-        CLIENT: process.env.CLIENT_PORT,
+        CLIENT: process.env.CLIENT_PORT || '3333',
         APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
     };
     let peerList = {

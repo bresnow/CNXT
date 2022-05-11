@@ -6,7 +6,7 @@ export const data = {
                 description: `P2P content management system using Remix.run and GunDB. Styles with Tailwind.css`,
                 author: "Bresnow",
                 keywords: "floating, mammoth, FLTNGMMTH, Bresnow, development, server, Remix.run, GunDB, gun",
-                "og:image": "https://peer.fltngmmth.com/rmix-gun.png",
+                "og:image": `https://${process.env.DOMAIN}/github/rmix-gun.png`,
                 "og:image:width": "512",
                 "og:image:height": "512",
                 "og:description": "P2P content management system using Remix.run and GunDB. Styles with Tailwind.css"

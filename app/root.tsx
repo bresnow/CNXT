@@ -17,6 +17,7 @@ import Gun, { GunOptions, ISEAPair } from "gun";
 import srStyles from "~/lib/SR/sr.css";
 import React from "react";
 import { useRouteData } from "./lib/gun/hooks";
+import { getDomain } from "./server";
 
 export const links: LinksFunction = () => {
   return [
@@ -33,10 +34,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { ENV, graph } = RemixGunContext(Gun, request);
   let meta = await graph.get(`pages.root.meta`).val();
   let peerList = {
-    DOMAIN:
-      process.env.NODE_ENV === "production"
-        ? `https://${ENV.DOMAIN}/gun`
-        : `http://0.0.0.0:${ENV.CLIENT}/gun`,
+    DOMAIN: getDomain(),
     PEER: `https://${ENV.PEER_DOMAIN}/gun`,
   };
   let gunOpts = {

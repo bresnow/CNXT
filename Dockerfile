@@ -4,12 +4,10 @@ ENV CLIENT_PORT=${CLIENT_PORT}
 ENV PEER_DOMAIN=${PEER_DOMAIN}
 ENV DOMAIN=${DOMAIN}
 
-RUN apk add --no-cache git
-RUN git clone https://github.com/bresnow/remix.gun-react-18-streaming /app
+COPY . /app
 
 WORKDIR  /app
 RUN yarn \
-    && yarn purge \
     && yarn build 
 
 CMD ["yarn", "start"] 

@@ -114,20 +114,18 @@ let requestListener: RequestListener = async (req, res) => {
 
 let server = createServer(requestListener);
 
-const getServeUrl = () => {
+export const getDomain = () => {
   if (process.env.NODE_ENV === "development") {
     return `http://0.0.0.0:${env.CLIENT}/gun`;
   }
-  return `http://${env.DOMAIN}:${env.CLIENT}/gun`
+  return `https://${env.DOMAIN}/gun`
 }
 
 const gun = Gun({
   web: server.listen(env.CLIENT, () => {
-    console.log(`Remix server is also acting as GunDB relay server. Both tasks are listening on ${getServeUrl()}`);
+    console.log(`Remix server is also acting as GunDB relay server. Both tasks are listening on ${getDomain()}`);
   }),
   radisk: true
 
 });
-
-gun.get('peers').put({ PEER: env.PEER_DOMAIN });
-gun.get('pages').put(data.pages)
+gun.put(data)
