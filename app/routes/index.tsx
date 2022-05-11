@@ -60,7 +60,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   let { formData } = RemixGunContext(Gun, request);
   try {
     let { key, value } = await formData();
-
+    log(key, value, "key, value");
     if (!validPropName(key)) {
       error._key =
         "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
@@ -76,20 +76,19 @@ export let action: ActionFunction = async ({ params, request, context }) => {
     if (Object.values(error).length > 0) {
       return json(error, {
         status: 400,
-        headers: { "Cache-Control": "no-cache" },
       });
     }
 
     return json(data, {
       status: 201,
-      headers: { "Cache-Control": "max-age=300000, must-revalidate" },
     });
   } catch (err) {
-    error._form = "Form data not found";
-    return json(error, {
-      status: 400,
-      headers: { "Cache-Control": "no-cache" },
-    });
+    for (let key in err as any) {
+      error._form = (err as any)[key];
+      return json(error, {
+        status: 400,
+      });
+    }
   }
 };
 function WelcomeCard() {
@@ -168,12 +167,14 @@ export default function Profile() {
         <Playground.Form method={"post"}>
           <Playground.Input
             type="text"
+            required
             name="key"
             label={"Key"}
             error={action?._key}
           />
           <Playground.Input
             type="text"
+            required
             name="value"
             label={"Value"}
             error={action?._value}
