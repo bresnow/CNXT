@@ -25,7 +25,7 @@ jobs:
           git clone https://github.com/bresnow/remix.gun-react-18-streaming ~/remix_gun
           cd ~/remix_gun
 
-      - name: Build Docker Image & Push to Github Registry
+      - name: Build Docker Image & Push to Registry
         env:
           VERSION: latest
 
