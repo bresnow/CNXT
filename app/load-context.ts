@@ -206,7 +206,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
             return new Promise((resolve, reject) => {
                 for (var key in values) {
                     if (typeof values[key] !== 'string') {
-                        reject({ [key]: `Invalid value type: ${typeof values[key]}` })
+                        reject(`${key} has invalid value type: ${typeof values[key]}`)
                     } Object.assign(obj, { [key]: values[key] })
                 }
                 resolve(obj)

@@ -89,7 +89,7 @@ let requestListener: RequestListener = async (req, res) => {
       method,
     });
 
-    let response = await remixHandler(request, { RemixGunContext, res });
+    let response = await remixHandler(request, { RemixGunContext });
     if (response) {
       let headers: Record<string, string[]> = {};
       for (const [key, value] of response.headers) {

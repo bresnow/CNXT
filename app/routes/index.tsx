@@ -58,11 +58,9 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   let { formData } = RemixGunContext(Gun, request);
   let error: ErrObj = {};
   try {
-    let formDataValue = await formData();
-    let [keyEntry, valueEntry] = Object.entries(formDataValue);
-    let keyVal = keyEntry[1];
-    let value = valueEntry[1];
-    if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(keyVal)) {
+    let { prop, value } = await formData();
+
+    if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(prop)) {
       error._key =
         "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
     }
@@ -71,20 +69,18 @@ export let action: ActionFunction = async ({ params, request, context }) => {
         "Property values must be greater than 1 and less than 240 characters";
     }
 
-    console.log(formDataValue, "DATA");
+    log({ [prop]: value }, "DATA");
 
     if (Object.values(error).length > 0) {
       return json<LoadError>({ error });
     }
-    return json({ [keyVal]: value });
+    return json({ [prop]: value });
   } catch (err) {
-    for (let key in err as any) {
-      error._form = (err as any)[key];
-      return json<LoadError>({ error });
-    }
+    error._form = err as string;
+    return json<LoadError>({ error });
   }
-  return null;
 };
+
 function WelcomeCard() {
   let { title, pageText, pageTitle, src } = useLoaderData();
   let img = { src, alt: "RemixGun" };
@@ -146,7 +142,7 @@ function SuspendedTest({
   return <RenderedData />;
 }
 
-export default function Profile() {
+export default function Index() {
   let action = useActionData<Record<string, string> | LoadError>();
   const [gun] = useGunStatic(Gun);
   const Playground = FormBuilder();
