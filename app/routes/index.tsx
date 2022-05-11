@@ -172,7 +172,7 @@ export default function Profile() {
           <Playground.Input
             type="text"
             required
-            name="key"
+            name="prop"
             label={"Key"}
             error={keyErr}
           />
