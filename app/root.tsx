@@ -40,13 +40,12 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     PEER: `https://${ENV.PEER_DOMAIN}/gun`,
   };
   let gunOpts = {
-    peers: [`${peerList.DOMAIN}`, `${peerList.PEER}`],
+    peers: [`${peerList.DOMAIN}`],
     radisk: true,
     localStorage: false,
   };
 
   return json({
-    peers: [peerList.PEER, peerList.DOMAIN],
     meta,
     gunOpts,
     ENV,
