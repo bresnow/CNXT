@@ -28,7 +28,11 @@ export interface RmxGunCtx {
         CLIENT: string | undefined;
         APP_KEY_PAIR: ISEAPair;
     },
-    gunOpts: GunOptions;
+    gunOpts: {
+        peers: string[];
+        radisk: boolean;
+        localStorage: boolean;
+    };
     gun: IGunInstance;
     graph: ChainCtx;
     user: UserAuth

@@ -31,7 +31,7 @@ export const links: LinksFunction = () => {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { ENV, graph } = RemixGunContext(Gun, request);
+  let { ENV, graph, gunOpts } = RemixGunContext(Gun, request);
   try {
     let meta = await graph.get(`pages.root.meta`).val();
     let peerList = {
@@ -62,7 +62,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       ],
     });
   } catch (error) {
-    throw new Error("Error loading root page");
+    throw new Error("Error loading root data");
   }
 };
 export type RootLoaderData = {

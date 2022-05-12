@@ -18,7 +18,11 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
         DOMAIN: getDomain(),
         PEER: `https://${ENV.PEER_DOMAIN}/gun`,
     };
-    const gunOpts: GunOptions = {
+    const gunOpts: {
+        peers: string[];
+        radisk: boolean;
+        localStorage: boolean;
+    } = {
         peers: [peerList.DOMAIN, peerList.PEER],
         localStorage: false,
         radisk: true,
@@ -204,7 +208,11 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
         graph,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
-            let values = Object.fromEntries(await request.formData())
+            let values: Record<string, string> | Record<string, FormDataEntryValue>
+            if (request.headers.get("Content-Type") === "application/json") {
+                values = Object.fromEntries(await request.json())
+            }
+            values = Object.fromEntries(await request.formData())
             let obj: Record<string, string> = {}
             return new Promise((resolve, reject) => {
                 for (const prop in values) {

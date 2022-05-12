@@ -69,6 +69,7 @@ let requestListener: RequestListener = async (req, res) => {
     let url = new URL(req.url || "/", process.env.NODE_ENV !== "production" ? `http://${req.headers.host}` : `https://${req.headers.host}`);
 
     let headers = new Headers();
+
     for (let [key, value] of Object.entries(req.headers)) {
       if (!value) continue;
       if (Array.isArray(value)) {
@@ -120,8 +121,12 @@ export const getDomain = () => {
   }
   return `https://${env.DOMAIN}/gun`
 }
-
+let peerList = {
+  DOMAIN: getDomain(),
+  PEER: `https://${env.PEER_DOMAIN}/gun`,
+};
 const gun = Gun({
+  peers: [peerList.PEER],
   web: server.listen(env.CLIENT, () => {
     console.log(`Remix server is also acting as GunDB relay server. Both tasks are listening on ${getDomain()}`);
   }),
