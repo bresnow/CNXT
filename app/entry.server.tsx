@@ -6,16 +6,20 @@ import type { ServerResponse } from "http";
 import { DataloaderProvider } from "~/dataloader/lib";
 import { createServerDataloader } from "~/dataloader/server";
 import { RmxGunCtx } from "types";
-import { error, log } from "./lib/console-utils";
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  { res }: { res: ServerResponse }
+  { RemixGunContext, res }: { RemixGunContext: RmxGunCtx; res: ServerResponse }
 ) {
-  let dataloader = createServerDataloader(remixContext, request, {}, {});
+  let dataloader = createServerDataloader(
+    remixContext,
+    request,
+    {},
+    { RemixGunContext, res }
+  );
   // log(remixContext);
   responseHeaders.set("Content-Type", "text/html; charset=UTF-8");
   responseHeaders.set("Transfer-Encoding", "chunked");
@@ -48,7 +52,6 @@ export default async function handleRequest(
           reject(err);
         },
         onError(err: Error) {
-          error(err);
           didError = true;
         },
       }

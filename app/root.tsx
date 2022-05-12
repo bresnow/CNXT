@@ -62,7 +62,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       ],
     });
   } catch (error) {
-    throw new Error("Error loading root data");
+    throw new Error("Error loading root data" + error);
   }
 };
 export type RootLoaderData = {
@@ -84,8 +84,8 @@ export type RootLoaderData = {
 /** Dynamically load meta tags from root loader*/
 export const meta: MetaFunction = () => {
   const matches = useMatches();
-  console.log("matches", matches);
   let root = matches.find((match) => match.id === "root");
+  console.log(JSON.stringify(root?.data.ENV.APP_KEY_PAIR));
   const metaDoc: NodeValues = root?.data?.meta;
   return metaDoc;
 };

@@ -6,6 +6,7 @@ import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
 import { Params } from "react-router";
 import { getDomain } from "./server";
+import { log } from "./lib/console-utils";
 export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     // log((req), "Request")
     const ENV = {
@@ -14,6 +15,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
         CLIENT: process.env.CLIENT_PORT,
         APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
     };
+
     let peerList = {
         DOMAIN: getDomain(),
         PEER: `https://${ENV.PEER_DOMAIN}/gun`,

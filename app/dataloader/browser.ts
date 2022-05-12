@@ -3,7 +3,7 @@ import { error } from "~/lib/console-utils";
 import { log } from "~/lib/console-utils";
 export function createGunFetchLoader() {
   return {
-    async load(id: string, internalId: string) {
+    async load(nodePath: string, internalId: string) {
       let cache = (window as any).__remix_gun || {};
       let cached = cache[internalId];
       if (cached) {
@@ -17,7 +17,7 @@ export function createGunFetchLoader() {
       }
 
       let url = new URL(
-        `/api/gun/${id}`,
+        `/api/gun/${nodePath}`,
         window.location.href
       );
       return fetch(url.toString());
