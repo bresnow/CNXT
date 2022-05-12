@@ -32,34 +32,38 @@ export const links: LinksFunction = () => {
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { ENV, graph } = RemixGunContext(Gun, request);
-  let meta = await graph.get(`pages.root.meta`).val();
-  let peerList = {
-    DOMAIN: getDomain(),
-    PEER: `https://${ENV.PEER_DOMAIN}/gun`,
-  };
-  let gunOpts = {
-    peers: [`${peerList.DOMAIN}`],
-    radisk: true,
-    localStorage: false,
-  };
+  try {
+    let meta = await graph.get(`pages.root.meta`).val();
+    let peerList = {
+      DOMAIN: getDomain(),
+      PEER: `https://${ENV.PEER_DOMAIN}/gun`,
+    };
+    let gunOpts = {
+      peers: [peerList.DOMAIN, peerList.PEER],
+      radisk: true,
+      localStorage: false,
+    };
 
-  return json<RootLoaderData>({
-    meta,
-    gunOpts,
-    ENV,
-    links: [
-      {
-        label: "Home",
-        id: "home",
-        link: "/",
-      },
-      {
-        label: "Authentication",
-        link: "/login",
-        id: "login",
-      },
-    ],
-  });
+    return json<RootLoaderData>({
+      meta,
+      gunOpts,
+      ENV,
+      links: [
+        {
+          label: "Home",
+          id: "home",
+          link: "/",
+        },
+        {
+          label: "Authentication",
+          link: "/login",
+          id: "login",
+        },
+      ],
+    });
+  } catch (error) {
+    throw new Error("Error loading root page");
+  }
 };
 export type RootLoaderData = {
   meta: Record<string, string> | undefined;
