@@ -69,7 +69,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
         "Property values must be greater than 1 and less than 240 characters";
     }
 
-    log({ [prop]: value }, "DATA");
+    console.log({ [prop]: value }, "DATA");
 
     if (Object.values(error).length > 0) {
       return json<LoadError>({ error });
@@ -147,11 +147,10 @@ export default function Index() {
   const [gun] = useGunStatic(Gun);
   const Playground = FormBuilder();
   useIf([action, !action?.error], () => {
-    log("action", action);
     gun.get("posts").get("test").put(action);
   });
 
-  let testLoader = useGunFetcher<any>("/api/gun/posts.test");
+  let testLoader = useGunFetcher<any>("posts.test");
   let [keyErr, valErr] = Object.values(action?.error ?? {});
   return (
     <>

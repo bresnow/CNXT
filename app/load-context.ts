@@ -5,16 +5,17 @@ import { parseJSON } from "~/lib/parseJSON";
 import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
 import { Params } from "react-router";
+import { getDomain } from "./server";
 export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
     // log((req), "Request")
     const ENV = {
-        DOMAIN: process.env.DOMAIN || '0.0.0.0',
+        DOMAIN: process.env.DOMAIN,
         PEER_DOMAIN: process.env.PEER_DOMAIN,
-        CLIENT: process.env.CLIENT_PORT || '3333',
+        CLIENT: process.env.CLIENT_PORT,
         APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
     };
     let peerList = {
-        DOMAIN: `https://${ENV.DOMAIN}/gun`,
+        DOMAIN: getDomain(),
         PEER: `https://${ENV.PEER_DOMAIN}/gun`,
     };
     const gunOpts: GunOptions = {
@@ -198,16 +199,16 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
 
     return {
         ENV,
+        gunOpts,
+        gun,
         graph,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
             let values = Object.fromEntries(await request.formData())
             let obj: Record<string, string> = {}
             return new Promise((resolve, reject) => {
-                for (var key in values) {
-                    if (typeof values[key] !== 'string') {
-                        reject(`${key} has invalid value type: ${typeof values[key]}`)
-                    } Object.assign(obj, { [key]: values[key] })
+                for (const prop in values) {
+                    Object.assign(obj, { [prop]: values[prop] as string });
                 }
                 resolve(obj)
             })

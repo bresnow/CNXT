@@ -17,7 +17,7 @@ export function createGunFetchLoader() {
       }
 
       let url = new URL(
-        id,
+        `/api/gun/${id}`,
         window.location.href
       );
       return fetch(url.toString());

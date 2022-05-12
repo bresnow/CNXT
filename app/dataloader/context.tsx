@@ -1,7 +1,6 @@
 import { createContext, useContext } from "react";
 import type { FC } from "react";
 
-
 export type ClientContext = {
   load: (id: string, internalId: string) => Promise<Response>;
 };
