@@ -30,7 +30,7 @@ jobs:
           VERSION: 0.1.0
 
         run: |
-          docker build -t bresnow/remix-gun:${{ env.VERSION }} .
+          docker build -t bresnow/rmx_gun:${{ env.VERSION }} .
           docker push bresnow/rmx-gun:${{ env.VERSION }}
 
       - name: Deploy Docker Swarm Script
