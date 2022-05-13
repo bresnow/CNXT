@@ -3,17 +3,19 @@ import { useLocation } from "remix";
 import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 
-import { useGunFetchLoader } from "./context";
+import { useDeferedLoadData } from "./context";
 import { useSafeCallback } from "bresnow_utility-react-hooks";
 export { DataloaderProvider } from "./context";
 
-export function useGunFetcher<T = any>(path: string) {
-  let dataloader = useGunFetchLoader();
+export function useDeferedLoaderData<T = any>(path?: string) {
+  let dataloader = useDeferedLoadData();
   let internalId = useId();
   let { key } = useLocation();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  console.log(`${currentPath}`);
   let defered = useMemo(() => {
     invariant(dataloader, "Context Provider is undefined for useGunFetcher");
-
     let defered = { resolved: false } as {
       resolved: boolean;
       value?: T;
@@ -21,7 +23,7 @@ export function useGunFetcher<T = any>(path: string) {
       promise: Promise<void>;
     };
     defered.promise = dataloader
-      .load(path, internalId)
+      .load(path ?? currentPath, internalId)
       .then((response) => response.json())
       .then((value) => {
         defered.value = value;
@@ -32,34 +34,9 @@ export function useGunFetcher<T = any>(path: string) {
         defered.resolved = true;
       });
     return defered;
-  }, [path, key]);
+  }, [path, key, currentPath]);
 
   return {
-    Component() {
-      if (!defered.resolved) throw defered.promise;
-
-      if (typeof document === "undefined") {
-        let serialized = jsesc(
-          { error: defered.error, value: defered.value },
-          { isScriptContext: true }
-        );
-        return (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.__remix_gun = window.__remix_gun||{};window.__remix_gun[${JSON.stringify(
-                internalId
-              )}] = ${serialized};`,
-            }}
-          />
-        );
-      }
-      return (
-        <script
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: "" }}
-        />
-      );
-    },
     load(): T {
       if (typeof defered.value !== "undefined") {
         return defered.value;

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useCatch, useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
-import { useGunFetcher } from "~/dataloader/lib";
+import { useDeferedLoaderData } from "~/dataloader/lib";
 import React from "react";
 import { SecureFrameWrapper } from "~/lib/SR";
 import Display from "~/components/DisplayHeading";

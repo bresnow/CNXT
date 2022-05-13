@@ -1,9 +1,9 @@
-import type { IGun } from "gun/types";
-import { error } from "~/lib/console-utils";
-import { log } from "~/lib/console-utils";
-export function createGunFetchLoader() {
+import Gun from "gun"
+import { useGunStatic } from "~/lib/gun/hooks";
+import { RemixGunContext } from "~/load-context";
+export function createDeferedLoader() {
   return {
-    async load(nodePath: string, internalId: string) {
+    async load(id: string, internalId: string) {
       let cache = (window as any).__remix_gun || {};
       let cached = cache[internalId];
       if (cached) {
@@ -17,9 +17,10 @@ export function createGunFetchLoader() {
       }
 
       let url = new URL(
-        `/api/gun/${nodePath}`,
+        id,
         window.location.href
       );
+      // url.searchParams.set("_data", id);
       return fetch(url.toString());
     }
   }

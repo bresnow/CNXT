@@ -52,6 +52,8 @@ export let action: ActionFunction = async ({ params, request, context }) => {
         "Property values must be greater than 1 and less than 240 characters";
     }
 
+    console.log({ [prop]: value }, "DATA");
+
     if (Object.values(error).length > 0) {
       return json<LoadError>({ error });
     }
@@ -87,34 +89,24 @@ function WelcomeCard() {
 }
 function SuspendedTest({
   getData,
-  error,
 }: {
   getData: () => any;
-  error?: any;
+  // error?: any;
 }) {
   function RenderedData() {
     let data = getData();
-    delete data._;
 
     return (
       <div>
-        {error && (
-          <div className="col-span-1">
-            <h5>ERROR</h5>
-            <pre className=" bg-red-500 text-secondary-100  text-sm rounded-md">
-              <code>{JSON.stringify(error, null, 2)}</code>
-            </pre>
-          </div>
-        )}
         <div className="grid grid-cols-1 gap-4 p-4">
           <div className="col-span-1">
             <h5>Node Metadata</h5>
-            <pre className=" bg-orange-300 text-sm wrapped-text text-primary rounded-md">
-              {/* <code>{JSON.stringify(dat, null, 2)}</code> */}
+            <pre className=" bg-orange-300 text-primary rounded-md">
+              {JSON.stringify(data, null, 2)}
             </pre>
           </div>
         </div>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       </div>
     );
   }
@@ -129,7 +121,7 @@ export default function Index() {
     gun.get("posts").get("test").put(action);
   });
 
-  let testLoader = useDeferedLoaderData<any>("/api/gun/posts.test");
+  let testLoader = useDeferedLoaderData<any>("/api/gun/pages");
   let [keyErr, valErr] = Object.values(action?.error ?? {});
   return (
     <>
@@ -160,7 +152,7 @@ export default function Index() {
           <Playground.Submit label={"Submit"} />
         </Playground.Form>
         <Suspense fallback="Loading Data....">
-          <SuspendedTest getData={testLoader.load} error={action?.error} />
+          <SuspendedTest getData={testLoader.load} />
         </Suspense>
       </div>
     </>

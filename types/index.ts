@@ -20,23 +20,25 @@ export interface UserAuth {
 
 }
 
-export type LoadCtx = { RemixGunContext: (Gun: IGun, request: Request) => RmxGunCtx, res: ServerResponse }
+export type LoadCtx = { RemixGunContext: RmxGunCtx, res: ServerResponse }
 export interface RmxGunCtx {
-    ENV: {
-        DOMAIN: string | undefined;
-        PEER_DOMAIN: string | undefined;
-        CLIENT: string | undefined;
-        APP_KEY_PAIR: ISEAPair;
-    },
-    gunOpts: {
-        peers: string[];
-        radisk: boolean;
-        localStorage: boolean;
-    };
-    gun: IGunInstance;
-    graph: ChainCtx;
-    user: UserAuth
-    formData: () => Promise<Record<string, string>>;
+    (Gun: IGun, request: Request): {
+        ENV: {
+            DOMAIN: string | undefined;
+            PEER_DOMAIN: string | undefined;
+            CLIENT: string | undefined;
+            APP_KEY_PAIR: ISEAPair;
+        },
+        gunOpts: {
+            peers: string[];
+            radisk: boolean;
+            localStorage: boolean;
+        };
+        gun: IGunInstance;
+        graph: ChainCtx;
+        user: UserAuth
+        formData: () => Promise<Record<string, string>>;
+    }
     // createToken: (sessionKey?: string) => Promise<string>,
     // verifyToken: (request: Request, sessionKey?: string) => Promise<void>,
 };

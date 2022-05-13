@@ -7,6 +7,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
   useLoaderData,
   useMatches,
 } from "remix";
@@ -18,6 +19,7 @@ import srStyles from "~/lib/SR/sr.css";
 import React from "react";
 import { useRouteData } from "./lib/gun/hooks";
 import { getDomain } from "./server";
+import Display from "./components/DisplayHeading";
 
 export const links: LinksFunction = () => {
   return [
@@ -31,39 +33,38 @@ export const links: LinksFunction = () => {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { ENV, graph, gunOpts } = RemixGunContext(Gun, request);
+  let { ENV, graph } = RemixGunContext(Gun, request);
+  let meta;
   try {
-    let meta = await graph.get(`pages.root.meta`).val();
-    let peerList = {
-      DOMAIN: getDomain(),
-      PEER: `https://${ENV.PEER_DOMAIN}/gun`,
-    };
-    let gunOpts = {
-      peers: [peerList.DOMAIN, peerList.PEER],
-      radisk: true,
-      localStorage: false,
-    };
+    meta = await graph.get(`pages.root.meta`).val();
+  } catch (error) {}
+  let peerList = {
+    DOMAIN: getDomain(),
+    PEER: `https://${ENV.PEER_DOMAIN}/gun`,
+  };
+  let gunOpts = {
+    peers: [peerList.DOMAIN, peerList.PEER],
+    radisk: true,
+    localStorage: false,
+  };
 
-    return json<RootLoaderData>({
-      meta,
-      gunOpts,
-      ENV,
-      links: [
-        {
-          label: "Home",
-          id: "home",
-          link: "/",
-        },
-        {
-          label: "Authentication",
-          link: "/login",
-          id: "login",
-        },
-      ],
-    });
-  } catch (error) {
-    throw new Error("Error loading root data" + error);
-  }
+  return json<RootLoaderData>({
+    meta,
+    gunOpts,
+    ENV,
+    links: [
+      {
+        label: "Home",
+        id: "home",
+        link: "/",
+      },
+      {
+        label: "Authentication",
+        link: "/login",
+        id: "login",
+      },
+    ],
+  });
 };
 export type RootLoaderData = {
   meta: Record<string, string> | undefined;
@@ -254,3 +255,40 @@ export const Header = ({ links }: { links: MenuLinks }) => {
     </nav>
   );
 };
+
+export function CatchBoundary() {
+  let caught = useCatch();
+
+  switch (caught.status) {
+    case 401:
+    case 403:
+    case 404:
+      return (
+        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+          <Display
+            title={`${caught.status}`}
+            titleColor="white"
+            span={`${caught.statusText}`}
+            spanColor="pink-500"
+            description={`${caught.statusText}`}
+          />
+        </div>
+      );
+  }
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return (
+    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+      <Display
+        title="Error:"
+        titleColor="#cb2326"
+        span={error.message}
+        spanColor="#fff"
+        description={`error`}
+      />
+    </div>
+  );
+}

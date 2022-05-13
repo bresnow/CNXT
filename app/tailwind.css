@@ -1213,6 +1213,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding-bottom: 0.625rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
@@ -1231,11 +1236,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pr-4 {

@@ -1,16 +1,27 @@
 import { createContext, useContext } from "react";
 import type { FC } from "react";
+import type { IGun } from "gun";
 
 export type ClientContext = {
   load: (id: string, internalId: string) => Promise<Response>;
 };
+
 let context = createContext<ClientContext | undefined>(undefined);
 
-export let DataloaderProvider: FC<{ dataloader: ClientContext }> = ({
+export let DataloaderProvider = ({
   children,
   dataloader,
+}: {
+  children: React.PropsWithChildren<any>;
+  dataloader: ClientContext;
 }) => {
   return <context.Provider value={dataloader}>{children}</context.Provider>;
 };
 
-export let useGunFetchLoader = () => useContext(context);
+export let useDeferedLoadData = () => useContext(context);
+
+export interface GunClientContext {
+  (Gun: IGun): {
+    get(nodePath: string): Promise<Response>;
+  };
+}

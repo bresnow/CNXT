@@ -32,7 +32,7 @@ const env = {
   CLIENT: process.env.CLIENT_PORT,
   APP_KEY_PAIR: process.env.APP_KEY_PAIR,
 };
-
+console.log(env)
 let remixHandler = createRequestHandler(
   build,
   { formatServerError },
@@ -134,4 +134,4 @@ const gun = Gun({
   radisk: true
 
 });
-gun.put(data)
+gun.get('pages').put(data.pages)

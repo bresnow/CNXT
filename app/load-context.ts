@@ -1,19 +1,18 @@
 import type { ChainCtx, RmxGunCtx, NodeValues } from "types";
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import { destroySession, getSession } from "~/session.server";
-import { parseJSON } from "~/lib/parseJSON";
 import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
 import { Params } from "react-router";
 import { getDomain } from "./server";
 import { log } from "./lib/console-utils";
-export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
+export function RemixGunContext(Gun: IGun, request: Request) {
     // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
         PEER_DOMAIN: process.env.PEER_DOMAIN,
         CLIENT: process.env.CLIENT_PORT,
-        APP_KEY_PAIR: parseJSON(process.env.APP_KEY_PAIR as string) as ISEAPair,
+        APP_KEY_PAIR: process.env.APP_KEY_PAIR,
     };
 
     let peerList = {
@@ -130,6 +129,7 @@ export function RemixGunContext(Gun: IGun, request: Request): RmxGunCtx {
                         if (!data) {
                             reject("No data found")
                         }
+                        delete data._
                         resolve(data)
                     })
                 ),
