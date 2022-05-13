@@ -42,5 +42,3 @@ jobs:
       - name: Clean Up
         run: |
           rm -rf ~/remix_gun
-          docker image prune 
-          docker volume prune
