@@ -8,7 +8,6 @@ COPY . /app
 
 WORKDIR  /app
 RUN yarn \
-    && yarn build:css \
     && yarn build 
 
 CMD ["yarn", "start"] 
