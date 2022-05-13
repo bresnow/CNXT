@@ -35,7 +35,6 @@ jobs:
 
       - name: Deploy Docker Swarm Script
         run: |
-          export APP_KEY_PAIR=${{secrets.APP_KEY_PAIR}}
           docker stack deploy -c docker_stack.yml rmx-gun
       #          # docker stack rm rmx-gun
       - name: Clean Up
