@@ -215,7 +215,8 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error);
+  console.error(error.message);
+  console.trace(error.message);
   return (
     <div className="min-h-screen py-4 flex flex-col justify-center items-center">
       <Display

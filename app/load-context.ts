@@ -129,7 +129,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
                         if (!data) {
                             reject("No data found")
                         }
-                        delete data._
+                        // delete data._
                         resolve(data)
                     })
                 ),
