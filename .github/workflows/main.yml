@@ -27,8 +27,20 @@ jobs:
 
       - name: Build Docker Image & Push to Registry
         env:
-          VERSION: latest
+          VERSION: 0.1.0
 
         run: |
           docker build -t bresnow/remix-gun:${{ env.VERSION }} .
-          docker push bresnow/remix-gun:${{ env.VERSION }}
+          docker push bresnow/rmx-gun:${{ env.VERSION }}
+
+      - name: Deploy Docker Swarm Script
+        run: |
+          export APP_KEY_PAIR=${{secrets.APP_KEY_PAIR}}
+          docker stack rm rmx-gun
+          docker stack deploy -c docker_stack.yml rmx-gun
+
+      - name: Clean Up
+        run: |
+          rm -rf ~/remix_gun
+          docker image prune 
+          docker volume prune
