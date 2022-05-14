@@ -6,12 +6,15 @@ This is my white-label boilerplate when building full stack apps. Using the Grap
 
 ## Goals
 
-- [x] Relay server doubles as the Remix Http Server  
-- [x] Authorization with Gun.Sea
+- [x] Relay Server
+- [x] Authorization with Gun.Sea/ Gun User Api
 - [x] Data Encrytion
-- [x] Data Compression
-- [x] React Suspense
+- [x] Data Compression 
+- [x] React Concurrent Features
 
+## Demo
+
+[Demo](https://rmx-gun.fltngmmth.com)
 ## Development
 
 Start the Remix development asset server
