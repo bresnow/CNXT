@@ -6,7 +6,7 @@ This is my white-label boilerplate when building full stack apps. Using the Grap
 
 ## Goals
 
-- [x] Relay Server
+- [x] Remix.GUN Relay Server Adapter  
 - [x] Authorization with Gun.Sea/ Gun User Api
 - [x] Data Encrytion
 - [x] Data Compression 
