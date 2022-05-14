@@ -14,7 +14,10 @@ This is my white-label boilerplate when building full stack apps. Using the Grap
 
 ## Demo
 
-[Demo](https://rmx-gun.fltngmmth.com)
+Visit the [Demo](https://rmx-gun.fltngmmth.com). In another window visit the [Peer](https://rmx-gun-peer.fltngmmth.com). In the first window use the object builder form by entering the key and value. Refresh the peer window to find your mutation. 
+
+### NOTE: The demo containers are not deployed with persisiting data volumes. When a new container is deployed the data will be reset. 
+
 ## Development
 
 Start the Remix development asset server
