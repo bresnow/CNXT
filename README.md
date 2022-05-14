@@ -11,6 +11,7 @@ This is my white-label boilerplate when building full stack apps. Using the Grap
 - [x] Data Encrytion
 - [x] Data Compression 
 - [x] React Concurrent Features
+- [x] Docker Swarm Production Deployment
 
 ## Demo
 
