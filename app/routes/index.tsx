@@ -15,6 +15,7 @@ import { Card } from "~/components/Card";
 import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
+import SimpleSkeleton from "~/components/skeleton/SimpleSkeleton";
 
 const noop = () => {};
 type ErrObj = {
@@ -98,17 +99,9 @@ function SuspendedTest({
 
     return (
       <div>
-        {error && (
-          <div className="col-span-1">
-            <h5>ERROR</h5>
-            <pre className=" bg-red-500 text-secondary-100  text-sm rounded-md">
-              <code>{JSON.stringify(error, null, 2)}</code>
-            </pre>
-          </div>
-        )}
         <div className="grid grid-cols-1 gap-4 p-4">
           <div className="col-span-1">
-            <h5>Node Metadata</h5>
+            <h5>Fetched Data</h5>
             <pre className=" bg-orange-300 text-sm wrapped-text text-primary rounded-md"></pre>
           </div>
         </div>
@@ -126,12 +119,9 @@ export default function Index() {
   useIf([action, !action?.error], () => {
     gun.get("posts").get("test").put(action);
   });
-
   let testLoader = useDeferedLoaderData<any>("/api/gun/posts.test");
   let [keyErr, valErr] = Object.values(action?.error ?? {});
-  useIf([testLoader.cachedData], () => {
-    console.log(testLoader.cachedData);
-  });
+  const noop = () => {};
   return (
     <>
       <WelcomeCard />
@@ -160,10 +150,30 @@ export default function Index() {
           />
           <Playground.Submit label={"Submit"} />
         </Playground.Form>
-        <Suspense fallback="Loading Data....">
-          <SuspendedTest getData={testLoader.load} error={action?.error} />
-        </Suspense>
       </div>
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 gap-4 p-4">
+            <div className="col-span-1">
+              <h5>Cached Data From Radisk/ IndexedDB</h5>
+              {testLoader.cachedData &&
+                Object.entries(testLoader.cachedData._[">"]).map((val) => (
+                  <>
+                    <p>
+                      {val[0]}: {val[1]}
+                    </p>
+                    <SimpleSkeleton />
+                  </>
+                ))}
+
+              {/* )} */}
+              {/* // </pre> */}
+            </div>
+          </div>
+        }
+      >
+        <SuspendedTest getData={testLoader.load} error={action?.error} />
+      </Suspense>
     </>
   );
 }

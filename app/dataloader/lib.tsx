@@ -18,7 +18,9 @@ export function useDeferedLoaderData<T = any>(
 ) {
   let dataloader = useDeferedLoadData();
   const [cache] = useGunStatic(Gun);
-  let [cachedData, setCachedData] = React.useState<T | undefined>(undefined);
+  let [cachedData, setCachedData] = React.useState<
+    Record<string, any> | undefined
+  >(undefined);
   let { key } = useLocation();
   useIf([!options?.cachePath, routePath.startsWith("/api/gun/")], () => {
     let path = routePath.replace("/api/gun/", "");

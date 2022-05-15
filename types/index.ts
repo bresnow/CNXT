@@ -39,7 +39,7 @@ export interface RmxGunCtx {
         user: UserAuth
         formData: () => Promise<Record<string, string>>;
     }
-    // createToken: (sessionKey?: string) => Promise<string>,
-    // verifyToken: (request: Request, sessionKey?: string) => Promise<void>,
+    createToken: (sessionKey?: string) => Promise<string>,
+    verifyToken: (request: Request, sessionKey?: string) => Promise<void>,
 };
 

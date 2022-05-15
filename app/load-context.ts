@@ -7,6 +7,7 @@ import { Params } from "react-router";
 import { getDomain } from "./server";
 import { log } from "./lib/console-utils";
 import { parseJSON } from "./lib/parseJSON";
+import { unprocessableEntity } from "remix-utils";
 export function RemixGunContext(Gun: IGun, request: Request) {
     // log((req), "Request")
     const ENV = {
@@ -155,7 +156,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
                     chainref.set(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
-                }) ,
+                }),
                 map: async (callback?: (args?: any) => any) => {
 
                     let object = await (chainref as any).then();
@@ -221,11 +222,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         graph,
         user: { keyPairAuth, credentials, logout },
         formData: async () => {
-            let values: Record<string, string> | Record<string, FormDataEntryValue>
-            if (request.headers.get("Content-Type") === "application/json") {
-                values = Object.fromEntries(await request.json())
-            }
-            values = Object.fromEntries(await request.formData())
+            let values: Record<string, FormDataEntryValue>
             let obj: Record<string, string> = {}
             return new Promise((resolve, reject) => {
                 for (const prop in values) {
@@ -233,41 +230,41 @@ export function RemixGunContext(Gun: IGun, request: Request) {
                 }
                 resolve(obj)
             })
-        }
-        // createToken: async (sessionKey = "verify") => {
-        //     let session = await getSession();
-        //     let token = (await SEA.pair()).epub
-        //     session.set(sessionKey, token);
-        //     return token;
-        // },
-        // verifyToken: async (request: Request, sessionKey = "verify") => {
+        },
+        createToken: async (sessionKey = "verify") => {
+            let session = await getSession();
+            let token = (await SEA.pair()).epub
+            session.set(sessionKey, token);
+            return token;
+        },
+        verifyToken: async (request: Request, sessionKey = "verify") => {
 
-        //     if (request.bodyUsed) {
-        //         throw new Error(
-        //             "The body of the request was read before calling verifyToken. Ensure you clone it before reading it."
-        //         );
-        //     }
-        //     let session = await getSession();
-        //     let formData = await request.clone().formData();
+            if (request.bodyUsed) {
+                throw new Error(
+                    "The body of the request was read before calling verifyToken. Ensure you clone it before reading it."
+                );
+            }
+            let session = await getSession();
+            let formData = await request.clone().formData();
 
-        //     if (!session.has(sessionKey)) {
-        //         throw unprocessableEntity({
-        //             message: "Can't find token in session.",
-        //         });
-        //     }
+            if (!session.has(sessionKey)) {
+                throw unprocessableEntity({
+                    message: "Can't find token in session.",
+                });
+            }
 
-        //     if (!formData.get(sessionKey)) {
-        //         throw unprocessableEntity({
-        //             message: "Can't find token in body.",
-        //         });
-        //     }
+            if (!formData.get(sessionKey)) {
+                throw unprocessableEntity({
+                    message: "Can't find token in body.",
+                });
+            }
 
-        //     if (formData.get(sessionKey) !== session.get(sessionKey)) {
-        //         throw unprocessableEntity({
-        //             message: "Can't verify token authenticity.",
-        //         });
-        //     }
-        // },
+            if (formData.get(sessionKey) !== session.get(sessionKey)) {
+                throw unprocessableEntity({
+                    message: "Can't verify token authenticity.",
+                });
+            }
+        },
     }
 
 }

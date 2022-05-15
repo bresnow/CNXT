@@ -15,7 +15,6 @@ import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
 import { LoadCtx, NodeValues } from "types";
 import styles from "./tailwind.css";
 import Gun, { GunOptions, ISEAPair } from "gun";
-import srStyles from "~/lib/SR/sr.css";
 import React from "react";
 import { useRouteData } from "./lib/gun/hooks";
 import { getDomain } from "./server";
@@ -23,7 +22,6 @@ import Display from "./components/DisplayHeading";
 
 export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: srStyles },
     { rel: "stylesheet", href: styles },
     {
       rel: "stylesheet",
