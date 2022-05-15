@@ -135,16 +135,20 @@ let peerList = {
 const gun = Gun({
   peers: [peerList.PEER],
   web: server.listen(env.CLIENT, () => {
-    console.log(`Remix server is also acting as GunDB relay server. Both tasks are listening on ${getDomain()}`);
+    console.log(`Remix.Gun Relay Server is listening on ${getDomain()}`);
   }),
   radisk: true
 
 });
 gun.get('pages').put(data.pages)
-
+//@ts-ignore
+gun.on('out', { get: { '#': { '*': '' } } });
 const user = gun.user();
 
 
 user.auth(env.APP_KEY_PAIR as any, (ack) => {
-  console.log(ack, "AUTH?")
+  if ((ack as any).err) {
+    throw new Error("APP AUTH FAILED - Check your ap keypair environment variables " + (ack as any).err)
+  }
+  console.log("APP AUTH SUCCESS")
 })

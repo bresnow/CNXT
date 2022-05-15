@@ -1,5 +1,5 @@
 import type { ChainCtx, RmxGunCtx, NodeValues } from "types";
-import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
+import type { GunOptions, GunUser, IGun, IGunChain, IGunUserInstance, ISEAPair } from "gun/types";
 import { destroySession, getSession } from "~/session.server";
 import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
@@ -18,7 +18,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
             priv: process.env.PRIV,
             epub: process.env.EPUB,
             epriv: process.env.EPRIV,
-        },
+        } as ISEAPair,
     };
 
     let peerList = {
@@ -35,6 +35,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         radisk: true,
     }
     let gun = Gun(gunOpts);
+    let user: IGunUserInstance = gun.user().auth(ENV.APP_KEY_PAIR)
     /**
      * Upgrade from Gun's user api
      * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
