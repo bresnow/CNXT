@@ -13,10 +13,10 @@
     "build:css": "tailwindcss -o ./app/tailwind.css",
     "dev": "concurrently \"yarn dev:css\" \"yarn dev:node\" \"yarn dev:remix\"",
     "dev:css": "tailwindcss -o ./app/tailwind.css --watch",
-    "dev:node": "cross-env-shell NODE_ENV=development APP_KEY_PAIR='{ \"pub\": \"5hVTigjYHty7Vj-ofchDFdAXgHLFyqu9jb_Qjh7vRpg.aevkrLvBWD91XGdpXNZiiXysKj_4QGqqtteUYI6pZ8Q, \"priv\": \"x64TSrxG8aIJ6BYmfi4nt26vydaDeaJ6ub9Plmc8hNk\", \"epub\": \"C5iraTKKmk5pUrSBCBHlpb-P2lxoqkdqDoSpTZLX06k.3Y_fjpOn_mbGdWq6fw8m_haZflJI34IEOxim0aJjm70\", \"epriv\": \"stDUVaWdqmUrGD67g8RfLkqocM80EZvHstvrof9BGfQ\" }'  DOMAIN='localhost:3335' CLIENT_PORT='3335' PEER_DOMAIN='remix-gun.fltngmmth.com' nodemon ./build/index.js --watch ./build/index.js",
+    "dev:node": "cross-env-shell NODE_ENV=development PUB=\"5hVTigjYHty7Vj-ofchDFdAXgHLFyqu9jb_Qjh7vRpg.aevkrLvBWD91XGdpXNZiiXysKj_4QGqqtteUYI6pZ8Q\" PRIV=\"x64TSrxG8aIJ6BYmfi4nt26vydaDeaJ6ub9Plmc8hNk\" EPUB=\"C5iraTKKmk5pUrSBCBHlpb-P2lxoqkdqDoSpTZLX06k.3Y_fjpOn_mbGdWq6fw8m_haZflJI34IEOxim0aJjm70\" EPRIV=\"stDUVaWdqmUrGD67g8RfLkqocM80EZvHstvrof9BGfQ\" DOMAIN='localhost:3335' CLIENT_PORT='3335' PEER_DOMAIN='remix-gun.fltngmmth.com' nodemon ./build/index.js --watch ./build/index.js",
     "dev:remix": "cross-env NODE_ENV=development remix watch",
     "purge": "rm -rf radata *.tmp",
-    "start": "cross-env-shell NODE_ENV=production APP_KEY_PAIR=$APP_KEY_PAIR DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
+    "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
   },
   "dependencies": {
     "@remix-run/node": "0.0.0-experimental-4e814511",

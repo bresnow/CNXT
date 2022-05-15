@@ -6,13 +6,19 @@ import { redirect } from "remix";
 import { Params } from "react-router";
 import { getDomain } from "./server";
 import { log } from "./lib/console-utils";
+import { parseJSON } from "./lib/parseJSON";
 export function RemixGunContext(Gun: IGun, request: Request) {
     // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
         PEER_DOMAIN: process.env.PEER_DOMAIN,
         CLIENT: process.env.CLIENT_PORT,
-        APP_KEY_PAIR: process.env.APP_KEY_PAIR,
+        APP_KEY_PAIR: {
+            pub: process.env.PUB,
+            priv: process.env.PRIV,
+            epub: process.env.EPUB,
+            epriv: process.env.EPRIV,
+        },
     };
 
     let peerList = {
@@ -33,6 +39,8 @@ export function RemixGunContext(Gun: IGun, request: Request) {
      * Upgrade from Gun's user api
      * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
      */
+
+
     const aliasAvailable = (alias: string) => {
         return new Promise((resolve, reject) => {
             gun.get(`~@${alias}`).once((exists) => {

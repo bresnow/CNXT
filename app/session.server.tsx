@@ -1,6 +1,6 @@
 import { createCookieSessionStorage } from "remix";
 
-let sessionSecret = process.env.APP_KEY_PAIR;
+let sessionSecret = process.env.PRIV as string;
 if (typeof sessionSecret !== "string") {
   throw new Error("SESSION_SECRET must be set");
 }

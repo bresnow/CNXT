@@ -9,7 +9,7 @@ This is my white-label boilerplate when building full stack apps. Using the Grap
 - [x] Remix.GUN Relay Server Adapter  
 - [x] Authorization with Gun.Sea/ Gun User Api
 - [x] Data Encrytion
-- [x] Data Compression 
+- [x] Data Compression
 - [x] React Concurrent Features
 - [x] Docker Swarm Production Deployment
 

@@ -12,7 +12,6 @@ export const log = (...args: any[]) => {
         console.log(args[i]);
         console.groupEnd();
         console.groupCollapsed("........." + `TRACE` + ".........");
-        console.trace();
         console.groupEnd();
       }
     }
@@ -28,7 +27,6 @@ export const error = (...args: any[]) => {
         console.groupEnd();
       }
       console.error(args[i]);
-      console.trace();
       console.groupEnd();
     }
   }

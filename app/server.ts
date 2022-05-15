@@ -8,7 +8,7 @@ import { createRequestHandler } from "@remix-run/server-runtime";
 import * as build from "@remix-run/server-build";
 import mime from "mime";
 import { RemixGunContext } from "./load-context";
-import Gun from "gun";
+import Gun, { ISEAPair } from "gun";
 import 'gun/lib/path'
 import 'gun/sea'
 import 'gun/lib/webrtc'
@@ -23,6 +23,7 @@ import 'gun/lib/open'
 import 'gun/lib/not'
 import 'gun/lib/axe'
 import { data } from "../data.config";
+import { parseJSON } from "./lib/parseJSON";
 
 
 installGlobals();
@@ -30,7 +31,12 @@ const env = {
   DOMAIN: process.env.DOMAIN,
   PEER_DOMAIN: process.env.PEER_DOMAIN,
   CLIENT: process.env.CLIENT_PORT,
-  APP_KEY_PAIR: process.env.APP_KEY_PAIR,
+  APP_KEY_PAIR: {
+    pub: process.env.PUB,
+    priv: process.env.PRIV,
+    epub: process.env.EPUB,
+    epriv: process.env.EPRIV,
+  },
 };
 console.log(env)
 let remixHandler = createRequestHandler(
@@ -135,3 +141,10 @@ const gun = Gun({
 
 });
 gun.get('pages').put(data.pages)
+
+const user = gun.user();
+
+
+user.auth(env.APP_KEY_PAIR as any, (ack) => {
+  console.log(ack, "AUTH?")
+})
