@@ -3,6 +3,7 @@ import Gun from "gun";
 import Display from "~/components/DisplayHeading";
 import { LoadCtx } from "types";
 import FormBuilder from "~/components/FormBuilder";
+import React from "react";
 
 type BlogNoSideBar = {
   sectionTitle: {
@@ -36,6 +37,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
 };
 function AuthResponse({ useActionData }: { useActionData: () => any }) {
   let data = useActionData();
+  let Logout = FormBuilder();
   if (data && data.error) {
     return (
       <div
@@ -74,6 +76,9 @@ function AuthResponse({ useActionData }: { useActionData: () => any }) {
         <pre>
           <code>{JSON.stringify(data, null, 2)}</code>
         </pre>
+        <Logout.Form method={"post"}>
+          <Logout.Submit label="Logout" />
+        </Logout.Form>
       </div>
     )
   );
@@ -81,6 +86,9 @@ function AuthResponse({ useActionData }: { useActionData: () => any }) {
 
 export default function Login() {
   let Login = FormBuilder();
+  let [switchFlip, switchSet] = React.useState({
+    authType: true,
+  });
   return (
     <div
       className="w-full mx-auto rounded-xl gap-4  p-4 relative"
@@ -94,6 +102,13 @@ export default function Login() {
         <Login.Input type="text" name="alias" label="Alias" />
         <Login.Input type="password" name="password" label="Password" />
         <Login.Submit label={"Authenticate"} />
+        <Login.Switch
+          name={"authType"}
+          value={switchFlip.authType ? "password" : "keypair"}
+          state={switchFlip.authType}
+          onClick={() => switchSet({ authType: !switchFlip.authType })}
+          rounded
+        />
       </Login.Form>
       <AuthResponse useActionData={useActionData} />
     </div>

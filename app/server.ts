@@ -38,7 +38,7 @@ const env = {
     epriv: process.env.EPRIV,
   },
 };
-console.log(env)
+
 let remixHandler = createRequestHandler(
   build,
   { formatServerError },
@@ -132,7 +132,7 @@ let peerList = {
   DOMAIN: getDomain(),
   PEER: `https://${env.PEER_DOMAIN}/gun`,
 };
-const gun = Gun({
+export const gun = Gun({
   peers: [peerList.PEER],
   web: server.listen(env.CLIENT, () => {
     console.log(`Remix.Gun Relay Server is listening on ${getDomain()}`);

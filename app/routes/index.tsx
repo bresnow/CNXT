@@ -109,9 +109,7 @@ function SuspendedTest({
         <div className="grid grid-cols-1 gap-4 p-4">
           <div className="col-span-1">
             <h5>Node Metadata</h5>
-            <pre className=" bg-orange-300 text-sm wrapped-text text-primary rounded-md">
-              {/* <code>{JSON.stringify(dat, null, 2)}</code> */}
-            </pre>
+            <pre className=" bg-orange-300 text-sm wrapped-text text-primary rounded-md"></pre>
           </div>
         </div>
         <pre>{JSON.stringify(data, null, 2)}</pre>

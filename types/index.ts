@@ -8,7 +8,7 @@ export * from "./loaders"
 export type NodeValues = Record<string, string>
 export interface ChainCtx {
     get: (path: string) => {
-        val: () => Promise<NodeValues | undefined>, put: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, set: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, map: (callback?: (args?: any) => any) => Promise<NodeValues[] | undefined>
+        val: (opts?: { open: boolean }) => Promise<NodeValues | undefined>, put: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, set: (data: NodeValues | IGunChain<Record<string, any>, any>) => Promise<string>, map: (callback?: (args?: any) => any) => Promise<NodeValues[] | undefined>
     },
     options: (peers: string | string[], remove?: boolean) => any,
 

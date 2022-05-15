@@ -42,7 +42,6 @@ export default function Profile() {
       <h1>Profile: {username}</h1>
       <Suspense fallback="Loading Profile....">
         <BlogNoSideBar getItems={postsLoader.load} />
-        <postsLoader.Component />
       </Suspense>
     </>
   );

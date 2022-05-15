@@ -1,5 +1,5 @@
 import type { ChainCtx, RmxGunCtx, NodeValues } from "types";
-import type { GunOptions, GunUser, IGun, IGunChain, IGunUserInstance, ISEAPair } from "gun/types";
+import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import { destroySession, getSession } from "~/session.server";
 import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
@@ -18,7 +18,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
             priv: process.env.PRIV,
             epub: process.env.EPUB,
             epriv: process.env.EPRIV,
-        } as ISEAPair,
+        },
     };
 
     let peerList = {
@@ -35,7 +35,6 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         radisk: true,
     }
     let gun = Gun(gunOpts);
-    let user: IGunUserInstance = gun.user().auth(ENV.APP_KEY_PAIR)
     /**
      * Upgrade from Gun's user api
      * sets pubkey and epub as user_info and SEA keypair in session storage ENCRYPTED with remix session api
@@ -133,12 +132,16 @@ export function RemixGunContext(Gun: IGun, request: Request) {
             let chainref: IGunChain<T>
             chainref = (gun as any).path(`${path}`)
             return {
-                val: () => new Promise((resolve, reject) =>
-                    chainref.once((data) => {
+                val: (opts) => new Promise((resolve, reject) =>
+                    opts?.open ? chainref.open((data) => {
                         if (!data) {
                             reject("No data found")
                         }
-                        // delete data._
+                        resolve(data)
+                    }) : chainref.once((data) => {
+                        if (!data) {
+                            reject("No data found")
+                        }
                         resolve(data)
                     })
                 ),
@@ -152,8 +155,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
                     chainref.set(data, (ack: any) => {
                         ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
                     })
-                })
-                ,
+                }) ,
                 map: async (callback?: (args?: any) => any) => {
 
                     let object = await (chainref as any).then();

@@ -15,34 +15,13 @@ export function createServerDataloader(
 
   const currentRouteId = () => {
     const url = getDomain().replace('gun', '')
-    const current = "routes/" + request.clone().url.replace(url, "")
+    const current = "routes/" + request.clone().url.replace(url, "").replace('?', '')
     return current
   }
   return {
     async load(id?: string) {
-
+      console.log(currentRouteId() + ": " + id)
       let route: ServerRouteModule = build.routeModules["routes/" + id ?? currentRouteId()];
-      // console.group("build.matches")
-      // console.log(build.matches)
-      // console.groupEnd()
-      // console.group()
-      // console.group("AppState")
-      // console.group()
-      // console.log(build.appState)
-      // console.groupEnd()
-      // console.group()
-      // console.group("routes manifest")
-      // console.log(build.manifest.routes)
-      // console.groupEnd()
-      // console.group()
-      // console.group("routedata")
-      // console.log(build.routeData)
-      // console.groupEnd()
-      // console.group()
-      // console.group("serverHandoff")
-      // console.log(build.serverHandoffString)
-      // console.groupEnd()
-
 
       if (!route) {
         throw new Error(`Route ${id} not found`);

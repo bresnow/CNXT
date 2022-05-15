@@ -13,7 +13,7 @@ export function useDeferedLoaderData<T = any>(path?: string) {
   let { key } = useLocation();
   const location = useLocation();
   const currentPath = location.pathname;
-  console.log(`${currentPath}`);
+
   let defered = useMemo(() => {
     invariant(dataloader, "Context Provider is undefined for useGunFetcher");
     let defered = { resolved: false } as {
