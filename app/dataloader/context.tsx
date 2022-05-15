@@ -3,7 +3,7 @@ import type { FC } from "react";
 import type { IGun } from "gun";
 
 export type ClientContext = {
-  load: (id: string, internalId: string) => Promise<Response>;
+  load: (route: string) => Promise<Response>;
 };
 
 let context = createContext<ClientContext | undefined>(undefined);

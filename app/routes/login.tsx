@@ -102,15 +102,18 @@ export default function Login() {
         <Login.Input type="text" name="alias" label="Alias" />
         <Login.Input type="password" name="password" label="Password" />
         <Login.Submit label={"Authenticate"} />
-        <Login.Switch
-          name={"authType"}
-          value={switchFlip.authType ? "password" : "keypair"}
-          state={switchFlip.authType}
-          onClick={() => switchSet({ authType: !switchFlip.authType })}
-          rounded
-        />
       </Login.Form>
       <AuthResponse useActionData={useActionData} />
+      <Login.Switch
+        name={"authType"}
+        value={switchFlip.authType ? "password" : "keypair"}
+        state={switchFlip.authType}
+        onClick={(state: any) => {
+          switchSet({ ...state, authType: !switchFlip.authType });
+        }}
+        rounded
+        label={switchFlip.authType ? "Password" : "Keypair"}
+      />
     </div>
   );
 }

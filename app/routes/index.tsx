@@ -129,6 +129,9 @@ export default function Index() {
 
   let testLoader = useDeferedLoaderData<any>("/api/gun/posts.test");
   let [keyErr, valErr] = Object.values(action?.error ?? {});
+  useIf([testLoader.cachedData], () => {
+    console.log(testLoader.cachedData);
+  });
   return (
     <>
       <WelcomeCard />

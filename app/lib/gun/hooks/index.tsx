@@ -61,9 +61,9 @@ export const error = (...args: any) =>
 
 export function useGunStatic(
   Gun: IGun,
-  opt?: { gunOptions: GunOptions }
+  opt?: GunOptions
 ): [instance: IGunInstance, sea: ISEA] {
-  let { gunOptions } = opt || {};
+  let gunOptions = opt || {};
   const { data } = useRouteData("/"),
     opts = data.gunOpts;
   let [options] = React.useState<GunOptions>(opts ? opts : gunOptions);

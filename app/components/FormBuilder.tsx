@@ -130,8 +130,9 @@ const FormBuilder = () => {
       color,
       icon,
       rounded,
+      label,
     }: {
-      onClick: () => void;
+      onClick: (e: any) => void;
       state: boolean;
       name: string;
       value: string;
@@ -147,12 +148,14 @@ const FormBuilder = () => {
         | "indigo";
       icon?: JSX.Element;
       rounded?: boolean;
+      label?: string;
     }) {
       const colorPicker = (primary: string, secondary: string) =>
         `bg-${primary}-500 hover:bg-${primary}-700 focus:ring-${secondary}-500 focus:ring-offset-${secondary}-200`;
 
       return (
         <div className="flex justify-center items-center m-auto w-10">
+          <label className="text-gray-700 px-4">{label}</label>
           <input type="hidden" name={name} value={value} />
           <div
             onClick={onClick}
@@ -160,7 +163,7 @@ const FormBuilder = () => {
               icon && "flex justify-center items-center "
             } ${
               colors[color ?? "indigo"]
-            } text-white w-full transition ease-in duration-200 hover:mb-2 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 
+            } text-white w-full transition ease-in duration-200  text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 
        ${rounded ? "rounded-full" : "rounded-lg "}  
            mx-auto mt-1`}
           >
@@ -169,11 +172,7 @@ const FormBuilder = () => {
                 <svg
                   width="20"
                   height="70"
-                  className={`${
-                    state
-                      ? `${color}-500`
-                      : `${colorPicker("indigo", color ?? "red")}`
-                  } bg-white w-6 h-6 transition-all duration-200  rounded-full shadow-md transform ${
+                  className={` bg-white w-6 h-6 transition-all duration-200  rounded-full shadow-md transform ${
                     state ? "-translate-x-8" : "translate-x-2"
                   }`}
                   viewBox="0 0 1792 1792"

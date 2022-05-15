@@ -7,6 +7,7 @@ import {
   useLoaderData,
   useActionData,
   useCatch,
+  Outlet,
 } from "remix";
 import { useDeferedLoaderData } from "~/dataloader/lib";
 import { useIf } from "bresnow_utility-react-hooks";
@@ -134,26 +135,7 @@ export default function Index() {
           maxWidth: "520px",
         }}
       >
-        <Playground.Form method={"post"}>
-          <Playground.Input
-            type="text"
-            required
-            name="prop"
-            label={"Key"}
-            error={keyErr}
-          />
-          <Playground.Input
-            type="text"
-            required
-            name="value"
-            label={"Value"}
-            error={valErr}
-          />
-          <Playground.Submit label={"Submit"} />
-        </Playground.Form>
-        <Suspense fallback="Loading Data....">
-          <SuspendedTest getData={testLoader.load} />
-        </Suspense>
+        <Outlet />
       </div>
     </>
   );
