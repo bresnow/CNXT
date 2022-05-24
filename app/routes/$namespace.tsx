@@ -16,6 +16,9 @@ import { Card } from "~/components/Card";
 import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
+import BrowserWindow from "~/components/Browser";
+import { SectionTitle } from ".";
+import { Navigation } from "~/root";
 
 const noop = () => {};
 type ErrObj = {
@@ -29,9 +32,11 @@ type LoadError = {
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { graph } = RemixGunContext(Gun, request);
+  let namespace = params.namespace;
   let data;
   try {
-    data = await graph.get("pages.index").val();
+    let _data = await graph.get("pages.index").val();
+    data = { namespace, ..._data };
   } catch (error) {
     data = { error };
   }
@@ -66,7 +71,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
 };
 
 function WelcomeCard() {
-  let { title, pageText, pageTitle, src } = useLoaderData();
+  let { namespace, title, pageText, pageTitle, src } = useLoaderData();
   let img = { src, alt: "RemixGun" };
   return (
     <div
@@ -78,40 +83,14 @@ function WelcomeCard() {
       }}
     >
       <SectionTitle
-        heading={pageTitle}
+        heading={namespace}
         description={pageText}
         align={"center"}
         color={"primary"}
         showDescription={true}
       />
-      <Card image={img} name={pageTitle} label={title} />
     </div>
   );
-}
-function SuspendedTest({
-  getData,
-}: {
-  getData: () => any;
-  // error?: any;
-}) {
-  function RenderedData() {
-    let data = getData();
-
-    return (
-      <div>
-        <div className="grid grid-cols-1 gap-4 p-4">
-          <div className="col-span-1">
-            <h5>Node Metadata</h5>
-            <pre className=" bg-orange-300 text-primary rounded-md">
-              {JSON.stringify(data, null, 2)}
-            </pre>
-          </div>
-        </div>
-        {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-      </div>
-    );
-  }
-  return <RenderedData />;
 }
 
 export default function Index() {
@@ -126,53 +105,13 @@ export default function Index() {
   let [keyErr, valErr] = Object.values(action?.error ?? {});
   return (
     <>
-      <WelcomeCard />
-      <div
-        className="w-full mx-auto rounded-xl gap-4  p-4 relative"
-        style={{
-          minHeight: "320px",
-          minWidth: "420px",
-          maxWidth: "520px",
-        }}
-      >
+      <Navigation>
+        <WelcomeCard />
         <Outlet />
-      </div>
+      </Navigation>
     </>
   );
 }
-
-export const SectionTitle = ({
-  heading,
-  description,
-  align,
-  color,
-  showDescription,
-}: TitleProps) => {
-  const title = {
-    showDescription: showDescription || false,
-    align: align ? align : "center",
-    color: color ? color : "primary",
-  };
-  return (
-    <div className="section-title">
-      <div className="container">
-        <div className={`align-${title.align} mx-auto`}>
-          <h2 className="font-bold max-w-3xl">{heading}</h2>
-          {title.showDescription && (
-            <p className="max-w-xl mt-2 leading-7 text-18base">{description}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-type TitleProps = {
-  heading: string;
-  description: string;
-  align?: "left" | "right" | "center";
-  color?: "white" | "primary";
-  showDescription: boolean;
-};
 
 export function CatchBoundary() {
   let caught = useCatch();
