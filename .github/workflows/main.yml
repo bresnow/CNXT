@@ -33,15 +33,15 @@ jobs:
     steps:
       - name: Build Docker Image & Push to Registry
         env:
-          VERSION: 0.1.12
+          VERSION: 0.1.121
 
         run: |
-          docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} .
+          docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
           docker push bresnow/rmx-gun-stack:${{ env.VERSION }}
 
       - name: Deploy Docker Swarm Script
         env:
-          VERSION: 0.1.12
+          VERSION: 0.1.121
         run: |
           export VERSION=${{ env.VERSION }}
           docker service update remix-gun_fltngmmth --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
