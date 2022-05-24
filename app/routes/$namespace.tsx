@@ -106,8 +106,8 @@ export default function Index() {
   return (
     <>
       <Navigation>
-        <WelcomeCard />
         <Outlet />
+        <WelcomeCard />
       </Navigation>
     </>
   );
