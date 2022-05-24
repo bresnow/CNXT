@@ -111,7 +111,9 @@ export default function BrowserWindow({
             onLoad={() => {
               setLoading(false);
             }}
-            sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation"
+            allowFullScreen
+            referrerPolicy="same-origin"
+            // sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
           />
           {loading && (

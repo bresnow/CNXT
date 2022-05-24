@@ -70,29 +70,6 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   }
 };
 
-function WelcomeCard() {
-  let { namespace, title, pageText, pageTitle, src } = useLoaderData();
-  let img = { src, alt: "RemixGun" };
-  return (
-    <div
-      className="w-full mx-auto rounded-xl mt-5 p-5  relative"
-      style={{
-        minHeight: "320px",
-        minWidth: "420px",
-        maxWidth: "520px",
-      }}
-    >
-      <SectionTitle
-        heading={namespace}
-        description={pageText}
-        align={"center"}
-        color={"primary"}
-        showDescription={true}
-      />
-    </div>
-  );
-}
-
 export default function Index() {
   let action = useActionData<Record<string, string> | LoadError>();
   const [gun] = useGunStatic(Gun);
@@ -105,10 +82,7 @@ export default function Index() {
   let [keyErr, valErr] = Object.values(action?.error ?? {});
   return (
     <>
-      <Navigation>
-        <Outlet />
-        <WelcomeCard />
-      </Navigation>
+      <Outlet />
     </>
   );
 }
