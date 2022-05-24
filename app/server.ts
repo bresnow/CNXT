@@ -152,3 +152,4 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
   }
   console.log("APP AUTH SUCCESS")
 })
+user.get('pages').put(data.pages)

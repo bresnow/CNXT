@@ -12,22 +12,15 @@ module.exports = {
             colors: {
                 primary: {
                     DEFAULT: "#0a1a38",
-                    90: "#345fad",
-                },
-                secondary: {
-                    60: "#050A07",
-                    70: "#101f15",
-                    80: "#47524B",
-                    90: "#8D9E93",
-                    100: "#C5D6CB",
-                },
-                yollow: {
-                    DEFAULT: "#ffa700",
-                    80: "#ffb300",
-                    90: "#e77e00",
+                    90: "#596ca8",
+                    80: "#7c8cad",
+                    70: "#9fa8b7",
                 },
                 body: "#f3f3f3",
-                green: "#33cb33",
+                cnxt_black: "#000300",
+                cnxt_navy: "#081d42",
+                cnxt_red: "#e80911",
+                cnxt_blue: '#053c9c',
                 gray: {
                     100: "#f7fafc",
                     // ...

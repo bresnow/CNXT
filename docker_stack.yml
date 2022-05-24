@@ -11,7 +11,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --pilot.token=4f869d98-2658-48e6-9405-c97c9183d932
-      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@xdesk.app}
+      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@me.com}
       - --certificatesresolvers.http.acme.storage=/certificates/acme.json
       - --certificatesresolvers.http.acme.tlschallenge=true
       - --accesslog
@@ -53,7 +53,7 @@ services:
   # FRONTEND
 
   fltngmmth:
-    image: bresnow/rmx-gun:latest
+    image: bresnow/rmx-gun-stack:latest
     deploy:
       replicas: 2
       placement:
@@ -83,7 +83,7 @@ services:
 
       #PEER DB
   peer:
-    image: bresnow/rmx-gun:latest
+    image: bresnow/rmx-gun-stack:latest
     deploy:
       replicas: 2
       placement:
