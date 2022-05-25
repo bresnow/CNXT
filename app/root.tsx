@@ -125,38 +125,90 @@ export let handle = {
     },
   ],
 };
-export const MainMenu = ({ links }: { links?: MenuLinks }) => {
+export const MainMenu = ({ links }: { links: MenuLinks }) => {
   const menuarr = links;
   let { pathname } = useLocation();
+  const isActive = (link: string) => pathname === link;
+  let translatex = menuarr.map(({ link }, i) => {
+    if (!isActive(link)) {
+      return;
+    }
+    return `translate-x-[${96 * 10}px] `;
+  });
 
   return (
-    <nav className="flex-1 px-2 py-4 bg-gray-800">
-      {menuarr?.map(({ link, icon, id, label }) => (
-        <Link
-          to={link}
-          key={Math.random().toLocaleString() + id}
-          className="mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700 transition ease-in-out duration-150"
-        >
-          <svg
-            className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150"
-            stroke="currentColor"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d={
-                icon ??
-                "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              }
-            />
-          </svg>
-          {label}
-        </Link>
-      ))}
-    </nav>
+    // <nav className="flex-1 px-2 py-4 bg-gray-800">
+    //   {menuarr?.map(({ link, icon, id, label }) => (
+    //     <Linkß
+    //       to={link}
+    //       key={Math.random().toLocaleString() + id}
+    //       className="mt-1 group flex items-center px-2 py-2 text-sm leading-5 font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700 transition ease-in-out duration-150"
+    //     >
+    //
+    //       {label}
+    //     </Linkß>
+    //   ))}
+    <div className="relative flex items-center px-6 overflow-hidden bg-cnxt_black border-0  h-28 rounded-2xl">
+      <nav className="flex items-center justify-center gap-8">
+        {menuarr?.map(({ link, icon, id, label }, index) => (
+          <>
+            <Link
+              onClick={(e) => {
+                (
+                  document.querySelector("#indicator") as HTMLElement
+                ).style.transform = `translateX(calc(${96 * index}px))`;
+              }}
+              to={link}
+              className="grid w-16 h-16 grid-cols-1 grid-rows-1"
+            >
+              <span className="sr-only">{label}</span>
+              <div
+                className={`col-[1/1] row-[1/1] flex items-center justify-center w-16 h-16`}
+              >
+                <svg
+                  className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-primary-80 transition ease-in-out duration-150"
+                  stroke={isActive(link) ? "#053c9c" : "currentColor"}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d={
+                      icon ??
+                      "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    }
+                  />
+                </svg>
+              </div>
+              <div
+                className={`col-[1/1] row-[1/1] flex items-center justify-center w-16 h-16 transition-opacity duration-300 ${
+                  isActive(link)
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+                }`}
+              ></div>
+            </Link>
+          </>
+        ))}
+      </nav>
+
+      <div
+        id="indicator"
+        className={`absolute w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4  left-10`}
+      >
+        <div
+          style={{ boxShadow: "0 10px 0 #053c9c" }}
+          className="absolute w-5 h-5 bg-cnxt_black-left-4 bottom-1/2 rounded-br-3xl"
+        ></div>
+        <div
+          style={{ boxShadow: "0 10px 0 #053c9c" }}
+          className="absolute w-5 h-5 bg-cnxt_black-right-4 bottom-1/2 rounded-bl-3xl"
+        ></div>
+      </div>
+    </div>
+    // </nav>
   );
 };
 
@@ -207,66 +259,8 @@ export function Navigation({
   });
   return (
     <div className="h-screen flex overflow-hidden bg-cnxt_black">
-      <div className={` md:flex md:flex-shrink-0`}>
-        <div className="flex flex-col max-w-64 min-w-60">
-          <div className="flex items-center flex-shrink-0 px-4 py-2 bg-cnxt_navy">
-            {" "}
-            <div className="ml-3 relative">
-              <div>
-                <button
-                  onClick={() => ofcanvasDispatch({ type: "USER_MENU" })}
-                  className="max-w-xs flex items-center text-sm rounded-full focus:outline-none focus:shadow-outline"
-                >
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                </button>
-              </div>
-              {/* {!!ofcanvasOpen.user_menu && (
-                <div
-                  className={`origin-top-right absolute left-10 mt-2 w-48 rounded-md shadow-lg`}
-                >
-                  <div className="py-1 rounded-md bg-white shadow-xs">
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
-                    >
-                      Your Profile
-                    </Link>
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
-                    >
-                      Settings
-                    </Link>
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
-                    >
-                      Sign out
-                    </Link>
-                    <MainMenu links={links} />
-                  </div>
-                </div>
-              )} */}
-            </div>
-            {logo ? logo : <FMLogo />}
-          </div>
-          {!!ofcanvasOpen.user_menu && (
-            <div
-              className={`${
-                !!ofcanvasOpen.user_menu ? "flex ml-0" : "-ml-60"
-              } transition-all duration-500 h-0 flex-1 flex flex-col overflow-y-auto`}
-            >
-              {" "}
-              <MainMenu links={links} />
-            </div>
-          )}
-        </div>
-      </div>
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <MainMenu links={links} />
         <main
           className="flex-1 relative z-0 overflow-y-auto py-6 focus:outline-none"
           tabIndex={0}

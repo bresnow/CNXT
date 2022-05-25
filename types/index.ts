@@ -4,7 +4,15 @@ import type { Params } from "react-router";
 import type { ServerResponse } from "http";
 export * from "./loaders"
 
+export interface _Window extends Window {
+    ENV: {
+        DOMAIN: string | undefined;
+        PEER_DOMAIN: string | undefined;
+        CLIENT: string | undefined;
+        APP_KEY_PAIR: ISEAPair;
+    }
 
+}
 export type NodeValues = Record<string, string>
 export interface ChainCtx {
     get: (path: string) => {

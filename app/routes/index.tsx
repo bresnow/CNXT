@@ -12,9 +12,7 @@ import { useDeferedLoaderData } from "~/dataloader/lib";
 import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
-import { useGunStatic } from "~/lib/gun/hooks";
-import FormBuilder from "~/components/FormBuilder";
-import SimpleSkeleton from "~/components/skeleton/SimpleSkeleton";
+
 import BrowserWindow from "~/components/Browser";
 import React from "react";
 import { Navigation } from "~/root";
