@@ -11,6 +11,8 @@ export interface InputTextProps {
   disabled?: boolean;
   square?: boolean;
   withForceIndications?: boolean;
+  className?: string;
+  shadow?: boolean;
   id?: string;
 }
 
@@ -19,7 +21,7 @@ const InputText = (props: InputTextProps) => {
     <div
       className={`${
         props.helper || props.icon ? "flex" : ""
-      } p-auto mx-5 shadow-lg relative ${
+      } p-auto mx-5  relative ${
         props.disabled ? "opacity-50 pointer-events-none" : ""
       }`}
     >
@@ -35,7 +37,9 @@ const InputText = (props: InputTextProps) => {
         <span
           className={`${
             props.square ? "" : "rounded-l-md"
-          } inline-flex  items-center px-2  bg-transparent border-0 text-gray-500 shadow-sm text-sm`}
+          } inline-flex  items-center px-2  bg-transparent border-0 text-gray-500 ${
+            props.shadow && !props.error && "shadow-sm"
+          }text-sm`}
         >
           {props.helper || props.icon}
         </span>
@@ -52,9 +56,9 @@ const InputText = (props: InputTextProps) => {
               : !props.square
               ? " rounded-lg border-transparent"
               : ""
-          } bg-zinc-500 pl-3 pr-10 h-10 rounded-md w-full ${
-            !props.error ? "shadow-xl" : ""
-          } `}
+          } ${
+            props.className ?? "bg-zinc-500 pl-3 pr-10 h-10 rounded-md w-full"
+          } ${!props.error ? "shadow-xl" : ""} `}
           type={props.type || "text"}
           name={props.name}
           placeholder={props.placeholder}
@@ -73,7 +77,10 @@ const InputText = (props: InputTextProps) => {
               : !props.square
               ? " rounded-lg border-transparent"
               : ""
-          } flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+          } ${
+            props.className ??
+            "flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          }`}
           name={props.name}
           placeholder={props.placeholder}
           aria-invalid={props.error ? true : false}

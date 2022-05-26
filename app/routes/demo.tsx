@@ -116,66 +116,9 @@ export default function BuilderRoute() {
   });
   let testLoader = useDeferedLoaderData<any>(`/api/gun/pages.builder`);
   let { text, page_title } = useLoaderData();
-  let funkShun =
-    React.useRef<
-      DetailedHTMLProps<
-        ScriptHTMLAttributes<HTMLScriptElement>,
-        HTMLScriptElement
-      >
-    >();
 
   return (
     <>
-      <div
-        className="w-full mx-auto rounded-xl gap-4  p-4 relative"
-        style={{
-          minHeight: "320px",
-          minWidth: "420px",
-          maxWidth: "520px",
-        }}
-      >
-        <SectionTitle
-          heading={page_title}
-          description={text}
-          align={"center"}
-          color={"primary"}
-          showDescription={true}
-        />
-      </div>
-      <div
-        className="w-full mx-auto rounded-xl gap-4  p-4 relative"
-        style={{
-          minHeight: "320px",
-          minWidth: "420px",
-          maxWidth: "520px",
-        }}
-      >
-        <ObjectBuilder.Form method={"post"}>
-          <ObjectBuilder.Input
-            type="text"
-            required
-            name="path"
-            label={"Document Path"}
-            placeholder={"posts/test"}
-            error={error?.path}
-          />
-          <ObjectBuilder.Input
-            type="text"
-            required
-            name="prop"
-            label={"Key"}
-            error={error?.key}
-          />
-          <ObjectBuilder.Input
-            type="text"
-            required
-            name="value"
-            label={"Value"}
-            error={error?.value}
-          />
-          <ObjectBuilder.Submit label={"Submit"} />
-        </ObjectBuilder.Form>
-      </div>
       <Suspense
         fallback={
           <div className="grid grid-cols-1 gap-4 p-4">
@@ -202,6 +145,33 @@ export default function BuilderRoute() {
       >
         <SuspendedTest getData={testLoader.load} />
       </Suspense>
+
+      <ObjectBuilder.Form
+        className="grid grid-cols-1 gap-4 p-4"
+        method={"post"}
+      >
+        <div className="flex flex-row items-center space-y-5 justify-center space-x-5">
+          <ObjectBuilder.Input
+            type="text"
+            required
+            name="prop"
+            label={"Key"}
+            className={"w-full bg-gray-300 py-2 px-8 rounded-md flex"}
+            error={error?.key}
+          />
+          <ObjectBuilder.Input
+            type="text"
+            required
+            name="value"
+            label={"Value"}
+            textArea={true}
+            className={"w-full bg-gray-300 py-5 px-8 rounded-md flex"}
+            error={error?.value}
+          />
+        </div>
+        <ObjectBuilder.Submit label={"Submit"} />
+      </ObjectBuilder.Form>
+
       {/* <script
         key={"USE_FX"}
         dangerouslySetInnerHTML={{

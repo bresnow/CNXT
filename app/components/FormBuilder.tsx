@@ -83,22 +83,7 @@ const FormBuilder = () => {
       );
     },
     Input(prop: InputTextProps) {
-      return (
-        <InputText
-          type={prop?.type}
-          label={prop?.label}
-          required={prop?.required}
-          error={prop?.error ? prop.error : undefined}
-          icon={prop?.icon}
-          helper={prop?.helper}
-          name={prop?.name}
-          disabled={prop?.disabled}
-          square={prop?.square}
-          withForceIndications={prop?.withForceIndications}
-          placeholder={prop?.placeholder}
-          id={`"form-${prop?.label}`}
-        />
-      );
+      return <InputText {...prop} id={`"form-${prop?.label}`} />;
     },
     Submit(props: ButtonProps) {
       return (
