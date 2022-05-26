@@ -148,7 +148,7 @@ const user = gun.user();
 
 user.auth(env.APP_KEY_PAIR as any, (ack) => {
   if ((ack as any).err) {
-    throw new Error("APP AUTH FAILED - Check your ap keypair environment variables " + (ack as any).err)
+    throw new Error("APP AUTH FAILED - Check your app keypair environment variables " + (ack as any).err)
   }
   console.log("APP AUTH SUCCESS")
 })

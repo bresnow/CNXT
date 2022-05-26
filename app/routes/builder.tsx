@@ -10,8 +10,8 @@ import { Navigation } from "~/root";
 import SecureRender from "~/components/Browser";
 
 export const loader: LoaderFunction = async ({ request, context }) => {
-  let { body } = await got.get("https://rmx-gun.fltngmmth.com/about");
-  console.log(request.url.replace("test", "about"));
+  let { body } = await got.get("http://localhost:3335/api/gun/pages.index");
+  console.log(body, "body");
   let { RemixGunContext } = context as LoadCtx;
   let { ENV } = RemixGunContext(Gun, request);
   let encrypted = await Gun.SEA.encrypt(body, ENV.APP_KEY_PAIR);
