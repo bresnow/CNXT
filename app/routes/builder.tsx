@@ -10,12 +10,13 @@ import { Navigation } from "~/root";
 import SecureRender from "~/components/Browser";
 
 export const loader: LoaderFunction = async ({ request, context }) => {
-  let { body } = await got.get("http://localhost:3335/api/gun/pages.index");
-  console.log(body, "body");
+  // let response = await got("http://0.0.0.0:3335/api/gun/pages.index");
+  // let body = response.body;
+  // console.log(body, "body");
   let { RemixGunContext } = context as LoadCtx;
   let { ENV } = RemixGunContext(Gun, request);
-  let encrypted = await Gun.SEA.encrypt(body, ENV.APP_KEY_PAIR);
-  return json({ body: encrypted });
+  // let encrypted = await Gun.SEA.encrypt(body, ENV.APP_KEY_PAIR);
+  return json({ body: null });
 };
 
 export default function Test() {
@@ -36,6 +37,7 @@ export default function Test() {
   return (
     <div className="h-screen flex overflow-hidden bg-gray-600">
       <SecureRender namespace="/demo" />
+      {/* srcdoc={JSON.stringify(decrypted)} */}
     </div>
   );
 }

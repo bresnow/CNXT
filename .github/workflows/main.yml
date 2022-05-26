@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Build Docker Image & Push to Registry
         env:
-          VERSION: 0.1.1211
+          VERSION: 0.1.2
 
         run: |
           docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
@@ -41,7 +41,7 @@ jobs:
 
       - name: Deploy Docker Swarm Script
         env:
-          VERSION: 0.1.1211
+          VERSION: 0.1.2
         run: |
           export VERSION=${{ env.VERSION }}
           docker service update remix-gun_fltngmmth --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
@@ -53,3 +53,6 @@ jobs:
       - name: Clean Up
         run: |
           rm -rf ~/remix_gun
+          docker image prune --force
+          docker volume prune --force
+          docker container prune --force
