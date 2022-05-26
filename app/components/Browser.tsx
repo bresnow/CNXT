@@ -8,6 +8,7 @@ import { useIf, useSafeEffect } from "bresnow_utility-react-hooks";
 import invariant from "@remix-run/react/invariant";
 import { log } from "~/lib/console-utils";
 import FormBuilder from "./FormBuilder";
+import Iframe, { SandBox } from "./Iframe";
 export function Lock() {
   return (
     <svg
@@ -69,6 +70,16 @@ const links = [
   },
 ];
 
+type SecureRenderProps = {
+  namespace: string;
+  srcdoc?: string;
+  allow?: string;
+  onLoad?: () => any;
+  onRefresh?: () => void;
+  encryption?: { key: ISEAPair };
+  onUnlock?: () => void;
+  sandbox?: SandBox | string;
+};
 export default function SecureRender({
   namespace,
   onLoad,
@@ -78,16 +89,7 @@ export default function SecureRender({
   srcdoc,
   allow,
   sandbox,
-}: Partial<{
-  namespace: string;
-  srcdoc: string;
-  allow: string;
-  onLoad<T>(): T;
-  onRefresh: () => void;
-  encryption?: { key: ISEAPair };
-  onUnlock: () => void;
-  sandbox: string;
-}>) {
+}: SecureRenderProps) {
   const [loading, setLoading] = React.useState(true);
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
   const [state, setState] = React.useState<string>();
@@ -118,7 +120,7 @@ export default function SecureRender({
           <div className="w-full flex items-center justify-start relative p-1 border-b bg-cnxt_black  dark:border-gray-800">
             <div className="p-1 flex items-center justify-center text-gray-300">
               <div className="relative flex items-center px-6 overflow-hidden border-0  h-28 rounded-2xl">
-                <nav className="flex-wrap items-center justify-center gap-8">
+                <nav className="flex items-center justify-center gap-8">
                   {menuarr?.map(({ link, icon, id, label }, index) => (
                     <>
                       <Link
@@ -201,18 +203,19 @@ export default function SecureRender({
           </div>
         </WindowForm.Form>
         <div className="w-full h-full relative">
-          <iframe
+          <Iframe
+            url={namespace}
             ref={iframeRef}
             className={`w-full  h-full transition-opacity duration-200 ${
               loading ? "opacity-0" : "opacity-100"
             }`}
-            srcDoc={srcdoc}
-            style={{ minWidth: "350px", minHeight: "350px" }}
+            srcdocument={srcdoc}
+            onLoad={() => {
+              setLoading(false);
+            }}
+            styles={{ minWidth: "350px", minHeight: "350px" }}
             allowFullScreen
-            referrerPolicy="no-referrer"
-            sandbox={
-              "allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"
-            }
+            referrerpolicy="same-origin"
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
           />
           {loading && (

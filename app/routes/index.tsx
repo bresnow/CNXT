@@ -59,7 +59,7 @@ function WelcomeCard() {
         showDescription={true}
         image={img}
       />
-      <Card />
+      <ImageCard />
     </div>
   );
 }
@@ -69,8 +69,8 @@ export default function Index() {
     <>
       <Navigation>
         <WelcomeCard />
-        <SecureRender namespace="/" />
-        <Tag color={"green"} filled={true} label="Positive Green" />
+        {/* <SecureRender namespace="/" /> */}
+        {/* <Tag color={"green"} filled={true} label="Positive Green" /> */}
       </Navigation>
     </>
   );
@@ -84,7 +84,7 @@ export function AppWindow() {
     </div>
   );
 }
-export function Card() {
+export function ImageCard({ src }: { src?: string }) {
   const [loading, setLoading] = React.useState(true);
 
   return (
@@ -93,7 +93,7 @@ export function Card() {
         <div className="w-full flex items-center justify-center border-b dark:border-gray-800 relative">
           <img
             alt="Forest"
-            src="https://source.unsplash.com/1200x630/?forest"
+            src={src ?? "https://source.unsplash.com/1200x630/?forest"}
             width="1200"
             height="630"
             className={`w-full h-auto transition-opacity duration-200 ${

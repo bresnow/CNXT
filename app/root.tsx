@@ -148,15 +148,16 @@ export const MainMenu = ({ links }: { links: MenuLinks }) => {
     //       {label}
     //     </Linkß>
     //   ))}
-    <div className="relative flex items-center px-6 overflow-hidden bg-cnxt_black border-0  h-28 rounded-2xl">
+    <div className="relative flex items-center px-6 overflow-hidden bg-cnxt_black border-0  h-28 rounded-b-2xl">
       <nav className="flex items-center justify-center gap-8">
         {menuarr?.map(({ link, icon, id, label }, index) => (
           <>
             <Link
               onClick={(e) => {
-                (
-                  document.querySelector("#indicator") as HTMLElement
-                ).style.transform = `translateX(calc(${96 * index}px))`;
+                let indicator = document.querySelector(
+                  "#indicator"
+                ) as HTMLElement;
+                indicator.style.transform = `translateX(calc(${96 * index}px))`;
               }}
               to={link}
               className="grid w-16 h-16 grid-cols-1 grid-rows-1"
@@ -194,9 +195,9 @@ export const MainMenu = ({ links }: { links: MenuLinks }) => {
         ))}
       </nav>
 
-      <div
+      {/* <div
         id="indicator"
-        className={`absolute w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4  left-10`}
+        className={`absolute w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4  left-11`}
       >
         <div
           style={{ boxShadow: "0 10px 0 #053c9c" }}
@@ -206,7 +207,7 @@ export const MainMenu = ({ links }: { links: MenuLinks }) => {
           style={{ boxShadow: "0 10px 0 #053c9c" }}
           className="absolute w-5 h-5 bg-cnxt_black-right-4 bottom-1/2 rounded-bl-3xl"
         ></div>
-      </div>
+      </div> */}
     </div>
     // </nav>
   );
@@ -258,7 +259,7 @@ export function Navigation({
     user_menu: false,
   });
   return (
-    <div className="h-screen flex overflow-hidden bg-cnxt_black">
+    <div className="h-screen flex overflow-hidden ">
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         <MainMenu links={links} />
         <main
