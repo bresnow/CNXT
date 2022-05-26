@@ -3,6 +3,7 @@
   "name": "remix-gun-react-18",
   "description": "Remix.run app - P2P Database Server Adapter ",
   "license": "MIT",
+  "module": "es2022",
   "resolutions": {
     "react": "18.0.0-rc.0",
     "react-dom": "18.0.0-rc.0"
@@ -24,6 +25,7 @@
     "bresnow_utility-react-hooks": "^0.2.7",
     "cross-env": "^7.0.3",
     "dockerode": "^3.3.1",
+    "got-cjs": "^12.0.1",
     "gun": "^0.2020.1237",
     "jsesc": "^3.0.2",
     "lodash": "^4.17.21",
@@ -40,7 +42,9 @@
     "@types/dockerode": "^3.3.9",
     "@types/jsesc": "^3.0.1",
     "@types/lodash": "^4.14.181",
+    "@types/lz-string": "^1.3.34",
     "@types/mime": "^2.0.3",
+    "@types/node": "^17.0.35",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.9",
     "@types/uuid": "^8.3.4",
@@ -57,7 +61,7 @@
     "prettier-plugin-tailwindcss": "^0.1.9",
     "tailwindcss": "^3.0.24",
     "tailwindcss-pseudo-elements": "^2.0.0",
-    "typescript": "^4.1.2"
+    "typescript": "^4.8.0-dev.20220524"
   },
   "engines": {
     "node": ">=14"

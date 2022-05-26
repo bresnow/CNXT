@@ -4,6 +4,7 @@ import { isResponse } from "@remix-run/server-runtime/responses";
 import { ServerRouteModule } from "@remix-run/server-runtime/routeModules";
 import { LoadCtx } from "types";
 import { getDomain } from "~/server"
+import got from "got-cjs";
 
 export function createServerDataloader(
   build: EntryContext,
@@ -13,16 +14,15 @@ export function createServerDataloader(
 ) {
   // console.log(build.manifest.routes)
 
-  const currentRouteId = () => {
+  const currentRouteId = (id: string) => {
     const url = getDomain().replace('gun', '')
-    const current = "routes/" + request.clone().url.replace(url, "").replace('?', '')
-    return current
+    const current = request.clone().url.replace(url, "").replace('?', '')
+    return current + "/" + id
   }
   return {
-    async load(id?: string) {
-      console.log(currentRouteId() + ": " + id)
-      let route: ServerRouteModule = build.routeModules["routes/" + id ?? currentRouteId()];
-
+    async load(id: string) {
+      let route: ServerRouteModule = build.routeModules["routes/" + id];
+      console.log("testResponse", await got.get(id));
       if (!route) {
         throw new Error(`Route ${id} not found`);
       }

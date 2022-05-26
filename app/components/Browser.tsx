@@ -1,8 +1,12 @@
 import { ISEAPair } from "gun/types";
-import React from "react";
-import { Form, FormProps, useFetcher } from "remix";
+import React, { HTMLAttributes, Reducer } from "react";
+import { Form, FormProps, Link, useFetcher } from "remix";
 import { _Window } from "types";
+import lz from "lz-string";
 import { MainMenu } from "~/root";
+import { useIf, useSafeEffect } from "bresnow_utility-react-hooks";
+import invariant from "@remix-run/react/invariant";
+import { log } from "~/lib/console-utils";
 export function Lock() {
   return (
     <svg
@@ -45,89 +49,151 @@ export function Refresh() {
 export type BrowserWindowIframe = HTMLIFrameElement;
 const links = [
   {
-    label: "Home",
-    id: "home",
-    link: "/",
-    icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z",
-  },
-  {
-    label: "Authentication",
-    link: "/login",
-    id: "login",
+    label: "Refresh",
+    id: "Refresh",
+    link: "#",
     icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
   },
   {
-    label: "CNXT",
-    link: "/cnxt",
-    id: "builder",
+    label: "Lock",
+    link: "#",
+    id: "lock",
+    icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+  },
+  {
+    label: "Search",
+    link: "#",
+    id: "search",
     icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
   },
 ];
-export default function BrowserWindow({
+
+export default function SecureRender({
   namespace,
   onLoad,
   onRefresh,
   onUnlock,
   encryption,
-  ...props
+  srcdoc,
+  allow,
+  sandbox,
 }: Partial<{
   namespace: string;
+  srcdoc: string;
+  allow: string;
   onLoad<T>(): T;
   onRefresh: () => void;
   encryption?: { key: ISEAPair };
   onUnlock: () => void;
-}> &
-  FormProps) {
+  sandbox: string;
+}>) {
   const [loading, setLoading] = React.useState(true);
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
-  let fetcher = useFetcher();
+  const [state, setState] = React.useState<string>();
+  const menuarr = links;
+
   React.useEffect(() => {
     if (iframeRef.current && namespace) {
       let env = (window as any).ENV;
-      console.log(env, "env");
       iframeRef.current.src = namespace;
     }
-  }),
-    [];
+  });
+  React.useEffect(() => {
+    if (iframeRef.current) {
+      iframeRef.current.onload = ({ target }) => {
+        setLoading(false);
+      };
+    }
+  });
+
   return (
     <div className="p-8 w-full h-full flex items-center justify-center">
       <div className="w-full h-full overflow-hidden shadow-lg flex items-start justify-start flex-col border dark:border-gray-800 rounded-lg">
-        <div className="w-full flex items-center justify-start relative p-1 border-b dark:border-gray-800">
-          <div className="p-1 flex items-center justify-center">
-            {/* <div className="bg-red-500 m-1 w-3 h-3 rounded-full" />
-            <div className="bg-yellow-500 m-1 w-3 h-3 rounded-full" />
-            <div className="bg-green-500 m-1 w-3 h-3 rounded-full" /> */}
+        <div className="w-full flex items-center justify-start relative p-1 border-b bg-cnxt_black  dark:border-gray-800">
+          <div className="p-1 flex items-center justify-center"></div>
+          <div className="relative flex items-center px-6 overflow-hidden border-0  h-28 rounded-2xl">
+            <nav className="flex items-center justify-center gap-8">
+              {menuarr?.map(({ link, icon, id, label }, index) => (
+                <>
+                  <Link
+                    to={link}
+                    className="grid w-16 h-16 grid-cols-1 grid-rows-1"
+                  >
+                    <span className="sr-only">{label}</span>
+                    <div
+                      onClick={(e) => {
+                        (
+                          document.querySelector(
+                            `#nav-indicator`
+                          ) as HTMLElement
+                        ).style.transform = `translateX(calc(${96 * index}px))`;
+                      }}
+                      className={`col-[1/1] row-[1/1] flex items-center justify-center w-16 h-16`}
+                    >
+                      <svg
+                        className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-primary-80 transition ease-in-out duration-150"
+                        stroke={"#053c9c"}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d={
+                            icon ??
+                            "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          }
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className={`col-[1/1] row-[1/1] flex items-center justify-center w-16 h-16 transition-opacity duration-300`}
+                      // ${
+                      //   isActive(link)
+                      //     ? "opacity-100 pointer-events-auto"
+                      //     : "opacity-0 pointer-events-none"
+                      // }
+                    ></div>
+                  </Link>
+                </>
+              ))}
+            </nav>
+
+            <div
+              id="nav-indicator"
+              className={`absolute w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4  left-10`}
+            >
+              <div
+                style={{ boxShadow: "0 10px 0 #053c9c" }}
+                className="absolute w-5 h-5 bg-cnxt_black-left-4 bottom-1/2 rounded-br-3xl"
+              ></div>
+              <div
+                style={{ boxShadow: "0 10px 0 #053c9c" }}
+                className="absolute w-5 h-5 bg-cnxt_black-right-4 bottom-1/2 rounded-bl-3xl"
+              ></div>
+            </div>
           </div>
-          <MainMenu links={links} />
           <div className="w-full flex items-center justify-center absolute left-0">
             <Form
               method="post"
-              action={props.action}
-              onSubmit={
-                props.onSubmit
-                  ? props.onSubmit
-                  : ({ preventDefault, currentTarget }) => {
-                      console.log(currentTarget, "FORM_ON_SUBMIT");
-                    }
-              }
               className="text-xs bg-gray-100 dark:bg-gray-900 w-1/2 rounded-lg py-1 flex justify-between items-center"
             >
-              {/* <div className="flex items-center justify-center pl-4">
+              <div className="flex items-center justify-center pl-4">
                 <span className="text-green-500 w-4 h-4 mr-2">
-                  <Lock />
+                  {/* <Lock /> */}
                 </span>
                 <input
                   className=""
                   onChange={({ target }) => {
                     console.log(target.value);
                   }}
+                  placeholder={namespace?.replace(/^\/*\//, "#")}
                 />
               </div>
               <div className="flex pr-4">
-                <span className="text-gray-500 w-4 h-4">
-                  <Refresh />
-                </span>
-              </div> */}
+                <span className="text-gray-500 flex items-center justify-center"></span>
+              </div>
             </Form>
           </div>
         </div>
@@ -137,14 +203,13 @@ export default function BrowserWindow({
             className={`w-full  h-full transition-opacity duration-200 ${
               loading ? "opacity-0" : "opacity-100"
             }`}
+            srcDoc={srcdoc}
             style={{ minWidth: "350px", minHeight: "350px" }}
-            onLoad={({ target }) => {
-              console.log(target, "IFRAME_ON_LOAD");
-              setLoading(false);
-            }}
             allowFullScreen
             referrerPolicy="no-referrer"
-            // sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"
+            sandbox={
+              "allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"
+            }
             allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
           />
           {loading && (

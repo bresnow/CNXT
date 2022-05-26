@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from "remix";
 import { LoadCtx } from "types";
-import BrowserWindow from "~/components/Browser";
+import SecureRender from "~/components/Browser";
 import FormBuilder from "~/components/FormBuilder";
 import { useDeferedLoaderData } from "~/dataloader/lib";
 import { useGunStatic } from "~/lib/gun/hooks";
@@ -28,7 +28,7 @@ function WelcomeCard() {
   return (
     <div className="max-w-4xl mx-auto text-center">
       <h2 className="text-2xl font-extrabold leading-20 text-white sm:text-4xl sm:leading-20">
-        {"#" + namespace + "Services"}
+        {"#" + namespace}
       </h2>
       <p className="mt-3 text-base leading-7 sm:mt-4 text-white">
         {"Services Example"}
@@ -41,9 +41,9 @@ export default function Index() {
   return (
     <Navigation>
       <WelcomeCard />
-      <BrowserWindow namespace="http://survey.fltngmmth.com" />
-      <BrowserWindow namespace="http://file-browser.fltngmmth.com" />
-      <BrowserWindow namespace="http://n8n.fltngmmth.com" />
+      <SecureRender namespace="http://survey.fltngmmth.com" />
+      <SecureRender namespace="http://file-browser.fltngmmth.com" />
+      <SecureRender namespace="http://n8n.fltngmmth.com" />
     </Navigation>
   );
 }

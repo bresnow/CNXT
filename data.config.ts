@@ -39,8 +39,8 @@ export const data = {
             text: `Cryptographically hash tagged namespaces for dynamic content. Peer to peer content management and service discovery.`,
         },
         builder: {
-            page_title: "Remix.GUN | Document Builder Demo ",
-            text: `Build the object by entering the path to the document, the key and value properties. The data object will be saved to the graph and asyncronously rendered. This application is peered to https://${process.env.PEER_DOMAIN}. The same data object will be available there also.`,
+            page_title: "Dynamic Namespace Builder Demo ",
+            text: `Build the namespace meta data . This application is peered to https://${process.env.PEER_DOMAIN}. The same data object will be available there also.`,
         },
     },
 }

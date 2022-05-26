@@ -6,8 +6,10 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { graph } = RemixGunContext(Gun, request);
   let path = params.path;
   if (typeof path === "string") {
+    // path = path.replace(/^\//, ".");
     try {
       let data = await graph.get(path).val();
+      console.log("data", data);
       return json(data);
     } catch (error) {
       return json({ error });

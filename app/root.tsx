@@ -94,14 +94,14 @@ export let handle = {
       icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z",
     },
     {
-      label: "Authentication",
-      link: "/login",
-      id: "login",
+      label: "Namespace Builder",
+      link: "/builder",
+      id: "build",
       icon: "M12.9 14.32a8 8 0 011.41-9.94l-1.42-1.42a6 6 0 00-9.18 9.19l1.42 1.42a8 8 0 01-9.94 1.42zM21.71 11.29A16 16 0 0112.9 20.32l-1.42-1.42a14 14 0 00-19.42-19.42l1.42-1.42a16 16 0 0121.71 11.29z",
     },
     {
-      label: "CNXT",
-      link: "/cnxt",
+      label: "service",
+      link: "/Services",
       id: "builder",
       icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
     },
@@ -117,12 +117,12 @@ export let handle = {
     //   id: "builder",
     //   icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
     // },
-    {
-      label: "Object Builder",
-      link: "/builder",
-      id: "builder",
-      icon: "M19.5 10.5c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4zM4 4h16v2H4zm14 8v-1.5c0-.83-.67-1.5-1.5-1.5.83 0 1.5-.67 1.5-1.5V7a2 2 0 00-2-2h-1v2h2a2 2 0 002-2zM2 17v2h16v-2a2 2 0 00-2-2h-2v2H4a2 2 0 00-2 2z",
-    },
+    // {
+    //   label: "Object Builder",
+    //   link: "/builder",
+    //   id: "builder",
+    //   icon: "M19.5 10.5c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4 4 1.79 4 4zM4 4h16v2H4zm14 8v-1.5c0-.83-.67-1.5-1.5-1.5.83 0 1.5-.67 1.5-1.5V7a2 2 0 00-2-2h-1v2h2a2 2 0 002-2zM2 17v2h16v-2a2 2 0 00-2-2h-2v2H4a2 2 0 00-2 2z",
+    // },
   ],
 };
 export const MainMenu = ({ links }: { links: MenuLinks }) => {

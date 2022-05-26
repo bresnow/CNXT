@@ -16,7 +16,7 @@ import { Card } from "~/components/Card";
 import Display from "~/components/DisplayHeading";
 import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
-import BrowserWindow from "~/components/Browser";
+import SecureRender from "~/components/Browser";
 import { SectionTitle } from ".";
 import { Navigation } from "~/root";
 

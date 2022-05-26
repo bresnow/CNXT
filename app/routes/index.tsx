@@ -13,7 +13,7 @@ import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
 
-import BrowserWindow from "~/components/Browser";
+import SecureRender from "~/components/Browser";
 import React from "react";
 import { Navigation } from "~/root";
 
@@ -69,7 +69,7 @@ export default function Index() {
     <>
       <Navigation>
         <WelcomeCard />
-        <BrowserWindow namespace="/" />
+        <SecureRender namespace="/" />
         <Tag color={"green"} filled={true} label="Positive Green" />
       </Navigation>
     </>

@@ -1,8 +1,11 @@
 import { LoaderFunction } from "remix";
+import got from 'got-cjs'
 import { html } from "remix-utils";
 
-export const loader: LoaderFunction = async () => {
-    const markup = `<!DOCTYPE html>
+export const loader: LoaderFunction = async ({ request }) => {
+	let { body } = await got.get(request.url.replace("api/test", "cnxt"))
+	console.log(body)
+	const markup = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -50,7 +53,7 @@ export const loader: LoaderFunction = async () => {
     })</script>
 
 </html>`
-    const markup2 = `<!DOCTYPE html>
+	const markup2 = `<!DOCTYPE html>
 <html>
 	<head>
     <link rel="canonical" href="https://gun.eco/apps/survey.html" />
@@ -187,5 +190,6 @@ export const loader: LoaderFunction = async () => {
 		</style>
 	</body>
 </html>`
-    return html(markup)
+	return html(body)
 };
+
