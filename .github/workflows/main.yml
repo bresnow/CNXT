@@ -1,14 +1,14 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CNXT DEV
 
 on:
   push:
     branches:
-      - main
+      - cnxt
   pull_request:
     branches:
-      - main
+      - cnxt
 
   workflow_dispatch:
 
@@ -23,9 +23,12 @@ jobs:
         run: "(test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist, skipping step"
 
       - name: Clone Repository
+        env:
+          BRANCH: cnxt
+          DIR: ~/cnxt-dev
         run: |
-          git clone https://github.com/bresnow/remix.gun-react-18-streaming ~/remix_gun
-          cd ~/remix_gun
+          git clone --branch ${{env.BRANCH}} https://github.com/bresnow/remix.gun-react-18-streaming ${{env.DIR}}
+          cd ${{env.DIR}}
 
   docker:
     runs-on: self-hosted
@@ -39,20 +42,36 @@ jobs:
           docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
           docker push bresnow/rmx-gun-stack:${{ env.VERSION }}
 
-      - name: Deploy Docker Swarm Script
+      - name: Deploy Via Docker Swarm
         env:
           VERSION: 0.1.23
+          PUB: ${{secrets.PUB}}
+          PRIV: ${{secrets.PRIV}}
+          EPUB: ${{secrets.EPUB}}
+          EPRIV: ${{secrets.EPRIV}}
+          PEER_DOMAIN: rmx-gun.fltngmmth.com
+          DOMAIN: dev.cnxt.app
+          CLIENT_PORT: 3335
+
         run: |
           export VERSION=${{ env.VERSION }}
-          docker service update remix-gun_fltngmmth --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
-          docker service update remix-gun_peer --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
+          docker service create --image bresnow/rmx-gun-stack:${{ env.VERSION }} --replicas 1 \
+          --label traefik.enable=true --label traefik.docker.network=traefik-public --label traefik.constraint-label=traefik-public \
+          --label traefik.http.routers.cnxt-dev-http.rule=Host(`${{env.DOMAIN}}`) --label traefik.http.routers.cnxt-dev-http.entrypoints=http \
+          --label traefik.http.routers.cnxt-dev-http.middlewares=https-redirect --label traefik.http.routers.cnxt-dev-https.rule=Host(`${{env.DOMAIN}}`) \
+          --label traefik.http.routers.cnxt-dev-https.entrypoints=https --label traefik.http.routers.cnxt-dev-https.tls.certresolver=http --label traefik.http.services.cnxt-dev.loadbalancer.server.port=${{env.CLIENT_PORT}} \
+          --env PUB=${{env.PUB}} --env PRIV=${{env.PRIV}} --env EPUB=${{env.EPUB}} --env EPRIV=${{env.EPRIV}} --env PEER_DOMAIN=${{env.PEER_DOMAIN}} --env DOMAIN=${{env.DOMAIN}} \
+          --network traefik-public cnxt-dev
+
       - name: "Logs"
         run: |
-          docker service logs remix-gun_fltngmmth
-      #          # docker stack rm rmx-gun
+          docker service logs cnxt-dev
+
       - name: Clean Up
+        env:
+          DIR: ~/cnxt-dev
         run: |
-          rm -rf ~/remix_gun
+          rm -rf ${{env.DIR}}
           docker image prune --force
           docker volume prune --force
           docker container prune --force
