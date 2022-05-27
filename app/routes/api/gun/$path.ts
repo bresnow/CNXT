@@ -8,16 +8,16 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   if (typeof path === "string") {
     let url = new URL(request.url);
     let nodePath = url.searchParams.get("path");
-    console.log(nodePath, "url");
+
     try {
-      let data = await graph.get((nodePath as string).replace("/", ".").replace("#", "").trim()).val();
+      let data = await graph.get((nodePath as string).replace("/", ".")).val();
       console.log("data", data);
       return json(data);
     } catch (error) {
       return json({ error });
     }
   }
-  return json({ err: "node path invalid" });
+  return json({ err: "invalid path" });
 };
 
 

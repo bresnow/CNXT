@@ -1,11 +1,14 @@
 import { createContext, useContext } from "react";
 import type { FC } from "react";
 import type { IGun } from "gun";
+import { Options } from "./browser";
 
 export type ClientContext = {
-  load: (route: string) => Promise<Response>;
+  load: Load;
 };
-
+interface Load {
+  (route: string, options?: Options): Promise<Response & any>;
+}
 let context = createContext<ClientContext | undefined>(undefined);
 
 export let DataloaderProvider = ({

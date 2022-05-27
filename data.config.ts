@@ -2,8 +2,8 @@ export const data = {
     pages: {
         root: {
             meta: {
-                title: "Remix.GUN | Boilerplate",
-                description: `P2P content management system using Remix.run and GunDB. Styles with Tailwind.css`,
+                title: "CNXT Dynamic Namespaces Demo",
+                description: `Peer-to-peer tagged domains. Development by FLTNGMMTH`,
                 author: "Bresnow",
                 keywords: "floating, mammoth, FLTNGMMTH, Bresnow, development, server, Remix.run, GunDB, gun",
                 "og:type": "website",
@@ -35,7 +35,7 @@ export const data = {
         },
         cnxt: {
             page_title: "CNXT Dynamic Namespaces",
-            src: "/images/cnxt/splash.png",
+            src: "/images/splash.png",
             text: `Cryptographically hash tagged namespaces for dynamic content. Peer to peer content management and service discovery.`,
         },
         builder: {

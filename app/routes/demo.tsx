@@ -1,10 +1,9 @@
-import { DetailedHTMLProps, ScriptHTMLAttributes, Suspense } from "react";
+import { Suspense } from "react";
 import Gun from "gun";
 import {
   ActionFunction,
   json,
   LoaderFunction,
-  useLoaderData,
   useActionData,
   useCatch,
 } from "remix";
@@ -18,6 +17,7 @@ import invariant from "@remix-run/react/invariant";
 import React from "react";
 import { Navigation } from "~/root";
 import { InputTextProps } from "~/components/InputText";
+import CNXTLogo from "~/components/svg/logos/CNXT";
 
 type ErrObj = {
   path?: string;
@@ -125,9 +125,9 @@ export default function BuilderRoute() {
     invariant(path, "path is undefined");
     gun.path(path).put(ackData);
   });
-  let buildLoader = useDeferedLoaderData<any>(
-    `/api/gun/q?path=${path ?? "pages/builder"}`
-  );
+  let buildLoader = useDeferedLoaderData<any>(`/api/gun`, {
+    params: { path: path || "pages.builder" },
+  });
   let formData = new FormData();
   let key = formData.get("key");
   React.useEffect(() => {
@@ -142,20 +142,16 @@ export default function BuilderRoute() {
   return (
     <ObjectBuilder.Form
       className="grid grid-cols-1  gap-3 px-10"
-      encType="multipart/form-data"
-      onSubmit={({ target }) => {
-        console.log("sent");
-      }}
       method={"post"}
     >
-      <Navigation search={searchProps}>
+      <Navigation search={searchProps} logo={<CNXTLogo />}>
         <Suspense
           fallback={
             <div className="grid grid-cols-1 gap-4 p-4">
               <div className="col-span-1">
                 <h5>Cached Data From Radisk/ IndexedDB</h5>
-                {buildLoader.cachedData &&
-                  Object.entries(buildLoader.cachedData).map((val) => {
+                {buildLoader.cached &&
+                  Object.entries(buildLoader.cached).map((val) => {
                     let [key, value] = val;
                     if (key === "_") {
                       return;

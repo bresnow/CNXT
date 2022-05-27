@@ -190,6 +190,7 @@ export function Navigation({
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         <div className="relative flex items-center px-6 overflow-hidden bg-cnxt_black border-0  h-28 rounded-b-2xl">
           <nav className="flex items-center justify-center gap-8">
+            {logo}
             {menuarr?.map(({ link, icon, id, label }, index) => (
               <Link
                 key={id}
@@ -240,7 +241,7 @@ export function Navigation({
 
           <div
             id="indicator"
-            className={`absolute w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4  left-11`}
+            className={`absolute left-40 w-6 h-8 transition-all duration-300 bg-cnxt_blue rounded-full -bottom-4 `}
           >
             <div
               style={{ boxShadow: "0 10px 0 #053c9c" }}
@@ -252,7 +253,7 @@ export function Navigation({
             ></div>
           </div>
           {search && (
-            <div className="w-1/2 ml-8  group-hover transition-all duration-350 bg-primary-80 hover:bg-primary-70 rounded-md flex-wrap  focus:shadow-md ring-1 ring-sky-500">
+            <div className="w-1/2 ml-8 hidden md:flex group-hover transition-all duration-350 bg-primary-80 hover:bg-primary-70 rounded-md flex-wrap  focus:shadow-md ring-1 ring-sky-500">
               <InputText {...search} />
             </div>
           )}

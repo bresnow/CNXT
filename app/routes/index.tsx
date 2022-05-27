@@ -16,6 +16,8 @@ import Display from "~/components/DisplayHeading";
 import SecureRender from "~/components/Browser";
 import React from "react";
 import { Navigation } from "~/root";
+import CNXTLogo from "~/components/svg/logos/CNXT";
+import FormBuilder from "~/components/FormBuilder";
 
 const noop = () => {};
 type ErrObj = {
@@ -33,8 +35,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   user.auth(ENV.APP_KEY_PAIR);
   let data;
   try {
-    // data = await graph.get("pages.index").val();
-    data = await user.get("pages").get("index").then();
+    data = await user.get("pages").get("cnxt").then();
   } catch (error) {
     data = { error };
   }
@@ -65,14 +66,16 @@ function WelcomeCard() {
 }
 
 export default function Index() {
+  const info = FormBuilder();
   return (
-    <>
-      <Navigation>
+    <info.Form
+      className="grid grid-cols-1 bg-slate-900 gap-3 px-10"
+      method={"post"}
+    >
+      <Navigation logo={<CNXTLogo />}>
         <WelcomeCard />
-        {/* <SecureRender namespace="/" /> */}
-        {/* <Tag color={"green"} filled={true} label="Positive Green" /> */}
       </Navigation>
-    </>
+    </info.Form>
   );
 }
 export function AppWindow() {
@@ -105,9 +108,7 @@ export function ImageCard({ src }: { src?: string }) {
           />
           <div className="absolute bg-gradient-to-b bg-opacity-60 from-transparent to-black w-full p-4 bottom-0">
             <div className="flex justify-between">
-              <p className="text-sm text-gray-300 flex items-center">
-                {/* 18/12/1993 */}
-              </p>
+              <p className="text-sm text-gray-300 flex items-center"></p>
               <p className="text-sm text-gray-300 flex items-center">
                 <svg
                   width="10"
