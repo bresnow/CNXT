@@ -50,15 +50,15 @@ jobs:
           EPUB: ${{secrets.EPUB}}
           EPRIV: ${{secrets.EPRIV}}
           PEER_DOMAIN: rmx-gun.fltngmmth.com
-          DOMAIN: dev.cnxt.app
+          DOMAIN: `dev.cnxt.app`
           CLIENT_PORT: 3335
 
         run: |
           export VERSION=${{ env.VERSION }}
           docker service create --image bresnow/rmx-gun-stack:${{ env.VERSION }} --replicas 1 \
           --label traefik.enable=true --label traefik.docker.network=traefik-public --label traefik.constraint-label=traefik-public \
-          --label traefik.http.routers.cnxt-dev-http.rule=Host(`${{env.DOMAIN}}`) --label traefik.http.routers.cnxt-dev-http.entrypoints=http \
-          --label traefik.http.routers.cnxt-dev-http.middlewares=https-redirect --label traefik.http.routers.cnxt-dev-https.rule=Host(`${{env.DOMAIN}}`) \
+          --label traefik.http.routers.cnxt-dev-http.rule=Host(${{env.DOMAIN}}) --label traefik.http.routers.cnxt-dev-http.entrypoints=http \
+          --label traefik.http.routers.cnxt-dev-http.middlewares=https-redirect --label traefik.http.routers.cnxt-dev-https.rule=Host(${{env.DOMAIN}}) \
           --label traefik.http.routers.cnxt-dev-https.entrypoints=https --label traefik.http.routers.cnxt-dev-https.tls.certresolver=http --label traefik.http.services.cnxt-dev.loadbalancer.server.port=${{env.CLIENT_PORT}} \
           --env PUB=${{env.PUB}} --env PRIV=${{env.PRIV}} --env EPUB=${{env.EPUB}} --env EPRIV=${{env.EPRIV}} --env PEER_DOMAIN=${{env.PEER_DOMAIN}} --env DOMAIN=${{env.DOMAIN}} \
           --network traefik-public cnxt-dev
