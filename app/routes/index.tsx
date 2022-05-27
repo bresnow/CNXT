@@ -18,6 +18,7 @@ import React from "react";
 import { Navigation } from "~/root";
 import CNXTLogo from "~/components/svg/logos/CNXT";
 import FormBuilder from "~/components/FormBuilder";
+import FMLogo from "~/components/svg/logos/FltngMmth";
 
 const noop = () => {};
 type ErrObj = {
@@ -72,7 +73,7 @@ export default function Index() {
       className="grid grid-cols-1 bg-slate-900 gap-3 px-10"
       method={"post"}
     >
-      <Navigation logo={<CNXTLogo />}>
+      <Navigation logo={<FMLogo />}>
         <WelcomeCard />
       </Navigation>
     </info.Form>
