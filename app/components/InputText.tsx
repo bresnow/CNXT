@@ -7,6 +7,8 @@ export interface InputTextProps {
   icon?: JSX.Element;
   helper?: string | JSX.Element;
   placeholder?: string;
+  value?: string;
+
   name?: string;
   disabled?: boolean;
   square?: boolean;
@@ -29,7 +31,7 @@ const InputText = (props: InputTextProps) => {
         <label htmlFor={props.id} className="text-gray-700">
           {props.label}{" "}
           {props.required && (
-            <span className="text-red-500 required-dot">*</span>
+            <span className="text-cnxt_red required-dot">*</span>
           )}
         </label>
       )}
@@ -38,7 +40,7 @@ const InputText = (props: InputTextProps) => {
           className={`${
             props.square ? "" : "rounded-l-md"
           } inline-flex  items-center px-2  bg-transparent border-0 text-gray-500 ${
-            props.shadow && !props.error && "shadow-sm"
+            props.shadow && !props.error && "shadow-md"
           }text-sm`}
         >
           {props.helper || props.icon}
@@ -48,7 +50,7 @@ const InputText = (props: InputTextProps) => {
         <input
           id={props.id}
           disabled={props.disabled}
-          className={`${props.error ? "ring-red-500 ring-2" : ""}${
+          className={`${props.error ? "ring-cnxt_red ring-2" : ""}${
             props.helper || props.icon
               ? !props.square
                 ? " rounded-r-lg"
@@ -58,9 +60,10 @@ const InputText = (props: InputTextProps) => {
               : ""
           } ${
             props.className ?? "bg-zinc-500 pl-3 pr-10 h-10 rounded-md w-full"
-          } ${!props.error ? "shadow-xl" : ""} `}
+          } ${props.shadow && !props.error ? "shadow-md" : ""} `}
           type={props.type || "text"}
           name={props.name}
+          defaultValue={props.value}
           placeholder={props.placeholder}
           aria-invalid={props.error ? true : false}
           aria-describedby={props.error}
@@ -69,7 +72,7 @@ const InputText = (props: InputTextProps) => {
         <textarea
           id={props.id}
           disabled={props.disabled}
-          className={`${props.error ? "ring-red-500 ring-2" : ""}${
+          className={`${props.error ? "ring-cnxt_red ring-2" : ""}${
             props.helper || props.icon
               ? !props.square
                 ? " rounded-r-lg"
@@ -81,6 +84,7 @@ const InputText = (props: InputTextProps) => {
             props.className ??
             "flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
           }`}
+          defaultValue={props.value}
           name={props.name}
           placeholder={props.placeholder}
           aria-invalid={props.error ? true : false}

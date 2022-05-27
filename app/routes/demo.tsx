@@ -16,6 +16,8 @@ import { useGunStatic } from "~/lib/gun/hooks";
 import FormBuilder from "~/components/FormBuilder";
 import invariant from "@remix-run/react/invariant";
 import React from "react";
+import { Navigation } from "~/root";
+import { InputTextProps } from "~/components/InputText";
 
 type ErrObj = {
   path?: string;
@@ -42,14 +44,20 @@ export let action: ActionFunction = async ({ request, context }) => {
   let { formData } = RemixGunContext(Gun, request);
   let error: ErrObj = {};
   try {
-    let { prop, value, path } = await formData();
-    console.log(path, prop, value, "prop, value");
-
+    let { prop, _value, path } = await formData();
+    console.log(prop, _value, "prop, value");
+    if (!path) {
+      error.path = "Namespace is required";
+    }
     if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(prop)) {
       error.key =
         "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
     }
-    if (typeof value !== "string" || value.length < 1 || value.length > 240) {
+    if (
+      typeof _value !== "string" ||
+      _value.length < 1 ||
+      _value.length > 240
+    ) {
       error.value =
         "Property values must be greater than 1 and less than 240 characters";
     }
@@ -57,7 +65,7 @@ export let action: ActionFunction = async ({ request, context }) => {
     if (Object.values(error).length > 0) {
       return json<LoadError>({ error });
     }
-    return json({ path, data: { [prop]: value } });
+    return json({ path, data: { [prop]: _value } });
   } catch (err) {
     error.form = err as string;
     return json<LoadError>({ error });
@@ -84,7 +92,10 @@ function SuspendedTest({ getData }: { getData(): Record<string, any> }) {
                 return;
               }
               return (
-                <div className="flex flex-row items-center space-y-5 justify-center space-x-5">
+                <div
+                  key={key}
+                  className="flex flex-row items-center space-y-5 justify-center space-x-5"
+                >
                   <div className="w-1/3 p-5 rounded-md ">{key}</div>
                   <div className="w-1/2 bg-gray-300 p-5 rounded-md flex-wrap">
                     {`${value}`}
@@ -114,92 +125,95 @@ export default function BuilderRoute() {
     invariant(path, "path is undefined");
     gun.path(path).put(ackData);
   });
-  let testLoader = useDeferedLoaderData<any>(`/api/gun/pages.builder`);
-  let { text, page_title } = useLoaderData();
+  let buildLoader = useDeferedLoaderData<any>(
+    `/api/gun/q?path=${path ?? "pages/builder"}`
+  );
+  let formData = new FormData();
+  let key = formData.get("key");
+  React.useEffect(() => {
+    key ? console.log(key) : null;
+  }, [key]);
 
+  let searchProps: InputTextProps = {
+    value: path,
+    error: error?.path,
+    placeholder: "#Namespace",
+  };
   return (
-    <>
-      <Suspense
-        fallback={
-          <div className="grid grid-cols-1 gap-4 p-4">
-            <div className="col-span-1">
-              <h5>Cached Data From Radisk/ IndexedDB</h5>
-              {testLoader.cachedData &&
-                Object.entries(testLoader.cachedData).map((val) => {
-                  let [key, value] = val;
-                  if (key === "_") {
-                    return;
-                  }
-                  return (
-                    <div className="flex animate-pulse flex-row items-center space-y-5 justify-center space-x-5">
-                      <div className="w-1/3 p-5 rounded-md ">{key}</div>
-                      <div className="w-1/2 bg-gray-300 p-5 rounded-md flex-wrap">
-                        {`${value}`}
+    <ObjectBuilder.Form
+      className="grid grid-cols-1  gap-3 px-10"
+      encType="multipart/form-data"
+      onSubmit={({ target }) => {
+        console.log("sent");
+      }}
+      method={"post"}
+    >
+      <Navigation search={searchProps}>
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 gap-4 p-4">
+              <div className="col-span-1">
+                <h5>Cached Data From Radisk/ IndexedDB</h5>
+                {buildLoader.cachedData &&
+                  Object.entries(buildLoader.cachedData).map((val) => {
+                    let [key, value] = val;
+                    if (key === "_") {
+                      return;
+                    }
+                    return (
+                      <div
+                        key={key}
+                        className="flex animate-pulse flex-row items-center space-y-5 justify-center space-x-5"
+                      >
+                        <div className="w-1/3 p-5 rounded-md ">{key}</div>
+                        <div className="w-1/2 bg-gray-300 p-5 rounded-md flex-wrap">
+                          {`${value}`}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
+            </div>
+          }
+        >
+          <SuspendedTest getData={buildLoader.load} />
+        </Suspense>
+
+        <div className="col-span-1">
+          <div className="flex flex-row items-center space-y-5 justify-center space-x-5">
+            <div className="w-1/3 p-5 rounded-md ">
+              {" "}
+              <ObjectBuilder.Input
+                type="text"
+                required
+                name="prop"
+                label={"Key"}
+                shadow={true}
+                className={
+                  "w-full bg-primary-80 hover:bg-primary-70 py-2 focus:outline-none  rounded-md flex"
+                }
+                error={error?.key}
+              />
+            </div>
+            <div className="w-1/2 bg-primary-80  hover:bg-primary-70 rounded-md flex-wrap">
+              <ObjectBuilder.Input
+                type="text"
+                required
+                name="_value"
+                label={"Value"}
+                shadow={true}
+                textArea={true}
+                className={
+                  "w-full bg-primary-80 hover:bg-primary-70 focus:outline-none mb-5 flex"
+                }
+                error={error?.value}
+              />
             </div>
           </div>
-        }
-      >
-        <SuspendedTest getData={testLoader.load} />
-      </Suspense>
-
-      <ObjectBuilder.Form
-        className="grid grid-cols-1 gap-4 p-4"
-        method={"post"}
-      >
-        <div className="flex flex-row items-center space-y-5 justify-center space-x-5">
-          <ObjectBuilder.Input
-            type="text"
-            required
-            name="prop"
-            label={"Key"}
-            className={"w-full bg-gray-300 py-2 px-8 rounded-md flex"}
-            error={error?.key}
-          />
-          <ObjectBuilder.Input
-            type="text"
-            required
-            name="value"
-            label={"Value"}
-            textArea={true}
-            className={"w-full bg-gray-300 py-5 px-8 rounded-md flex"}
-            error={error?.value}
-          />
         </div>
         <ObjectBuilder.Submit label={"Submit"} />
-      </ObjectBuilder.Form>
-
-      {/* <script
-        key={"USE_FX"}
-        dangerouslySetInnerHTML={{
-          __html: `
-            ${jsesc(
-              (function () {
-                var gun = new Gun("http://localhost:3335/gun");
-                gun.on("hi", function (peer) {
-                  // console.log("hi", peer);
-                });
-                gun.on("bye", function (peer) {
-                  // console.log("bye", peer);
-                });
-                gun.on("put", function (data) {
-                  // console.log("put", data);
-                });
-                gun.on("get", function (data) {
-                  // console.log("get", data);
-                });
-                gun.on("auth", function (data) {
-                  console.log("auth", data);
-                });
-              })()
-            )}
-            `,
-        }}
-      /> */}
-    </>
+      </Navigation>
+    </ObjectBuilder.Form>
   );
 }
 

@@ -1,7 +1,22 @@
-import React from "react";
-import { Form } from "remix";
+import React, { FormEventHandler } from "react";
+import { Form, useLocation } from "remix";
 import { log } from "~/lib/console-utils";
 import InputText, { InputTextProps } from "./InputText";
+function isHtmlElement(object: any) {
+  return object != null && typeof object.tagName === "string";
+}
+
+function isButtonElement(object: any) {
+  return isHtmlElement(object) && object.tagName.toLowerCase() === "button";
+}
+
+function isFormElement(object: any) {
+  return isHtmlElement(object) && object.tagName.toLowerCase() === "form";
+}
+
+function isInputElement(object: any) {
+  return isHtmlElement(object) && object.tagName.toLowerCase() === "input";
+}
 interface ButtonProps {
   rounded?: boolean;
   color?:
@@ -39,7 +54,7 @@ const colors = {
 };
 const FormBuilder = () => {
   return {
-    Form({
+    Form<T>({
       children,
       ariaDescribed,
       method,
@@ -50,7 +65,7 @@ const FormBuilder = () => {
       replace,
       onSubmit,
     }: {
-      children: React.PropsWithChildren<any>;
+      children: React.PropsWithChildren<T>;
       ariaDescribed?: string;
       method?: "get" | "post";
       action?: string;
@@ -58,28 +73,47 @@ const FormBuilder = () => {
       reloadDocument?: boolean;
       encType?: "multipart/form-data" | "application/x-www-form-urlencoded";
       replace?: boolean;
-      onSubmit?: () => void;
+      onSubmit?: FormEventHandler<HTMLFormElement>;
     }) {
-      // const childMap = React.Children.map(children, (child) => {
-      //   let clone = React.cloneElement(child, {});
-      //   return clone;
-      // });
+      let { pathname } = useLocation();
       return (
-        <Form
-          method={method ?? "post"}
-          action={action && action}
-          aria-describedby={ariaDescribed}
-          reloadDocument={reloadDocument}
-          encType={encType ? encType : "application/x-www-form-urlencoded"}
-          replace={replace}
-          onSubmit={onSubmit}
-          className={
-            className ??
-            "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
-          }
-        >
-          {children}
-        </Form>
+        <>
+          {encType === "multipart/form-data" ? (
+            <form
+              encType={encType}
+              method={method ?? "post"}
+              action={action ?? pathname}
+              aria-describedby={ariaDescribed}
+              onSubmit={({ target }) => {
+                if (target instanceof HTMLFormElement) {
+                  const formData = new FormData(target);
+                  console.log(formData, "Form");
+                }
+              }}
+              className={
+                className ??
+                "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
+              }
+            >
+              {children}
+            </form>
+          ) : (
+            <Form
+              method={method ?? "post"}
+              action={action}
+              aria-describedby={ariaDescribed}
+              reloadDocument={reloadDocument}
+              replace={replace}
+              onSubmit={onSubmit}
+              className={
+                className ??
+                "flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto"
+              }
+            >
+              {children}
+            </Form>
+          )}
+        </>
       );
     },
     Input(prop: InputTextProps) {

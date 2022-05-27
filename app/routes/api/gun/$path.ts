@@ -3,12 +3,14 @@ import { LoadCtx } from "types";
 import Gun from "gun";
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph } = RemixGunContext(Gun, request);
+  let { graph, gun } = RemixGunContext(Gun, request);
   let path = params.path;
   if (typeof path === "string") {
-    // path = path.replace(/^\//, ".");
+    let url = new URL(request.url);
+    let nodePath = url.searchParams.get("path");
+    console.log(nodePath, "url");
     try {
-      let data = await graph.get(path).val();
+      let data = await graph.get((nodePath as string).replace("/", ".").replace("#", "").trim()).val();
       console.log("data", data);
       return json(data);
     } catch (error) {

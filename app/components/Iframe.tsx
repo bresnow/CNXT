@@ -113,7 +113,7 @@ const Iframe: ComponentType<IIframe> = ({
     styles: styles || null,
     name: name || null,
     className: className || null,
-    referrerpolicy: referrerpolicy || null,
+    referrerPolicy: referrerpolicy || null,
     title: title || null,
     allow: allow || null,
     id: id || null,

@@ -5,9 +5,8 @@ import { errorCheck } from "./lib/utils/helpers";
 import { redirect } from "remix";
 import { Params } from "react-router";
 import { getDomain } from "./server";
-import { log } from "./lib/console-utils";
-import { parseJSON } from "./lib/parseJSON";
 import { unprocessableEntity } from "remix-utils";
+import objectAssign from "object-assign";
 export function RemixGunContext(Gun: IGun, request: Request) {
     // log((req), "Request")
     const ENV = {
@@ -56,48 +55,49 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     const SEA = Gun.SEA
     const pair = SEA.pair, encrypt = SEA.encrypt, decrypt = SEA.decrypt, sign = SEA.sign, verify = SEA.verify, secret = SEA.secret, certify = SEA.certify;
 
-    async function keyPairAuth(pair: ISEAPair) {
-        let session = await getSession(request.headers.get("Cookie") ?? undefined);
-        return new Promise((resolve, reject) => gun.user().auth(pair, (ack) => {
-            if (errorCheck(ack)) {
-                let err = (ack as any).err as string
-                reject(err)
-            } else {
-                let sea = (ack as any).sea as ISEAPair
-                let userInfo = (ack as any).put as GunUser
-                session.set(`user_info`, JSON.stringify(userInfo))
-                session.set(`key_pair`, sea)
-                resolve(userInfo)
-            }
-        }))
+    async function keypair(pair?: ISEAPair) {
+        let error: { message: string | undefined } = { message: undefined }
+        let session = await getSession();
+        let sessionKeys = session.get('key_pair')
+        if (!pair && sessionKeys) {
+            pair = sessionKeys
+        }
+        if (!pair && sessionKeys) {
+            error.message = 'No keys provided'
+            return { error }
+        }
+        return pair && { user: gun.user().auth(pair) }
     }
     /**
      * authenticate with username and password
      * If alias is available it automaticatically creates a new user... likewise reasoning for login
      */
     async function credentials(alias: string, password: string) {
-        let session = await getSession(request.headers.get("Cookie"));
-        return new Promise((resolve, reject) => gun.user().auth(alias, password, async (ack) => {
-            if ((await aliasAvailable(alias))) {
-                try {
-                    let signUp = await createUser(alias, password)
-                    resolve(signUp)
-                } catch (error) {
-                    reject(error)
+        let session = await getSession();
+        if ((await aliasAvailable(alias))) {
+            try {
+                await createUser(alias, password)
+            } catch (error) {
+                return { error }
+            }
+        }
+        return {
+            user: gun.user().auth(alias, password, (ack) => {
+                if (Object.getOwnPropertyNames(ack).includes('sea')) {
+                    let sea = (ack as any).sea as ISEAPair
+                    let userInfo = (ack as any).put as GunUser
+                    session.set(`user_info`, userInfo)
+                    session.set(`key_pair`, sea)
                 }
-            }
-            if (Object.getOwnPropertyNames(ack).includes('sea')) {
-                let sea = (ack as any).sea as ISEAPair
-                let userInfo = (ack as any).put as GunUser
-                session.set(`user_info`, userInfo)
-                session.set(`key_pair`, sea)
-                resolve({ alias: userInfo.alias, pub: userInfo.pub, epub: userInfo.epub });
-            }
-            if (errorCheck(ack)) {
-                let err = (ack as any).err as string
-                reject(err)
-            }
-        }))
+                console.log(session.get('user_info'))
+                console.log(session.get('key_pair'))
+                if (errorCheck(ack)) {
+                    let err = (ack as any).err as string
+                    console.error(err)
+                }
+            })
+            ,
+        }
     }
     /**
      * 
@@ -220,9 +220,17 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         gunOpts,
         gun,
         graph,
-        user: { keyPairAuth, credentials, logout },
+        seaAuth: { keypair, credentials, logout },
         formData: async () => {
-            let values: Record<string, FormDataEntryValue>
+            let values: Record<string, string> | Record<string, FormDataEntryValue>
+            if (request.headers.get("Content-Type") === "application/json") {
+                values = Object.fromEntries(await request.json())
+            }
+            console.log(request.headers.get("Content-Type") === "application/json", "application/json")
+            console.log(request.headers.get("Content-Type") === "multipart/form-data", "multipart/form-data")
+            console.log(request.headers.get("Content-Type") === "application/x-www-form-urlencoded", "application/x-www-form-urlencoded")
+
+            values = Object.fromEntries(await request.formData())
             let obj: Record<string, string> = {}
             return new Promise((resolve, reject) => {
                 for (const prop in values) {

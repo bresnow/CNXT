@@ -1,4 +1,4 @@
-import type { GunOptions, IGun, IGunChain, IGunInstance } from "gun/types";
+import type { GunOptions, IGun, IGunChain, IGunInstance, IGunUserInstance } from "gun/types";
 import type { ISEAPair } from "gun/types";
 import type { Params } from "react-router";
 import type { ServerResponse } from "http";
@@ -21,11 +21,24 @@ export interface ChainCtx {
     options: (peers: string | string[], remove?: boolean) => any,
 
 }
-export interface UserAuth {
-    keyPairAuth: (pair: ISEAPair) => Promise<unknown>;
-    credentials: (alias: string, password: string) => Promise<unknown>;
-    logout(): Promise<Response>
 
+export interface CredentialsAuth {
+    (alias: string, password: string): Promise<{
+        user: IGunUserInstance;
+    }>
+    (alias: string, password: string): Promise<{
+        error: string;
+    }>
+}
+export interface Keydentials {
+    (pair?: ISEAPair | undefined): Promise<{ user?: undefined; }>
+    (pair?: ISEAPair | undefined): Promise<{ error: { message: string | undefined; }; }>
+}
+
+export interface SEAAuth {
+    keypair: Keydentials
+    logout(): Promise<Response>
+    credentials: CredentialsAuth;
 }
 
 export type LoadCtx = { RemixGunContext: RmxGunCtx, res: ServerResponse }
@@ -44,7 +57,7 @@ export interface RmxGunCtx {
         };
         gun: IGunInstance;
         graph: ChainCtx;
-        user: UserAuth
+        seaAuth: SEAAuth
         formData: () => Promise<Record<string, string>>;
     }
     createToken: (sessionKey?: string) => Promise<string>,
