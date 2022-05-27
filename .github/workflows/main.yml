@@ -50,7 +50,7 @@ jobs:
           EPUB: ${{secrets.EPUB}}
           EPRIV: ${{secrets.EPRIV}}
           PEER_DOMAIN: rmx-gun.fltngmmth.com
-          DOMAIN: `dev.cnxt.app`
+          DOMAIN: dev.cnxt.app
           CLIENT_PORT: 3335
 
         run: |
