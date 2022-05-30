@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
@@ -9,50 +7,44 @@ on:
   pull_request:
     branches:
       - main
-
   workflow_dispatch:
 
+env:
+  STACK_NAME: remix-gun
+  IMAGE: rmx-gun-stack
+  DOCKER_REGISTRY: bresnow
+  VERSION: 0.1.25
+
 jobs:
-  build:
+  docker_build:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Check for exisiting directory
-        run: "(test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist, skipping step"
-
-      - name: Clone Repository
-        run: |
-          git clone https://github.com/bresnow/remix.gun-react-18-streaming ~/remix_gun
-          cd ~/remix_gun
-
-  docker:
-    runs-on: self-hosted
-
-    steps:
-      - name: Build Docker Image & Push to Registry
+      - uses: actions/checkout@v3
+      - name: Build Docker Image & Push to Github Registry
         env:
-          VERSION: 0.1.241
-
+          GH_REGISTRY: ghcr.io/bresnow
         run: |
-          docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
-          docker push bresnow/rmx-gun-stack:${{ env.VERSION }}
+          docker build -t ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
+          docker push ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
 
-      - name: Deploy Docker Swarm Script
-        env:
-          VERSION: 0.1.241
+      - name: Build Docker Image & Push to Docker registry
+        run: |
+          docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
+          docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+
+      - name: Update Docker Swarm
         run: |
           export VERSION=${{ env.VERSION }}
-          docker service update remix-gun_fltngmmth --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
-          docker service update remix-gun_peer --image=bresnow/rmx-gun-stack:${{ env.VERSION }}
+          docker service update ${{env.STACK_NAME}}_fltngmmth --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          docker service update ${{env.STACK_NAME}}_peer --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+
       - name: "Logs"
         run: |
-          docker service logs remix-gun_fltngmmth
-      #          # docker stack rm rmx-gun
+          docker service logs ${{env.STACK_NAME}}_fltngmmth
+
       - name: Clean Up
         run: |
-          rm -rf ~/remix_gun
           docker image prune --force
           docker volume prune --force
           docker container prune --force
