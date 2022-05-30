@@ -2,8 +2,8 @@ export const data = {
     pages: {
         root: {
             meta: {
-                title: "CNXT Dynamic Namespaces Demo",
-                description: `Peer-to-peer tagged domains. Development by FLTNGMMTH`,
+                title: "Remix.GUN | Boilerplate",
+                description: `Developed by Bresnow for FLTNGMMTH + XDesk`,
                 author: "Bresnow",
                 keywords: "floating, mammoth, FLTNGMMTH, Bresnow, development, server, Remix.run, GunDB, gun",
                 "og:type": "website",
