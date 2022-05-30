@@ -545,12 +545,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   position: sticky;
 }
 
-.-bottom-4 {
-  bottom: -1rem;
+.left-40 {
+  left: 10rem;
 }
 
-.left-11 {
-  left: 2.75rem;
+.-bottom-4 {
+  bottom: -1rem;
 }
 
 .bottom-1\/2 {
@@ -603,26 +603,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .left-2 {
   left: 0.5rem;
-}
-
-.-left-36 {
-  left: -9rem;
-}
-
-.-right-36 {
-  right: -9rem;
-}
-
-.right-36 {
-  right: 9rem;
-}
-
-.left-36 {
-  left: 9rem;
-}
-
-.left-40 {
-  left: 10rem;
 }
 
 .z-0 {
@@ -1399,19 +1379,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
-.bg-gray-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
-}
-
-.bg-slate-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-}
-
 .bg-slate-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
+
+.bg-gray-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-60 {
@@ -2155,12 +2130,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(26 32 44 / var(--tw-bg-opacity));
 }
 
-@media (min-width: 480px) {
-  .xs\:hidden {
-    display: none;
-  }
-}
-
 @media (min-width: 640px) {
   .sm\:mx-auto {
     margin-left: auto;
@@ -2177,10 +2146,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .sm\:grid {
     display: grid;
-  }
-
-  .sm\:hidden {
-    display: none;
   }
 
   .sm\:h-15 {

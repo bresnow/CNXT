@@ -1,6 +1,6 @@
-import { SVGProps } from 'react';
+import { SVGProps } from "react";
 
-const BDStackLogo = (props: SVGProps<SVGSVGElement>) => (
+const BDSLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 1585.619 428.02"
@@ -9,7 +9,7 @@ const BDStackLogo = (props: SVGProps<SVGSVGElement>) => (
     <defs>
       <style>
         {
-          '.prefix__a{fill:#f01973;fill-rule:evenodd}.prefix__c{fill:#38003d;stroke:#38003d;stroke-miterlimit:10;stroke-width:.74402px}.prefix__f{fill:#fff}'
+          ".prefix__a{fill:#f01973;fill-rule:evenodd}.prefix__c{fill:#38003d;stroke:#38003d;stroke-miterlimit:10;stroke-width:.74402px}.prefix__f{fill:#fff}"
         }
       </style>
     </defs>
@@ -81,4 +81,4 @@ const BDStackLogo = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default BDStackLogo;
+export default BDSLogo;

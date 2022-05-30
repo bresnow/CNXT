@@ -36,7 +36,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   user.auth(ENV.APP_KEY_PAIR);
   let data;
   try {
-    data = await user.get("pages").get("cnxt").then();
+    data = await user.get("pages").get("index").then();
   } catch (error) {
     data = { error };
   }
