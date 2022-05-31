@@ -1,77 +1,50 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CNXT DEV
+name: CI
 
 on:
   push:
     branches:
-      - cnxt
+      - main
   pull_request:
     branches:
-      - cnxt
-
+      - main
   workflow_dispatch:
 
+env:
+  STACK_NAME: remix-gun
+  IMAGE: rmx-gun-stack
+  DOCKER_REGISTRY: bresnow
+  VERSION: 0.1.25
+
 jobs:
-  build:
+  docker_build:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Check for exisiting directory
-        run: "(test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist, skipping step"
-
-      - name: Clone Repository
+      - uses: actions/checkout@v3
+      - name: Build Docker Image & Push to Github Registry
         env:
-          BRANCH: cnxt
-          DIR: ~/cnxt-dev
+          GH_REGISTRY: ghcr.io/bresnow
         run: |
-          git clone --branch ${{env.BRANCH}} https://github.com/bresnow/remix.gun-react-18-streaming ${{env.DIR}}
-          cd ${{env.DIR}}
+          docker build -t ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
+          docker push ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
 
-  docker:
-    runs-on: self-hosted
-
-    steps:
-      - name: Build Docker Image & Push to Registry
-        env:
-          VERSION: 0.1.23
-
+      - name: Build Docker Image & Push to Docker registry
         run: |
-          docker build -t bresnow/rmx-gun-stack:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
-          docker push bresnow/rmx-gun-stack:${{ env.VERSION }}
+          docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
+          docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
 
-      - name: Deploy Via Docker Swarm
-        env:
-          VERSION: 0.1.23
-          PUB: ${{secrets.PUB}}
-          PRIV: ${{secrets.PRIV}}
-          EPUB: ${{secrets.EPUB}}
-          EPRIV: ${{secrets.EPRIV}}
-          PEER_DOMAIN: rmx-gun.fltngmmth.com
-          DOMAIN: dev.cnxt.app
-          CLIENT_PORT: 3335
-
+      - name: Update Docker Swarm
         run: |
           export VERSION=${{ env.VERSION }}
-          docker service create --image bresnow/rmx-gun-stack:${{ env.VERSION }} --replicas 1 \
-          --label traefik.enable=true --label traefik.docker.network=traefik-public --label traefik.constraint-label=traefik-public \
-          --label traefik.http.routers.cnxt-dev-http.rule=Host(${{env.DOMAIN}}) --label traefik.http.routers.cnxt-dev-http.entrypoints=http \
-          --label traefik.http.routers.cnxt-dev-http.middlewares=https-redirect --label traefik.http.routers.cnxt-dev-https.rule=Host(${{env.DOMAIN}}) \
-          --label traefik.http.routers.cnxt-dev-https.entrypoints=https --label traefik.http.routers.cnxt-dev-https.tls.certresolver=http --label traefik.http.services.cnxt-dev.loadbalancer.server.port=${{env.CLIENT_PORT}} \
-          --env PUB=${{env.PUB}} --env PRIV=${{env.PRIV}} --env EPUB=${{env.EPUB}} --env EPRIV=${{env.EPRIV}} --env PEER_DOMAIN=${{env.PEER_DOMAIN}} --env DOMAIN=${{env.DOMAIN}} \
-          --network traefik-public cnxt-dev
+          docker service update ${{env.STACK_NAME}}_fltngmmth --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          docker service update ${{env.STACK_NAME}}_peer --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
 
       - name: "Logs"
         run: |
-          docker service logs cnxt-dev
+          docker service logs ${{env.STACK_NAME}}_fltngmmth
 
       - name: Clean Up
-        env:
-          DIR: ~/cnxt-dev
         run: |
-          rm -rf ${{env.DIR}}
           docker image prune --force
           docker volume prune --force
           docker container prune --force

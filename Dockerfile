@@ -1,4 +1,4 @@
-FROM node:14-alpine 
+FROM node:16-alpine 
 ENV PUB=${PUB} 
 ENV PRIV=${PRIV} 
 ENV EPUB=${EPUB}
@@ -14,3 +14,4 @@ RUN yarn \
     && yarn build 
 
 CMD ["yarn", "start"] 
+LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun-react-18-streaming
