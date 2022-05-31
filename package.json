@@ -1,6 +1,6 @@
 {
   "name": "remix-gun-react-18",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Remix.run app - P2P Database Server Adapter ",
   "license": "MIT",
   "module": "es2022",

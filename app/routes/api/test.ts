@@ -1,10 +1,8 @@
 import { LoaderFunction } from "remix";
-import got from 'got-cjs'
+
 import { html } from "remix-utils";
 
 export const loader: LoaderFunction = async ({ request }) => {
-	let { body } = await got.get(request.url.replace("api/test", "cnxt"))
-	console.log(body)
 	const markup = `<!DOCTYPE html>
 <html lang="en">
 
@@ -190,6 +188,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 		</style>
 	</body>
 </html>`
-	return html(body)
+	return html(markup)
 };
 
