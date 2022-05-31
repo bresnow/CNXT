@@ -3,23 +3,21 @@ import { cd } from 'fsxx'
 import fs from 'fs'
 import path from 'path'
 import 'zx/globals';
-let grepMark = `Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)`
+
 let cl = console.log;
 $.verbose = false;
 cd(path.resolve(__dirname, '..'))
-await $`pwd`
 
-let args = process.argv.slice(2)
-if (args.length > 0) {
-    cl(args)
+let args = process.argv.slice(3)
+let title = args.length > 0 && (args[0] === "--title" || args[0] === "-t") ? args[1] : args[0]
+if (title === undefined) {
+    title = await question("Title for commit: ")
 }
-
+cl(title)
 let { modified } = await gitAddAllModified()
 
 $.verbose = true
-await $`git commit -s -m ${modified}`
+await $`git commit -s -m ${`${title} \n ${modified}`}`
 await $`git push`
 
 async function gitAddAllModified() {
