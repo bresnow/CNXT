@@ -28,5 +28,13 @@ async function gitAddAllModified() {
         }
     })
 
-    return { modified: mod }
+    return {
+        modified: mod.stdout.split("modified: ").reduce((acc, line) => {
+            let filename = line.trim()
+            if (filename.length > 1) {
+                acc += `${filename}\n`
+            }
+            return acc
+        })
+    }
 }
