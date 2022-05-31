@@ -11,6 +11,10 @@ $.verbose = false;
 cd(path.resolve(__dirname, '..'))
 await $`pwd`
 
+let args = process.argv.slice(2)
+if (args.length > 0) {
+    cl(args)
+}
 
 let { modified } = await gitAddAllModified()
 
