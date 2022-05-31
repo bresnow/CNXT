@@ -6,7 +6,7 @@ ENV EPRIV=${EPRIV}
 ENV CLIENT_PORT=${CLIENT_PORT}
 ENV PEER_DOMAIN=${PEER_DOMAIN}
 ENV DOMAIN=${DOMAIN}
-ARG VERSION="0.1.1"
+ARG version=${VERSION}
 
 COPY . /app
 
@@ -16,4 +16,3 @@ RUN yarn \
 
 CMD ["yarn", "start"] 
 LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun-react-18-streaming
-LABEL version=${VERSION}

@@ -2591,7 +2591,7 @@ fs-extra@^10.0.0:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
-fs-extra@^10.0.1:
+fs-extra@^10.0.1, fs-extra@^10.1.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz#02873cfbc4084dde127eaa5f9905eef2325d1abf"
   integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==
@@ -2625,6 +2625,15 @@ fsevents@~2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
+
+fsxx@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/fsxx/-/fsxx-0.1.0.tgz#7b08dec1a4890129d84d2633da94c143a992a654"
+  integrity sha512-KFbo5/ECtFO5UI2aScvrhuEcf6V0BUnjg1LtM9/pqc3tR++fS5jqmUEujsbpdEtM5rg2sqMeI+WJjdp6TqMDMQ==
+  dependencies:
+    fast-glob "^3.2.11"
+    fs-extra "^10.1.0"
+    zx "^6.1.0"
 
 function-bind@^1.1.1:
   version "1.1.1"

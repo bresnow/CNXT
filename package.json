@@ -25,6 +25,7 @@
     "bresnow_utility-react-hooks": "0.2.9",
     "cross-env": "^7.0.3",
     "dockerode": "^3.3.1",
+    "fsxx": "^0.1.0",
     "gun": "^0.2020.1237",
     "lz-object": "^0.1.7",
     "mime": "^3.0.0",

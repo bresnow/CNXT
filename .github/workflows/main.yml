@@ -3,15 +3,15 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - cnxt
   pull_request:
     branches:
-      - main
+      - cnxt
   workflow_dispatch:
 
 env:
-  STACK_NAME: remix-gun
-  IMAGE: rmx-gun-stack
+  STACK_NAME: srv-captain--remix-gun
+  IMAGE: cnxt
   DOCKER_REGISTRY: bresnow
   VERSION: 0.1.25
 
@@ -32,16 +32,6 @@ jobs:
         run: |
           docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} --label "version=${{env.VERSION}}" --label "maintaner=Bresnow <bresnow@me.com>" .
           docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-
-      - name: Update Docker Swarm
-        run: |
-          export VERSION=${{ env.VERSION }}
-          docker service update ${{env.STACK_NAME}}_fltngmmth --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-          docker service update ${{env.STACK_NAME}}_peer --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-
-      - name: "Logs"
-        run: |
-          docker service logs ${{env.STACK_NAME}}_fltngmmth
 
       - name: Clean Up
         run: |
