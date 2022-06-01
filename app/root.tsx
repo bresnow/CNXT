@@ -181,8 +181,7 @@ export function Navigation({
     required: true,
     name: "path",
     shadow: true,
-    className:
-      "w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex",
+
     ...search,
   } || { ...search };
   return (
