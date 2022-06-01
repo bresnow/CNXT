@@ -1,4 +1,5 @@
 import { useIf } from "bresnow_utility-react-hooks";
+import React from "react";
 import { Suspense } from "react";
 import {
   ActionFunction,
@@ -38,12 +39,17 @@ function WelcomeCard() {
 }
 
 export default function Index() {
+  let [protocol, protocolSet] = React.useState("");
+  React.useEffect(() => {
+    let { protocol } = window.location;
+    protocolSet(protocol);
+  });
   return (
     <Navigation>
       <WelcomeCard />
-      <SecureRender namespace="http://survey.fltngmmth.com" />
-      <SecureRender namespace="http://file-browser.fltngmmth.com" />
-      <SecureRender namespace="http://n8n.fltngmmth.com" />
+      <SecureRender namespace={`${protocol}//survey.fltngmmth.com`} />
+      <SecureRender namespace={`${protocol}//file-browser.fltngmmth.com`} />
+      <SecureRender namespace={`${protocol}//n8n.fltngmmth.com`} />
     </Navigation>
   );
 }

@@ -18,6 +18,7 @@ import React from "react";
 import { Navigation } from "~/root";
 import { InputTextProps } from "~/components/InputText";
 import CNXTLogo from "~/components/svg/logos/CNXT";
+import { HashtagLarge } from "~/components/svg/Icons";
 
 type ErrObj = {
   path?: string;
@@ -45,7 +46,6 @@ export let action: ActionFunction = async ({ request, context }) => {
   let error: ErrObj = {};
   try {
     let { prop, _value, path } = await formData();
-    console.log(prop, _value, "prop, value");
     if (!path) {
       error.path = "Namespace is required";
     }
@@ -137,11 +137,18 @@ export default function BuilderRoute() {
   let searchProps: InputTextProps = {
     value: path,
     error: error?.path,
-    placeholder: "#Namespace",
+    placeholder: "Namespace",
+    icon: (
+      <HashtagLarge
+        className={`${error?.path ? "fill-cnxt_red" : "fill-primary"} `}
+      />
+    ),
+    className:
+      "w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex",
   };
   return (
     <ObjectBuilder.Form
-      className="grid grid-cols-1  gap-3 px-10"
+      className="grid grid-cols-1  gap-3 px-3"
       method={"post"}
     >
       <Navigation search={searchProps} logo={<CNXTLogo />}>
@@ -176,9 +183,8 @@ export default function BuilderRoute() {
         </Suspense>
 
         <div className="col-span-1">
-          <div className="flex flex-row items-center space-y-5 justify-center space-x-5">
+          <div className="flex flex-col lg:flex-row items-center space-y-5 justify-center space-x-5">
             <div className="w-1/3 p-5 rounded-md ">
-              {" "}
               <ObjectBuilder.Input
                 type="text"
                 required

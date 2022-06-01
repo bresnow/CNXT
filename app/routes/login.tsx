@@ -20,7 +20,7 @@ type BlogNoSideBar = {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData, user } = RemixGunContext(Gun, request);
+  let { formData, seaAuth } = RemixGunContext(Gun, request);
   let { alias, password } = await formData();
   if (typeof alias !== "string") {
     return json({ error: "Invalid alias entry" });
@@ -29,7 +29,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
     return json({ error: "Invalid password entry" });
   }
   try {
-    let result = await user.credentials(alias, password);
+    let result = await seaAuth.credentials(alias, password);
     return json(result);
   } catch (error) {
     return json({ error });
