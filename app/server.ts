@@ -29,7 +29,7 @@ import { parseJSON } from "./lib/parseJSON";
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,
-  PEER_DOMAIN: process.env.PEER_DOMAIN,
+  PEER_DOMAIN: process.env.PEER_DOMAIN?.split(", " || " " || "/" || ""),
   CLIENT: process.env.CLIENT_PORT,
   APP_KEY_PAIR: {
     pub: process.env.PUB,
@@ -130,17 +130,18 @@ export const getDomain = () => {
 }
 let peerList = {
   DOMAIN: getDomain(),
-  PEER: `https://${env.PEER_DOMAIN}/gun`,
+  PEERS: (env.PEER_DOMAIN as string[]).map((domain) => `https://${domain}/gun`)
 };
+console.log(peerList, "peerList");
 export const gun = Gun({
-  peers: [peerList.PEER],
+  peers: [peerList.DOMAIN, ...peerList.PEERS],
   web: server.listen(env.CLIENT, () => {
     console.log(`Remix.Gun Relay Server is listening on ${getDomain()}`);
   }),
   radisk: true
 
 });
-gun.get('pages').put(data.pages)
+
 //@ts-ignore
 gun.on('out', { get: { '#': { '*': '' } } });
 const user = gun.user();

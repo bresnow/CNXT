@@ -11,7 +11,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
-        PEER_DOMAIN: process.env.PEER_DOMAIN,
+        PEER_DOMAIN: process.env.PEER_DOMAIN?.split(", " || " " || "/" || ""),
         CLIENT: process.env.CLIENT_PORT,
         APP_KEY_PAIR: {
             pub: process.env.PUB,
@@ -23,14 +23,11 @@ export function RemixGunContext(Gun: IGun, request: Request) {
 
     let peerList = {
         DOMAIN: getDomain(),
-        PEER: `https://${ENV.PEER_DOMAIN}/gun`,
+        PEERS: (ENV.PEER_DOMAIN as string[]).map((domain) => `https://${domain}/gun`)
     };
-    const gunOpts: {
-        peers: string[];
-        radisk: boolean;
-        localStorage: boolean;
-    } = {
-        peers: [peerList.DOMAIN, peerList.PEER],
+    peerList.PEERS && peerList.PEERS.push(peerList.DOMAIN)
+    const gunOpts: GunOptions = {
+        peers: [peerList.DOMAIN, ...peerList.PEERS],
         localStorage: false,
         radisk: true,
     }
@@ -53,20 +50,18 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     }
     type T = any
     const SEA = Gun.SEA
-    const pair = SEA.pair, encrypt = SEA.encrypt, decrypt = SEA.decrypt, sign = SEA.sign, verify = SEA.verify, secret = SEA.secret, certify = SEA.certify;
-
-    async function keypair(pair?: ISEAPair) {
-        let error: { message: string | undefined } = { message: undefined }
+    async function keypair() {
         let session = await getSession();
-        let sessionKeys = session.get('key_pair')
-        if (!pair && sessionKeys) {
-            pair = sessionKeys
+        let pair, _pair
+
+        if (!session.get('key_pair')) {
+            session.set('key_pair', JSON.stringify(await SEA.pair()))
         }
-        if (!pair && sessionKeys) {
-            error.message = 'No keys provided'
-            return { error }
-        }
-        return pair && { user: gun.user().auth(pair) }
+
+        // pair = JSON.parse(session.get('key_pair'))
+
+        // console.log('new keypair', session.get('key_pair'))
+        return { pair: JSON.parse(session.get('key_pair')) }
     }
     /**
      * authenticate with username and password
@@ -226,9 +221,6 @@ export function RemixGunContext(Gun: IGun, request: Request) {
             if (request.headers.get("Content-Type") === "application/json") {
                 values = Object.fromEntries(await request.json())
             }
-            console.log(request.headers.get("Content-Type") === "application/json", "application/json")
-            console.log(request.headers.get("Content-Type") === "multipart/form-data", "multipart/form-data")
-            console.log(request.headers.get("Content-Type") === "application/x-www-form-urlencoded", "application/x-www-form-urlencoded")
 
             values = Object.fromEntries(await request.formData())
             let obj: Record<string, string> = {}

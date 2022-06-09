@@ -47,8 +47,7 @@ export type UpdateType = {
   id: string;
   data: any;
 };
-type T = any;
-export type ActionType<T> = { type: string; payload: any };
+export type ActionType = { type: string; payload: any };
 
 export type Nodevalues = {
   [key: string]: any;
@@ -96,17 +95,6 @@ export interface NodeFetcherHook {
     put: (val: any) => void;
     get: (node: string) => IGunChain<any>;
   };
-  // load: (href: string) => void;
-  // submission: ActionSubmission | LoaderSubmission | undefined;
-  // type:
-  //   | "init"
-  //   | "actionSubmission"
-  //   | "loaderSubmission"
-  //   | "actionReload"
-  //   | "normalLoad"
-  //   | "done";
-  // state: "idle" | "submitting" | "loading";
-  // data: any;
 }
 
 export function useNodeFetcher(
@@ -115,15 +103,6 @@ export function useNodeFetcher(
 ): NodeFetcherHook {
   let [value, setValue] = React.useState<Nodevalues>();
   let [compress, decompress] = useLZObject({ output: "utf16" });
-
-  const mounted = useIsMounted();
-  let bobafetch = useFetcher(),
-    load = bobafetch.load,
-    data = bobafetch.data,
-    submission = bobafetch.submission,
-    type = bobafetch.type,
-    state = bobafetch.state;
-  let loadFetcher = useFetcher();
 
   const put = useSafeCallback((val: any) => {
     if (typeof value !== "undefined") {
@@ -144,23 +123,8 @@ export function useNodeFetcher(
     { unsubscribe: opt?.unsubscribe ? opt.unsubscribe : true }
   );
 
-  // useIf([value, bobafetch.type === "init", !bobafetch.data], () => {
-  //   invariant(value, "submit expression ran without value");
-  //   let soul = value._["#"];
-  //   let path = soul.replace(/\//g, ".");
-  //   bobafetch.load(`/gun/${path}`);
-  // });
-
-  // useIf([bobafetch.type === "done", bobafetch.data], () => {
-  //   log(bobafetch.data, "BOBA_FETCH ");
-  // });
   let chainFetcher = {
     chain: { value, put, get: (node: string) => gunRef.get(node) },
-    // load,
-    // submission,
-    // type,
-    // state,
-    // data,
   };
 
   return chainFetcher;
@@ -189,9 +153,7 @@ export const useSEAFetcher = (
     authenticate = fetcher.type === "init" && !keys,
     generate =
       fetcher.type == "done" && !existingKeys && !keys && !fetcher.data.pair,
-    loadedPair = fetcher.type === "done" && fetcher.data.pair,
-    // submit Fetcher
-    bobaFetch = useFetcher();
+    loadedPair = fetcher.type === "done" && fetcher.data.pair;
 
   // If theres keys... use them
   useSafeEffect(() => {
@@ -324,8 +286,6 @@ export function useRouteData(pathname: string): {
   };
 }
 
-type Dispatcher = Function;
-
 // export const debouncedDispatch = (
 //   dispatcher: Dispatcher,
 //   {
@@ -352,10 +312,7 @@ type Dispatcher = Function;
  * @param fetcher
  * @returns
  */
-export function useFileUploader(
-  action: string,
-  gunRef: IGunChain<any>
-): [
+export function useFileUploader(): [
   {
     result: any;
     loading: boolean;
@@ -393,8 +350,6 @@ export function useFileUploader(
         { output: "uint8array" }
       );
       let arr: number[] = Object.values(file);
-      let uint8array = Uint8Array.from(arr);
-      let blob = new Blob([uint8array]);
       setResult(r.target.result);
     };
     reader.onerror = (r: any) => {

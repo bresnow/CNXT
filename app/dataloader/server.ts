@@ -11,16 +11,11 @@ export function createServerDataloader(
   params: any,
   context: LoadCtx
 ) {
-  // console.log(build.manifest.routes)
 
-  const currentRouteId = (id: string) => {
-    const url = getDomain().replace('gun', '')
-    const current = request.clone().url.replace(url, "").replace('?', '')
-    return current + "/" + id
-  }
   return {
     async load(id: string) {
       let route: ServerRouteModule = build.routeModules["routes/" + id];
+      console.log(route.default.contextTypes)
       if (!route) {
         throw new Error(`Route ${id} not found`);
       }

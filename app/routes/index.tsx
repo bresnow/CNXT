@@ -15,10 +15,10 @@ import Display from "~/components/DisplayHeading";
 
 import SecureRender from "~/components/Browser";
 import React from "react";
-import { Navigation } from "~/root";
 import CNXTLogo from "~/components/svg/logos/CNXT";
 import FormBuilder from "~/components/FormBuilder";
 import FMLogo from "~/components/svg/logos/FltngMmth";
+import { Navigation } from "~/components/Navigator";
 
 const noop = () => {};
 type ErrObj = {
@@ -31,7 +31,7 @@ type LoadError = {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { graph, gun, ENV } = RemixGunContext(Gun, request);
+  let { gun, ENV } = RemixGunContext(Gun, request);
   let user = gun.user();
   user.auth(ENV.APP_KEY_PAIR);
   let data;

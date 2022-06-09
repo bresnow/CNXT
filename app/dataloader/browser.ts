@@ -1,13 +1,23 @@
 import Gun, { IGunChain } from "gun"
+import LZString from "lz-string";
 import axios, { RequestHeaders } from "redaxios"
 import { useGunStatic } from "~/lib/gun/hooks";
+
 import { RemixGunContext } from "~/load-context";
+import { includes } from "./lib";
 export function createDeferedLoader() {
   return {
     async load(routePath: string, options?: Options) {
-      if (options && options.params && !routePath.endsWith("/")) {
-        routePath += "/q?";
+
+      if (options && options.params) {
+        if (!routePath.endsWith("/")) {
+          routePath += "/";
+        }
+        if (includes(options.params, "compressed") && (options.params as any).compressed === ("true" || true)) {
+          routePath = LZString.compressToEncodedURIComponent(routePath);
+        }
       }
+
       return axios.get(routePath, options);
     }
   }

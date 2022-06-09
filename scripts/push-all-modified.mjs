@@ -1,4 +1,4 @@
-import { $, nothrow, chalk, question, } from 'zx'
+import { $, question, } from 'zx'
 import { cd } from 'fsxx'
 import fs from 'fs'
 import path from 'path'
@@ -33,6 +33,9 @@ async function gitAddAllModified() {
     return {
         modified: mod.stdout.split("modified: ").reduce((acc, line) => {
             let filename = line.trim()
+            if (filename.endsWith("index.lock")) {
+                return acc
+            }
             if (filename.length > 1) {
                 acc += `${filename} \n`
             }

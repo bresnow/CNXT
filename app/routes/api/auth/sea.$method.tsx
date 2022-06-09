@@ -1,18 +1,29 @@
 import { json, LoaderFunction } from "remix";
 import { LoadCtx } from "types";
-import { getSession } from "~/session.server";
+import { commitSession, getSession } from "~/session.server";
 import Gun, { ISEAPair } from "gun";
 
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { user } = RemixGunContext(Gun, request);
+  let { seaAuth } = RemixGunContext(Gun, request);
   let method = params.method;
   let keys: ISEAPair;
-  let session = await getSession(request.headers.get("Cookie"));
-  if (method === "pair") {
-    keys = await Gun.SEA.pair();
-    let data = `PUB=${keys.pub} PRIV=${keys.priv} EPUB=${keys.epub} EPRIV=${keys.epriv}`;
-    return json(data);
+  let session = await getSession();
+  switch (method) {
+    case "pair":
+      let { pair } = await seaAuth.keypair();
+      return json(pair, {
+        headers: {
+          "Set-Cookie": await commitSession(session),
+        },
+      });
+    case "session":
+      let keys = session.get("key_pair");
+      if (!keys) {
+        return json({ error: "No keys found" });
+      }
+      return json(keys);
+    default:
+      return "SEA ROUTE INCOMPLETE";
   }
-  return "SEA ROUTE INCOMPLETE";
 };

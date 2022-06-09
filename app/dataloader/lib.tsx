@@ -13,11 +13,14 @@ export { DataloaderProvider } from "./context";
  * @param {string} remix route path to load
  * @param {Options} options Redaxios options
  */
-
+export interface DeferedData {
+  load(): Record<string, any>;
+  cached: Record<string, any> | undefined;
+}
 export function useDeferedLoaderData<T = any>(
   routePath: string,
   options?: Options
-) {
+): DeferedData {
   let dataloader = useDeferedLoadData();
   /**
    * Fetching the data from the browser using RAD && IDB

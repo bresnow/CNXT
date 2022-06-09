@@ -1,7 +1,7 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "app/esm/modules.js"],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019", ],
+    "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "types": ["@types/react", "@types/react-dom", "@types/node"],
     "isolatedModules": true,
     "module": "es2022",

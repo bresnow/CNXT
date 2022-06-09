@@ -8,7 +8,7 @@ if (typeof sessionSecret !== "string") {
 export let { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
-      name: "FM_session",
+      name: "AUTH SESSION",
       secure: true,
       secrets: [sessionSecret],
       sameSite: "strict",

@@ -7,7 +7,7 @@ export * from "./loaders"
 export interface _Window extends Window {
     ENV: {
         DOMAIN: string | undefined;
-        PEER_DOMAIN: string | undefined;
+        PEER_DOMAIN: string[] | undefined;
         CLIENT: string | undefined;
         APP_KEY_PAIR: ISEAPair;
     }
@@ -31,8 +31,9 @@ export interface CredentialsAuth {
     }>
 }
 export interface Keydentials {
-    (pair?: ISEAPair | undefined): Promise<{ user?: undefined; }>
-    (pair?: ISEAPair | undefined): Promise<{ error: { message: string | undefined; }; }>
+    (): Promise<{
+        pair: ISEAPair;
+    }>
 }
 
 export interface SEAAuth {
@@ -46,7 +47,7 @@ export interface RmxGunCtx {
     (Gun: IGun, request: Request): {
         ENV: {
             DOMAIN: string | undefined;
-            PEER_DOMAIN: string | undefined;
+            PEER_DOMAIN: string[] | undefined;
             CLIENT: string | undefined;
             APP_KEY_PAIR: ISEAPair;
         },
