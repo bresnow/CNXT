@@ -5,5 +5,5 @@ module.exports = {
   customServer: "./app/server.ts",
   ignoredRouteFiles: [".*"],
   devServerBroadcastDelay: 1000,
-  serverDependenciesToBundle: ["got"]
+  serverDependenciesToBundle: ["zx", "fsxx", "fs", "path", "zx/globals"],
 };

@@ -11,20 +11,13 @@ import {
   useParams,
 } from "remix";
 import { DeferedData, useDeferedLoaderData } from "~/dataloader/lib";
-import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
-import { Card } from "~/components/Card";
 import Display from "~/components/DisplayHeading";
-import { useGunStatic } from "~/lib/gun/hooks";
-import FormBuilder from "~/components/FormBuilder";
-
-import React from "react";
 import { HashtagLarge } from "~/components/svg/Icons";
 import { InputTextProps } from "~/components/InputText";
 import CNXTLogo from "~/components/svg/logos/CNXT";
 import { Navigation } from "~/components/Navigator";
 import { SuspendedTest } from "./$namespace/edit";
-import main from "~/runner";
 
 export function Fallback({ defered }: { defered: DeferedData }) {
   return (
