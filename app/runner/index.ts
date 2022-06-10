@@ -2,7 +2,7 @@
 
 import { LoaderFunction } from "remix"
 
-let { $, glob } = require('@cspotcode/zx')
+let { $, glob } = require('zx')
 // import {$} from '..'
 export let loader: LoaderFunction = async ({ request, params, context }) => {
     void (async function () {

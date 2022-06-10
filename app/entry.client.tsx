@@ -5,7 +5,7 @@ import { createDeferedLoader } from "~/dataloader/browser";
 import { DataloaderProvider } from "~/dataloader/lib";
 
 let dataloader = createDeferedLoader();
-
+// @ts-ignore
 ReactDOM.hydrateRoot(
   document,
   <DataloaderProvider dataloader={dataloader}>
