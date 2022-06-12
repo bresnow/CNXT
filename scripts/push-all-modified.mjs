@@ -55,6 +55,9 @@ async function gitAddAllModified() {
     $.verbose = true
     mod.stdout.split("modified: ").forEach(async (line) => {
         let filename = line.trim()
+        if (filename.endsWith('index.lock')) {
+            return
+        }
         if (filename.length > 1) {
             await $`git add ${filename}`
         }
