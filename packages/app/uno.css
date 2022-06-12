@@ -140,7 +140,8 @@
 .after\:w-8::after,
 .w-8,
 [w-8=""]{width:2rem;}
-.h-1{height:0.25rem;}
+.h-1,
+.h1{height:0.25rem;}
 .h-10,
 [h-10=""]{height:2.5rem;}
 .h-12{height:3rem;}

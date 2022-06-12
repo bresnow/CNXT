@@ -1,7 +1,7 @@
 import { ActionFunction, json, LoaderFunction } from "remix";
 import { LoadCtx } from "types";
 import Gun, { ISEAPair } from "gun";
-import { getSession } from "~/session.server";
+import { getSession } from "../../../session.server"
 import LZString from "lz-string";
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;

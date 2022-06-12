@@ -8,15 +8,14 @@ import React from "react";
 type LoaderData = {
   username: string;
 };
-type BlogNoSideBar = {
-  getItems: () => {
+type IGetItem = () => {
     title: string;
     author: string;
     postedAt: { date: string; slug: string };
     slug: string;
     image: { src: string };
   }[];
-};
+
 export let loader: LoaderFunction = () => {
   return {
     username: "Remix",
@@ -35,13 +34,13 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useDeferedLoaderData<any>("/api/posts");
+  let postsLoader = useDeferedLoaderData("/api/posts");
 
   return (
     <>
       <h1>Profile: {username}</h1>
       <Suspense fallback="Loading Profile....">
-        <BlogNoSideBar getItems={postsLoader.load} />
+        <BlogNoSideBar getItems={postsLoader.load as any} />
       </Suspense>
     </>
   );
@@ -104,7 +103,7 @@ export const BlogCard = ({ title, date, slug, dateSlug, image }: BlogCard) => {
   );
 };
 
-export const BlogNoSideBar = ({ getItems }: BlogNoSideBar) => {
+export const BlogNoSideBar = ({ getItems }: { getItems:IGetItem }) => {
   let items = getItems();
   return (
     <section className="blog-section">

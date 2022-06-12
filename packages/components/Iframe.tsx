@@ -43,7 +43,7 @@ export interface IIframe {
   ariaHidden?: boolean;
   ariaLabel?: string;
   ariaLabelledby?: string;
-  ref?: React.MutableRefObject<HTMLIFrameElement | null>;
+  refrence?: React.MutableRefObject<HTMLIFrameElement | null>;
   sandbox?: string | boolean | SandBox;
   allow?: string;
   className?: string;
@@ -77,7 +77,7 @@ const Iframe: ComponentType<IIframe> = ({
   onMouseOut,
   scrolling,
   srcdocument,
-  ref,
+  refrence,
   id,
   frameBorder,
   ariaHidden,
@@ -109,7 +109,7 @@ const Iframe: ComponentType<IIframe> = ({
     importance: importance || null,
     sandbox: sandbox || null,
     loading: loading || null,
-    ref: ref || null,
+    ref: refrence || null,
     styles: styles || null,
     name: name || null,
     className: className || null,

@@ -43,6 +43,8 @@ export const data = {
             text: `Build the namespace meta data . This application is peered to https://${process.env.PEER_DOMAIN}. The same data object will be available there also.`,
         },
     },
+
+
 }
 
 

@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from "react";
 import { Link } from "remix";
-import cn from "classnames";
+
 interface ButtonType<ButtonProps = ButtonHTMLAttributes<any>> {
   children: string | JSX.Element[] | HTMLElement[] | JSX.Element | HTMLElement;
   path?: string;
@@ -44,7 +44,7 @@ const Button = ({
     secondary: `bg-secondary`,
   };
 
-  const buttonClasses = cn(
+  const buttonClasses = [
     className,
     "font-exo",
     "inline-block",
@@ -55,7 +55,7 @@ const Button = ({
     sizeStyle[btnstyle.size],
     shapeStyle[btnstyle.shape ?? "square22xl"],
     colorStyle[btnstyle.color ?? "primary"]
-  );
+  ].join(" ");
 
   const btnImageSm = {
     backgroundImage: `url(${image?.small})`,

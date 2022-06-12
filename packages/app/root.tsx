@@ -1,5 +1,5 @@
 import reset from "@unocss/reset/tailwind.css";
-import unocss from "~/uno.css";
+import unocss from "@/uno.css";
 import {
   json,
   Links,

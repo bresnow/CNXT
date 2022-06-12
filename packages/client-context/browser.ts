@@ -3,7 +3,7 @@ import LZString from "lz-string";
 import axios, { RequestHeaders } from "redaxios"
 import { useGunStatic } from "~/lib/gun/hooks";
 
-import { RemixGunContext } from "~/load-context";
+import { RemixGunContext } from "$/load-context";
 import { includes } from "./lib";
 export function createDeferedLoader() {
   return {

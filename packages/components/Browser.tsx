@@ -71,7 +71,8 @@ const links = [
 ];
 
 type SecureRenderProps = {
-  namespace: string;
+  namespace?: string;
+  refrence: React.MutableRefObject<HTMLIFrameElement | null>;
   srcdoc?: string;
   allow?: string;
   onLoad?: () => any;
@@ -83,6 +84,7 @@ type SecureRenderProps = {
 };
 export default function SecureRender({
   namespace,
+  refrence,
   onLoad,
   onRefresh,
   onUnlock,
@@ -93,10 +95,15 @@ export default function SecureRender({
   sandbox,
 }: SecureRenderProps) {
   const [loading, setLoading] = React.useState(true);
-  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
+  const iframeRef = React.useRef<HTMLIFrameElement | null>(
+    refrence ? refrence.current : null
+  );
+
   const [state, setState] = React.useState<string>();
   const menuarr = links;
-
+  useIf([!search?.label], () => {
+    search?.label ? (search.label = namespace) : null;
+  });
   React.useEffect(() => {
     if (iframeRef.current && namespace) {
       let env = (window as any).ENV;
@@ -203,7 +210,8 @@ export default function SecureRender({
         </div>
         <div className="w-full h-full relative">
           <Iframe
-            url={namespace}
+            refrence={refrence}
+            url={namespace || ""}
             className={`w-full  h-full transition-opacity duration-200 ${
               loading ? "opacity-0" : "opacity-100"
             }`}
