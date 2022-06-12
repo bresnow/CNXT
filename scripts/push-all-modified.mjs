@@ -1,23 +1,53 @@
-import { $, question, } from 'zx'
-import { cd } from 'fsxx'
-import fs from 'fs'
+import { $, question, YAML, chalk } from 'zx'
+import { cd, io, write } from 'fsxx'
 import path from 'path'
 import 'zx/globals';
 
-let cl = console.log;
+
 $.verbose = false;
 cd(path.resolve(__dirname, '..'))
-
+let message, version
 let args = process.argv.slice(3)
-let message = args.length > 0 && (args[0] === "--message" || args[0] === "-m") ? args[1] : args[0]
+if (args.length > 0) {
+    for (let i = 0; i < args.length; i++) {
+        let arg = args[i]
+        if (arg.startsWith('--message=' || '-m=' || '--message' || '-m')) {
+            message = arg.split('=')[1]
+        }
+        if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
+            version = arg.split('=')[1]
+        }
+    }
+}
 if (message === undefined) {
     message = await question("Message for commit: ")
+    if (message === '' || message === ' ' || typeof message === 'undefined') {
+        message = 'Update'
+    }
 }
-cl(message)
-let { modified } = await gitAddAllModified()
+
+let pkg = await io.json`package.json`
+if (version === undefined) {
+    version = await question(`Version ? \n ${chalk.bgCyan('Current Version Is ') + chalk.cyan(pkg.data.version)}: `)
+}
+//PACKAGE>JSON MODIFY VERSION
+pkg.data.version = version
+await pkg.save()
+
+
+// GITHUB WORKFLOW VERSION ENV REVISION
+let status = await $`git status`.pipe($`grep "On branch"`)
+let branch = status.stdout.replace("On branch ", "").trim()
+const yml = YAML.parse(fs.readFileSync(`.github/workflows/${branch}.yml`, "utf8"))
+yml.env.VERSION = version
+await write(`.github/workflows/${branch}.yml`, YAML.stringify(yml))
+
+
+
+await gitAddAllModified()
 
 $.verbose = true
-await $`git commit -s -m ${`${message} \n ${modified}`}`
+await $`git commit -s -m ${`${message} | ${version}`}`
 await $`git push`
 
 async function gitAddAllModified() {
@@ -29,17 +59,4 @@ async function gitAddAllModified() {
             await $`git add ${filename}`
         }
     })
-
-    return {
-        modified: mod.stdout.split("modified: ").reduce((acc, line) => {
-            let filename = line.trim()
-            if (filename.endsWith("index.lock")) {
-                return acc
-            }
-            if (filename.length > 1) {
-                acc += `${filename} \n`
-            }
-            return acc
-        })
-    }
 }

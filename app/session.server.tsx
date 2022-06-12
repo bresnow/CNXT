@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "remix";
+import { createCookieSessionStorage } from "@remix-run/server-runtime";
 
 let sessionSecret = process.env.PRIV as string;
 if (typeof sessionSecret !== "string") {

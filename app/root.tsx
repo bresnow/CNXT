@@ -1,6 +1,7 @@
+import reset from "@unocss/reset/tailwind.css";
+import unocss from "~/uno.css";
 import {
   json,
-  Link,
   Links,
   LiveReload,
   Meta,
@@ -9,28 +10,23 @@ import {
   ScrollRestoration,
   useCatch,
   useLoaderData,
-  useLocation,
   useMatches,
 } from "remix";
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
 import { LoadCtx } from "types";
-import styles from "./tailwind.css";
-import Gun, { GunOptions, ISEAPair } from "gun";
-import React from "react";
-import { useRouteData } from "./lib/gun/hooks";
-import { getDomain, gun } from "./server";
+import Gun, { ISEAPair } from "gun";
 import Display from "./components/DisplayHeading";
-import CNXTLogo from "./components/svg/logos/CNXT";
-import FMLogo from "./components/svg/logos/FltngMmth";
 import jsesc from "jsesc";
-import InputText, { InputTextProps } from "./components/InputText";
 
 export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: styles },
     {
       rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css?family=Cantarell",
+      href: unocss,
+    },
+    {
+      rel: "stylesheet",
+      href: reset,
     },
   ];
 };

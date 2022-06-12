@@ -9,3 +9,4 @@ radata
 package-lock.json
 yarn-error.log
 yarn.lock
+scripts/test.mjs
