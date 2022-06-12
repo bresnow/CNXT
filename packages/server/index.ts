@@ -22,8 +22,8 @@ import 'gun/lib/load'
 import 'gun/lib/open'
 import 'gun/lib/not'
 import 'gun/lib/axe'
-import { data } from "../data.config";
-import { parseJSON } from "./lib/parseJSON";
+import { data } from "../../data.config";
+
 
 
 installGlobals();
@@ -132,7 +132,7 @@ let peerList = {
   DOMAIN: getDomain(),
   PEERS: (env.PEER_DOMAIN as string[]).map((domain) => `https://${domain}/gun`)
 };
-console.log(peerList, "peerList");
+
 export const gun = Gun({
   peers: [peerList.DOMAIN, ...peerList.PEERS],
   web: server.listen(env.CLIENT, () => {

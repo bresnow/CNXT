@@ -28,7 +28,7 @@ if (message === undefined) {
 
 let pkg = await io.json`package.json`
 if (version === undefined) {
-    version = await question(`Version ? \n ${chalk.bgCyan('Current Version Is ') + chalk.cyan(pkg.data.version)}: `)
+    version = await question(`Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)}: `)
 }
 //PACKAGE>JSON MODIFY VERSION
 pkg.data.version = version

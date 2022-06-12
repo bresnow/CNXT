@@ -3,8 +3,8 @@ import { renderToPipeableStream } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
 import type { ServerResponse } from "http";
-import { DataloaderProvider } from "~/dataloader/lib";
-import { createServerDataloader } from "~/dataloader/server";
+import { DataloaderProvider } from "~/client-context/lib";
+import { createServerDataloader } from "~/client-context/server";
 import { RmxGunCtx } from "types";
 
 export default async function handleRequest(

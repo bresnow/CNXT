@@ -3,7 +3,6 @@ import type { EntryContext } from "remix";
 import { isResponse } from "@remix-run/server-runtime/responses";
 import { ServerRouteModule } from "@remix-run/server-runtime/routeModules";
 import { LoadCtx } from "types";
-import { getDomain } from "~/server"
 
 export function createServerDataloader(
   build: EntryContext,

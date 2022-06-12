@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Link, useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
-import { useDeferedLoaderData } from "~/dataloader/lib";
+import { useDeferedLoaderData } from "~/client-context/lib";
 import React from "react";
 
 type LoaderData = {

@@ -3,9 +3,10 @@ import Gun from "gun";
 import { html } from "remix-utils";
 import React from "react";
 import jsesc from "jsesc";
-import { LoadCtx } from "@/types";
+
 import { useIf } from "bresnow_utility-react-hooks";
 import SecureRender from "~/components/Browser";
+import { LoadCtx } from "types";
 
 export const loader: LoaderFunction = async ({ request, context }) => {
   let { RemixGunContext } = context as LoadCtx;

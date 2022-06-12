@@ -15,7 +15,7 @@ import {
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
 import { LoadCtx } from "types";
 import Gun, { ISEAPair } from "gun";
-import Display from "./components/DisplayHeading";
+import Display from "../components/DisplayHeading";
 import jsesc from "jsesc";
 
 export const links: LinksFunction = () => {

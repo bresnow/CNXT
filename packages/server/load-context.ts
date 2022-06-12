@@ -1,10 +1,10 @@
 import type { RmxGunCtx } from "types";
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
-import { destroySession, getSession } from "~/session.server";
-import { errorCheck } from "./lib/utils/helpers";
+import { destroySession, getSession } from "../app/session.server";
+import { errorCheck } from "../lib/utils/helpers";
 import { redirect } from "remix";
 import { Params } from "react-router";
-import { getDomain } from "./server";
+import { getDomain } from ".";
 import { unprocessableEntity } from "remix-utils";
 import objectAssign from "object-assign";
 export function RemixGunContext(Gun: IGun, request: Request) {

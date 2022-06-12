@@ -6,7 +6,6 @@ import lz from "lz-string";
 
 import { useIf, useSafeEffect } from "bresnow_utility-react-hooks";
 import invariant from "@remix-run/react/invariant";
-import { log } from "~/lib/console-utils";
 import FormBuilder from "./FormBuilder";
 import Iframe, { SandBox } from "./Iframe";
 import { InputTextProps } from "./InputText";

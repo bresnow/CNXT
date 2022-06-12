@@ -10,7 +10,7 @@ import {
   Outlet,
   useParams,
 } from "remix";
-import { DeferedData, useDeferedLoaderData } from "~/dataloader/lib";
+import { DeferedData, useDeferedLoaderData } from "~/client-context/lib";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
 import { HashtagLarge } from "~/components/svg/Icons";

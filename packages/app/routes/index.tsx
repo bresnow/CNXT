@@ -8,7 +8,7 @@ import {
   useActionData,
   useCatch,
 } from "remix";
-import { useDeferedLoaderData } from "~/dataloader/lib";
+import { useDeferedLoaderData } from "~/client-context/lib";
 import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";

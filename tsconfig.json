@@ -13,10 +13,10 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"],
-      "@/*": ["./*"]
+      "~/*": ["./packages/*"],
+      "@/*": ["./packages/app/*"],
+      "$/*": ["./packages/server/*"]
     },
-
     // Remix takes care of building everything in `remix build`.
     "noEmit": true
   }
