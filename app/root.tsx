@@ -13,7 +13,7 @@ import {
   useMatches,
 } from "remix";
 import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { LoadCtx, NodeValues } from "types";
+import { LoadCtx } from "types";
 import styles from "./tailwind.css";
 import Gun, { GunOptions, ISEAPair } from "gun";
 import React from "react";
@@ -74,7 +74,7 @@ export type RootLoaderData = {
 export const meta: MetaFunction = () => {
   const matches = useMatches();
   let root = matches.find((match) => match.id === "root");
-  const metaDoc: NodeValues = root?.data?.meta;
+  const metaDoc: Record<string, string> = root?.data?.meta;
   return metaDoc;
 };
 export type MenuLinks = {

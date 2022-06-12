@@ -1,4 +1,4 @@
-import type { ChainCtx, RmxGunCtx, NodeValues } from "types";
+import type { RmxGunCtx } from "types";
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from "gun/types";
 import { destroySession, getSession } from "~/session.server";
 import { errorCheck } from "./lib/utils/helpers";
@@ -123,89 +123,89 @@ export function RemixGunContext(Gun: IGun, request: Request) {
      * @param keys - optional Keypair to authorize node access
      * @returns - get: get data from node, map - map numerical sets as an array , put: update node with data with option to set data as a numerical set,
      */
-    const graph: ChainCtx = {
-        get: (path: string) => {
-            let chainref: IGunChain<T>
-            chainref = (gun as any).path(`${path}`)
-            return {
-                val: (opts) => new Promise((resolve, reject) =>
-                    opts?.open ? chainref.open((data) => {
-                        if (!data) {
-                            reject("No data found")
-                        }
-                        resolve(data)
-                    }) : chainref.once((data) => {
-                        if (!data) {
-                            reject("No data found")
-                        }
-                        resolve(data)
-                    })
-                ),
-                put: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-                    chainref.put(data, (ack: any) => {
-                        ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
-                    })
-                })
-                ,
-                set: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-                    chainref.set(data, (ack: any) => {
-                        ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
-                    })
-                }),
-                map: async (callback?: (args?: any) => any) => {
+    // const graph: ChainCtx = {
+    //     get: (path: string) => {
+    //         let chainref: IGunChain<T>
+    //         chainref = (gun as any).path(`${path}`)
+    //         return {
+    //             val: (opts) => new Promise((resolve, reject) =>
+    //                 opts?.open ? chainref.open((data) => {
+    //                     if (!data) {
+    //                         reject("No data found")
+    //                     }
+    //                     resolve(data)
+    //                 }) : chainref.once((data) => {
+    //                     if (!data) {
+    //                         reject("No data found")
+    //                     }
+    //                     resolve(data)
+    //                 })
+    //             ),
+    //             put: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
+    //                 chainref.put(data, (ack: any) => {
+    //                     ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
+    //                 })
+    //             })
+    //             ,
+    //             set: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
+    //                 chainref.set(data, (ack: any) => {
+    //                     ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
+    //                 })
+    //             }),
+    //             map: async (callback?: (args?: any) => any) => {
 
-                    let object = await (chainref as any).then();
+    //                 let object = await (chainref as any).then();
 
-                    return new Promise(async (resolve, reject) => {
-                        if (!object) {
-                            reject("No data set");
-                        }
-                        let set: NodeValues[] = await Promise.all(
-                            Object.keys(object).map(async (key) => {
-                                // @ts-ignore
-                                let data = await chainref.get({ "#": key });
-                                return data
-                            })
-                        );
-                        if (!set) {
-                            reject("Error getting data - set is undefined");
-                        }
-                        if (callback) {
-                            let cbd = callback(set)
-                            resolve(cbd)
-                        }
-                        resolve([...new Set(set)]);
+    //                 return new Promise(async (resolve, reject) => {
+    //                     if (!object) {
+    //                         reject("No data set");
+    //                     }
+    //                     let set: NodeValues[] = await Promise.all(
+    //                         Object.keys(object).map(async (key) => {
+    //                             // @ts-ignore
+    //                             let data = await chainref.get({ "#": key });
+    //                             return data
+    //                         })
+    //                     );
+    //                     if (!set) {
+    //                         reject("Error getting data - set is undefined");
+    //                     }
+    //                     if (callback) {
+    //                         let cbd = callback(set)
+    //                         resolve(cbd)
+    //                     }
+    //                     resolve([...new Set(set)]);
 
-                    })
-                },
-            }
-        },
-
-
-        /**
-         * add or remove peer addresses 
-         * @param peers 
-         * @param remove 
-         * @returns 
-         */
-        options: (peers: string | string[], remove?: boolean) => {
-            var peerOpt = (gun as any).back('opt.peers');
-            var mesh = (gun as any).back('opt.mesh');  // DAM
-            if (remove) {
-                if (Array.isArray(peers)) {
-                    peers.forEach((peer) => {
-                        mesh.bye(peer);
-                    });
-                } mesh.bye(peers);
-                return { message: `Peers ${peers} removed` };
-            }
-            // Ask local peer to connect to another peer. //
-            mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
-            return { message: `Peers ${peers} added` };
-        }
+    //                 })
+    //             },
+    //         }
+    //     },
 
 
-    }
+    //     /**
+    //      * add or remove peer addresses 
+    //      * @param peers 
+    //      * @param remove 
+    //      * @returns 
+    //      */
+    //     options: (peers: string | string[], remove?: boolean) => {
+    //         var peerOpt = (gun as any).back('opt.peers');
+    //         var mesh = (gun as any).back('opt.mesh');  // DAM
+    //         if (remove) {
+    //             if (Array.isArray(peers)) {
+    //                 peers.forEach((peer) => {
+    //                     mesh.bye(peer);
+    //                 });
+    //             } mesh.bye(peers);
+    //             return { message: `Peers ${peers} removed` };
+    //         }
+    //         // Ask local peer to connect to another peer. //
+    //         mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
+    //         return { message: `Peers ${peers} added` };
+    //     }
+
+
+    // }
 
 
 
@@ -214,7 +214,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         ENV,
         gunOpts,
         gun,
-        graph,
+        // graph,
         seaAuth: { keypair, credentials, logout },
         formData: async () => {
             let values: Record<string, string> | Record<string, FormDataEntryValue>
