@@ -2,19 +2,19 @@ import { Suspense } from "react";
 import { Link, useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
-import { useDeferedLoaderData } from "~/client-context/lib";
+import { useFetcherAsync } from "~/client-context/lib";
 import React from "react";
 
 type LoaderData = {
   username: string;
 };
 type IGetItem = () => {
-    title: string;
-    author: string;
-    postedAt: { date: string; slug: string };
-    slug: string;
-    image: { src: string };
-  }[];
+  title: string;
+  author: string;
+  postedAt: { date: string; slug: string };
+  slug: string;
+  image: { src: string };
+}[];
 
 export let loader: LoaderFunction = () => {
   return {
@@ -34,7 +34,7 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
 
 export default function Profile() {
   let { username } = useLoaderData<LoaderData>();
-  let postsLoader = useDeferedLoaderData("/api/posts");
+  let postsLoader = useFetcherAsync("/api/posts");
 
   return (
     <>
@@ -103,7 +103,7 @@ export const BlogCard = ({ title, date, slug, dateSlug, image }: BlogCard) => {
   );
 };
 
-export const BlogNoSideBar = ({ getItems }: { getItems:IGetItem }) => {
+export const BlogNoSideBar = ({ getItems }: { getItems: IGetItem }) => {
   let items = getItems();
   return (
     <section className="blog-section">

@@ -34,7 +34,7 @@ export interface IIframe {
     | "strict-origin"
     | "strict-origin-when-cross-origin"
     | "unsafe-url";
-  onLoad?: () => void;
+  onLoad?: (e: Event) => void;
   onMouseOver?: () => void;
   onMouseOut?: () => void;
   frameBorder?: number;

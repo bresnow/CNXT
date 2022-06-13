@@ -4,7 +4,7 @@ import { html } from "remix-utils";
 import React from "react";
 import jsesc from "jsesc";
 import { useIf } from "bresnow_utility-react-hooks";
-import SecureRender from "~/components/Browser";
+import SecureRender, { SecureRenderProps } from "~/components/Browser";
 import { LoadCtx } from "types";
 import { useGunStatic } from "~/lib/gun/hooks";
 
@@ -14,40 +14,36 @@ export const loader: LoaderFunction = async ({ request, context }) => {
   return json({ body: null });
 };
 
-export default function Test() {
+export default function AminionDemo() {
   let data = useLoaderData();
   let iframeRef = React.useRef<HTMLIFrameElement>(null);
   let [gun] = useGunStatic(Gun);
 
-  let _data: any;
-  (_data.demo.markup.html = ` <!DOCTYPE html>
-<html>
-<head>
-<style>
-body {background-color: powderblue;}
-h1   {color: blue;}
-p    {color: red;}
-</style>
-</head>
-<body>
-
-<h1>This is a heading... If im not mistaken</h1>
-<p>This is a paragraph... I could be wrong tho</p>
-
-</body>
-</html>`),
-    // This hook is peered to the http gun server and a few other peers.
-    // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
-    React.useEffect(() => {
-      gun.get("test").put(_data);
-    }, []);
+  // This hook is peered to the http gun server and a few other peers.
+  // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-600">
-      <SecureRender namespace={"/api/gun/m?path=test"} refrence={iframeRef} />
-      {/* srcdoc={JSON.stringify(decrypted)} */}
+      <SecureRender namespace={"/api/gun/q?path=pages"} refrence={iframeRef} />
     </div>
   );
+}
+export function AminionComponent<Loaded>({
+  load,
+  route,
+}: {
+  load(): Loaded;
+  route?: string;
+}) {
+  let srcDoc = load();
+  let iframeRef = React.useRef<HTMLIFrameElement>(null);
+  let aminionRef = React.useRef<SecureRenderProps>(null);
+  let [gun] = useGunStatic(Gun);
+
+  // This hook is peered to the http gun server and a few other peers.
+  // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
+
+  return <SecureRender namespace={route} refrence={iframeRef} />;
 }
 // let [decrypted, decryptedSet] = React.useState<string | undefined>();
 // React.useEffect(() => {

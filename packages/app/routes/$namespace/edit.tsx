@@ -8,7 +8,7 @@ import {
   useCatch,
   useParams,
 } from "remix";
-import { DeferedData, useDeferedLoaderData } from "~/client-context/lib";
+import { DeferedData, useFetcherAsync } from "~/client-context/lib";
 import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
@@ -129,7 +129,7 @@ export default function BuilderRoute() {
     invariant(ackData, "ackData is undefined");
     gun.path(namespace).put(ackData);
   });
-  let buildLoader = useDeferedLoaderData(`/api/gun/q`, {
+  let buildLoader = useFetcherAsync(`/api/gun/q`, {
     params: { path: namespace },
   });
   let searchProps = {

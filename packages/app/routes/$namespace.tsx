@@ -10,7 +10,7 @@ import {
   Outlet,
   useParams,
 } from "remix";
-import { DeferedData, useDeferedLoaderData } from "~/client-context/lib";
+import { DeferedData, useFetcherAsync } from "~/client-context/lib";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
 import { HashtagLarge } from "~/components/svg/Icons";
@@ -73,7 +73,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export default function NameSpaceRoute() {
   let namespace = useParams().namespace as string;
-  let defered = useDeferedLoaderData(`/api/gun/q?`, {
+  let defered = useFetcherAsync(`/api/gun/q?`, {
     params: { path: namespace },
   });
 

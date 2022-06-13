@@ -70,12 +70,12 @@ const links = [
   },
 ];
 
-type SecureRenderProps = {
+export type SecureRenderProps = {
   namespace?: string;
   refrence: React.MutableRefObject<HTMLIFrameElement | null>;
   srcdoc?: string;
   allow?: string;
-  onLoad?: () => any;
+  onLoad?: (e: Event) => any;
   search?: InputTextProps;
   onRefresh?: () => void;
   encryption?: { key: ISEAPair };
@@ -114,6 +114,10 @@ export default function SecureRender({
     if (iframeRef.current) {
       iframeRef.current.onload = ({ target }) => {
         setLoading(false);
+        console.log(
+          (target as HTMLIFrameElement).contentWindow,
+          "ContentWindow"
+        );
       };
     }
   });

@@ -1,14 +1,13 @@
-import Gun, { IGunChain } from "gun"
 import LZString from "lz-string";
 import axios, { RequestHeaders } from "redaxios"
-import { useGunStatic } from "~/lib/gun/hooks";
-
-import { RemixGunContext } from "$/load-context";
 import { includes } from "./lib";
-export function createDeferedLoader() {
+export function createBrowserLoader() {
   return {
     async load(routePath: string, options?: Options) {
+      let Gun = (window as Window).Gun
 
+      let { host, protocol } = window.location
+      const cacheRef = Gun({ peers: [`${protocol + host + '/gun'}`], localStorage: false });
       if (options && options.params) {
         if (!routePath.endsWith("/")) {
           routePath += "/";
@@ -18,7 +17,15 @@ export function createDeferedLoader() {
         }
       }
 
-      return axios.get(routePath, options);
+      let { data } = await axios.get(routePath, options);
+      let cache
+      if (includes(options?.params, "path")) {
+        let { path } = options?.params as any;
+        cacheRef.path(path).put(data.data);
+        cache = await new Promise((res, rej) => cacheRef.path((path as string).replace("/", ".")).open((data) => { data ? res(data) : rej(data) }));
+
+      }
+      return { data, cache }
     }
   }
 }

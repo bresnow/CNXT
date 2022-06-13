@@ -3,7 +3,7 @@ import { useLocation } from "remix";
 import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 import Gun from "gun";
-import { useDeferedLoadData } from "./context";
+import { useDataLoader } from "./context";
 import { useIf, useSafeCallback } from "bresnow_utility-react-hooks";
 import { useGunStatic } from "~/lib/gun/hooks";
 import React from "react";
@@ -15,62 +15,57 @@ export { DataloaderProvider } from "./context";
  */
 export interface DeferedData {
   load(): Record<string, any>;
-  cached: Record<string, any> | undefined;
+  cached: unknown;
 }
-export function useDeferedLoaderData<T = any>(
+
+/**
+ * Fetches route loaders for Suspended Components. Uses RAD/ indexedDB to load and store cached data.
+ * @param routePath remix route path to load
+ * @param options Redaxios options
+ * @returns 
+ */
+export function useFetcherAsync<FetchedLoaderData>(
   routePath: string,
   options?: Options
 ): DeferedData {
-  let dataloader = useDeferedLoadData();
-  /**
-   * Fetching the data from the browser using RAD && IDB
-   */
-  const [cache] = useGunStatic(Gun);
-  let [cachedValue, setCachedValue] = React.useState<
-    Record<string, any> | undefined
-  >(undefined);
+  let dataloader = useDataLoader();
   let { key } = useLocation();
-  useIf([options?.params, includes(options?.params, "path")], () => {
-    let { path } = options?.params as { path: string };
-    cache.path(`${path}`).on((data: T) => {
-      if (data) setCachedValue(data);
-    });
-  });
-
-  let defered = useMemo(() => {
+  let deferred = useMemo(() => {
     invariant(dataloader, "Context Provider is undefined for useGunFetcher");
-    let defered = { resolved: false } as {
+    let _deferred = { resolved: false } as {
       resolved: boolean;
-      value?: T;
+      cache?: unknown;
+      value?: FetchedLoaderData;
       error?: any;
       promise: Promise<void>;
     };
-    defered.promise = dataloader
+    _deferred.promise = dataloader
       .load(routePath, options)
-      .then((response) => response.data)
+      .then(({ data, cache }) => ({ data, cache }))
       .then((value) => {
-        defered.value = value;
-        defered.resolved = true;
+        _deferred.value = value.data;
+        _deferred.cache = value.cache;
+        _deferred.resolved = true;
       })
       .catch((error) => {
-        defered.error = error;
-        defered.resolved = true;
+        _deferred.error = error;
+        _deferred.resolved = true;
       });
-    return defered;
+    return _deferred;
   }, [routePath, key]);
 
   return {
-    load(): T {
-      if (typeof defered.value !== "undefined") {
-        return defered.value;
+    load(): FetchedLoaderData {
+      if (typeof deferred.value !== "undefined") {
+        return deferred.value;
       }
-      if (typeof defered.error !== "undefined") {
-        throw defered.error;
+      if (typeof deferred.error !== "undefined") {
+        throw deferred.error;
       }
 
-      throw defered.promise;
+      throw deferred.promise;
     },
-    cached: cachedValue,
+    cached: deferred.cache,
   };
 }
 export const includes = (object: any, prop: string) => {

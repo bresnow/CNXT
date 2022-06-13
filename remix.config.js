@@ -4,6 +4,5 @@
 module.exports = {
   appDirectory: 'packages/app',
   customServer: "packages/server/index.ts",
-  ignoredRouteFiles: [".*"],
-  devServerPort: 8090,
+  ignoredRouteFiles: [".*"]
 };

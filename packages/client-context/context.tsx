@@ -6,8 +6,19 @@ import { Options } from "./browser";
 export type ClientContext = {
   load: Load;
 };
+
+interface DataFetcher {
+  load: Load;
+  submit: Submit;
+}
 interface Load {
   (route: string, options?: Options): Promise<Response & any>;
+}
+
+interface Submit {
+  (data: FormData | Record<string, any> | JSON, options?: Options): Promise<
+    Response & any
+  >;
 }
 let context = createContext<ClientContext | undefined>(undefined);
 
@@ -21,10 +32,4 @@ export let DataloaderProvider = ({
   return <context.Provider value={dataloader}>{children}</context.Provider>;
 };
 
-export let useDeferedLoadData = () => useContext(context);
-
-export interface GunClientContext {
-  (Gun: IGun): {
-    get(nodePath: string): Promise<Response>;
-  };
-}
+export let useDataLoader = () => useContext(context);
