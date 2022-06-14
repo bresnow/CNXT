@@ -9,7 +9,9 @@ on:
 env:
   STACK_NAME: dev-cnxt
   IMAGE: rmx-gun
-  VERSION: 0.2.7
+  DOCKER_REGISTRY: bresnow
+  GH_REGISTRY: ghcr.io/bresnow
+  VERSION: 0.2.71
 jobs:
   docker_build:
     runs-on:
@@ -17,20 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Docker Image & Push to Github Registry
-        env:
-          DOCKER_REGISTRY: bresnow
-          GH_REGISTRY: ghcr.io/bresnow
-        run: |
-          docker build -t ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-          --label "version=${{env.VERSION}}" --label "maintaner=Bresnow
-          <bresnow@me.com>" .
+        run: >
+          docker build -t ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} .
+
           docker push ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
       - name: Build Docker Image & Push to Docker registry
         run: >
           docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-          --label "version=${{env.VERSION}}" --label "maintaner=Bresnow
-          <bresnow@me.com . docker push
-          ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          . docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION
+          }}
       - name: Update Swarm Services
         run: >
           export VERSION=${{ env.VERSION }} docker service update
