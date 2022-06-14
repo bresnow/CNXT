@@ -14,7 +14,6 @@ if (args.length > 0) {
         }
     }
 }
-stack = await question(`Stack name? `)
 console.log(chalk.cyanBright(`Updating stack ${stack}`))
 await $`docker service update ${stack} --image=bresnow/${image}:${version}`
 console.log(chalk.cyanBright('Fin'))
