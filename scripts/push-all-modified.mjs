@@ -53,16 +53,16 @@ await $`git status`
 
 
 
-let tag$ = await question(`Are we tagging version ${version} ? (Y/n) `)
+// let tag$ = await question(`Are we tagging version ${version} ? (Y/n) `)
 
-if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
-    await $`git tag -a ${version} -m "${message}"`
-    let docker = await question(`Build and push image to ghcr.io? (Y/n) `)
-    if (docker === ('Y' || 'y' || "Yes" || "yes")) {
-        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name} --version=${version}`
-    }
-}
+// if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
+//     await $`git tag -a ${version} -m "${message}"`
 
+// }
+// let docker = await question(`Build and push image to ghcr.io? (Y/n) `)
+// if (docker === ('Y' || 'y' || "Yes" || "yes")) {
+//     await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name} --version=${version}`
+// }
 await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`
 await $`git push -uf ${await $`git remote show`.trim()} ${await $`git branch --show-current`.trim()}`
