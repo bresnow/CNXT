@@ -7,7 +7,7 @@ on:
     branches:
       - main
 env:
-  STACK_NAME: dev-cnxt_temp
+  STACK_NAME: dev-cnxt-temp_fltngmmth
 jobs:
   docker:
     runs-on:
