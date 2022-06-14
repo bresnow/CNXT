@@ -28,22 +28,13 @@ jobs:
       - name: Build Docker Image & Push to Docker registry
         run: >
           docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-
-
           --label "version=${{env.VERSION}}" --label "maintaner=Bresnow
-
-
-          <bresnow@me.com | .
-
-
-
-          docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          <bresnow@me.com . docker push
+          ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
       - name: Update Swarm Services
         run: >
-          export VERSION=${{ env.VERSION }}
-
-
-          docker service update ${{env.STACK_NAME}}-temp --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-
-
-          docker service update ${{env.STACK_NAME}}_peer --image=${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          export VERSION=${{ env.VERSION }} docker service update
+          ${{env.STACK_NAME}}-temp
+          --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+          docker service update ${{env.STACK_NAME}}_peer
+          --image=${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
