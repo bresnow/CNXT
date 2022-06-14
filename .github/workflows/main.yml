@@ -7,28 +7,21 @@ on:
     branches:
       - main
 env:
-  STACK_NAME: dev-cnxt
-  IMAGE: rmx-gun
-  DOCKER_REGISTRY: bresnow
-  GH_REGISTRY: ghcr.io/bresnow
-  VERSION: 0.2.72
+  STACK_NAME: dev-cnxt_temp
+  IMAGE: cnxt
+  VERSION: "0.3"
 jobs:
-  docker_build:
+  docker:
     runs-on:
       - self-hosted
     steps:
       - uses: actions/checkout@v3
       - name: Build Docker Image & Push to Github Registry
-        run: docker build -t ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-          ./Dockerfile \ docker push ${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{
-          env.VERSION }}
-      - name: Build Docker Image & Push to Docker registry
-        run: docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
-          ./Dockerfile \ docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{
-          env.VERSION }}
-      - name: Update Swarm Services
-        run: export VERSION=${{ env.VERSION }} \ docker service update
-          ${{env.STACK_NAME}}-temp
-          --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }} \
-          docker service update ${{env.STACK_NAME}}_peer
-          --image=${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+        run: npx zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
+          ${{env.VERSION}}
+      - name: Build Docker Image & Push to Docker Registry
+        run: npx zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
+          ${{env.VERSION}}
+      - name: Update Swarm Stack
+        run: npx zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
+          ${{env.VERSION}} --stack-name ${{env.STACK_NAME}}
