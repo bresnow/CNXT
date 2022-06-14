@@ -55,10 +55,7 @@ if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
 if (tag$ === ('N' || 'n' || "No" || "no")) {
     console.log(`Not tagging version ${version}`)
 }
-if (tag$ === ('H' || 'h' || "Help" || "help")) {
-    console.log(chalk.redBright(`God helps those that help themselves. No one helps God. Duck Duck Go search some git docs`))
-    sleep(1000)
-}
+
 
 //PACKAGE>JSON MODIFY VERSION
 pkg.data.version = version
