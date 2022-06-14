@@ -16,7 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
-        run: zsh
+        run: |
+          zsh
+          yarn
       - name: Build Docker Image & Push to Docker Registry
         run: |
           npx zx ./scripts/docker/build-push-dh.mjs
