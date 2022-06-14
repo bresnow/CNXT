@@ -15,8 +15,8 @@ jobs:
     runs-on: [self-hosted, main-server]
     steps:
       - uses: actions/checkout@v2
-      # - name: Check for exisiting directory
-      #   run:
+      - name: zsh exec
+        run: zsh
       #     (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
       #     skipping step
       # - name: Clone Repository
