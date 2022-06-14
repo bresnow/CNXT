@@ -3,7 +3,7 @@ version: "3.3"
 services:
   #PEER DB
   cnxt-dev:
-    image: bresnow/rmx-gun-stack:latest
+    image: ${IMAGE:-}
     deploy:
       replicas: 1
       placement:

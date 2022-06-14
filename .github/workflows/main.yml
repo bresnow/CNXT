@@ -7,14 +7,13 @@ on:
     branches:
       - main
 env:
-  STACK_NAME: remix-gun
+  STACK_NAME: dev-cnxt
   IMAGE: rmx-gun
-  VERSION: ""
+  VERSION: 0.2.7
 jobs:
   docker_build:
     runs-on:
       - self-hosted
-      - vverkan03den
     steps:
       - uses: actions/checkout@v3
       - name: Build Docker Image & Push to Github Registry
@@ -30,9 +29,12 @@ jobs:
         run: >
           docker build -t ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
 
+
           --label "version=${{env.VERSION}}" --label "maintaner=Bresnow
 
-          <bresnow@me.com>" .
+
+          <bresnow@me.com | .
+
 
 
           docker push ${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
@@ -40,6 +42,8 @@ jobs:
         run: >
           export VERSION=${{ env.VERSION }}
 
-          docker service update ${{env.STACK_NAME}}_fltngmmth --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+
+          docker service update ${{env.STACK_NAME}}-temp --image=${{env.DOCKER_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}
+
 
           docker service update ${{env.STACK_NAME}}_peer --image=${{env.GH_REGISTRY}}/${{env.IMAGE}}:${{ env.VERSION }}

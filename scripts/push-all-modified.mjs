@@ -74,17 +74,7 @@ await write(`.github/workflows/${branch}.yml`, YAML.stringify(yml))
 
 
 
-await gitAddAllModified()
 
+await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`
-await $`git push`
-
-async function gitAddAllModified() {
-    let mod = await $`git status`.pipe($`grep modified:`)
-    mod.stdout.split("modified: ").forEach(async (line) => {
-        let filename = line.trim()
-        if (filename.length > 1) {
-            await $`git add ${filename}`
-        }
-    })
-}
+await $`git push -uf origin ${branch}`
