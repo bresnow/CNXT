@@ -4,6 +4,7 @@ import 'zx/globals';
 let pkg = await io.json`package.json`
 let message, version
 let args = process.argv.slice(3)
+
 if (args.length > 0) {
 
     for (let i = 0; i < args.length; i++) {
@@ -52,16 +53,17 @@ await $`git status`
 
 
 
-let tag$ = await question(`Are we tagging version ${version} ? (y/n) `)
+let tag$ = await question(`Are we tagging version ${version} ? (Y/n) `)
 
 if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
     await $`git tag -a ${version} -m "${message}"`
-    let docker = await question(`Build and push image to ghcr.io? (y/n) `)
+    let docker = await question(`Build and push image to ghcr.io? (Y/n) `)
     if (docker === ('Y' || 'y' || "Yes" || "yes")) {
-        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name + "-" + branch} --version=${version}`
+        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name} --version=${version}`
     }
 }
 
 await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`
-await $`git push -uf origin ${branch}`
+await $`git push -uf ${await $`git remote show`.trim()} ${await $`git branch --show-current`.trim()}`
+
