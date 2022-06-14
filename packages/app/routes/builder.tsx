@@ -24,7 +24,7 @@ export default function AminionDemo() {
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-600">
-      <SecureRender namespace={"/api/gun/q?path=pages"} refrence={iframeRef} />
+      <SecureRender namespace={"/profile"} refrence={iframeRef} />
     </div>
   );
 }
@@ -43,7 +43,7 @@ export function AminionComponent<Loaded>({
   // This hook is peered to the http gun server and a few other peers.
   // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
 
-  return <SecureRender namespace={route} refrence={iframeRef} />;
+  return <SecureRender namespace={"/profile"} refrence={iframeRef} />;
 }
 // let [decrypted, decryptedSet] = React.useState<string | undefined>();
 // React.useEffect(() => {

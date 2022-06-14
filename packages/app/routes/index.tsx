@@ -8,7 +8,7 @@ import {
   useActionData,
   useCatch,
 } from "remix";
-import { useFetcherAsync } from "~/client-context/lib";
+import { useFetcherAsync } from "~/rmxgun-context/useFetcherAsync";
 import { useIf } from "bresnow_utility-react-hooks";
 import { LoadCtx } from "types";
 import Display from "~/components/DisplayHeading";
@@ -19,6 +19,7 @@ import CNXTLogo from "~/components/svg/logos/CNXT";
 import FormBuilder from "~/components/FormBuilder";
 import FMLogo from "~/components/svg/logos/FltngMmth";
 import { Navigation } from "~/components/Navigator";
+import Profile from "~/components/Profile";
 
 const noop = () => {};
 type ErrObj = {
@@ -43,7 +44,9 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   return json(data);
 };
 function WelcomeCard() {
-  let { text, page_title, src } = useLoaderData();
+  let data = useLoaderData();
+  let { text, page_title, src } = data;
+  console.log(data);
   let img = { src, alt: "RemixGun" };
   return (
     <div
@@ -61,7 +64,7 @@ function WelcomeCard() {
         showDescription={true}
         image={img}
       />
-      <ImageCard />
+    <Profile />
     </div>
   );
 }

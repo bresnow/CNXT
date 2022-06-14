@@ -1,14 +1,6 @@
 import * as ReactDOM from "react-dom";
-import { RemixBrowser } from "remix";
+import { EntryFactory } from "~/rmxgun-context/context";
 
-import { createBrowserLoader } from "~/client-context/browser";
-import { DataloaderProvider } from "~/client-context/lib";
-
-let dataloader = createBrowserLoader();
+let RmxGun = EntryFactory();
 // @ts-ignore
-ReactDOM.hydrateRoot(
-  document,
-  <DataloaderProvider dataloader={dataloader}>
-    <RemixBrowser />
-  </DataloaderProvider>
-);
+ReactDOM.hydrateRoot(document, <RmxGun.Client />);

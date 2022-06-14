@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import { Link, useLoaderData } from "remix";
 import type { LoaderFunction } from "remix";
 import Gun from "gun";
-import { useFetcherAsync } from "~/client-context/lib";
+import { useFetcherAsync } from "~/rmxgun-context/useFetcherAsync";
 import React from "react";
-
+import Profile from "~/components/Profile";
 type LoaderData = {
   username: string;
 };
@@ -32,16 +32,16 @@ function SuspendedProfileInfo({ getData }: { getData: () => any }) {
   );
 }
 
-export default function Profile() {
+export default function ProfileRoute() {
   let { username } = useLoaderData<LoaderData>();
   let postsLoader = useFetcherAsync("/api/posts");
 
   return (
     <>
-      <h1>Profile: {username}</h1>
-      <Suspense fallback="Loading Profile....">
+      <Profile />
+      {/* <Suspense fallback="Loading Profile....">
         <BlogNoSideBar getItems={postsLoader.load as any} />
-      </Suspense>
+      </Suspense> */}
     </>
   );
 }

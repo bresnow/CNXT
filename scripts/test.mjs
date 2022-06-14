@@ -1,15 +1,8 @@
 import { $, question, } from 'zx'
-import { cd, read } from 'fsxx'
+import { cd, read, write } from 'fsxx'
 import fs from 'fs'
+import jsesc from 'jsesc';
 import Configstore from 'configstore';
-
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-const yaml = JSON.parse(fs.readFileSync('./github/main.yml', 'utf8'));
-console.log(yaml)
-packageJson.version = '0.2.123'
-// Create a Configstore instance.
-// const config = new Configstore(packageJson.name, { foo: 'bar' });
-
-console.log(packageJson.version);
-
-// version = await question("Version: ")
+await $`pwd`
+let patsh = await $`cat node_modules/@remix-run/server-runtime/server.js`
+console.log(jsesc(patsh))

@@ -1,6 +1,8 @@
 import LZString from "lz-string";
+import objectAssign from "object-assign";
 import axios, { RequestHeaders } from "redaxios"
-import { includes } from "./lib";
+import { Submit } from "./context";
+import { includes } from "./useFetcherAsync";
 export function createBrowserLoader() {
   return {
     async load(routePath: string, options?: Options) {
@@ -8,6 +10,8 @@ export function createBrowserLoader() {
 
       let { host, protocol } = window.location
       const cacheRef = Gun({ peers: [`${protocol + host + '/gun'}`], localStorage: false });
+
+
       if (options && options.params) {
         if (!routePath.endsWith("/")) {
           routePath += "/";
@@ -17,15 +21,33 @@ export function createBrowserLoader() {
         }
       }
 
+
       let { data } = await axios.get(routePath, options);
       let cache
       if (includes(options?.params, "path")) {
         let { path } = options?.params as any;
         cacheRef.path(path).put(data.data);
         cache = await new Promise((res, rej) => cacheRef.path((path as string).replace("/", ".")).open((data) => { data ? res(data) : rej(data) }));
-
       }
-      return { data, cache }
+      return { data, cache: cache && cache as Record<string, any> }
+    },
+    async submit(options?: Options) {
+      let Gun = (window as Window).Gun
+      let MasterKeys = (window as any).ENV.APP_KEY_PAIR
+      console.log(MasterKeys, "MasterKeys")
+      let { host, protocol } = window.location
+      const gun = Gun({ peers: [`${protocol + host + '/gun'}`], localStorage: false });
+      const radCookie = new Gun({ localStorage: false, file: 'rad_biscuit' });
+      if (options && options.params) {
+        if (!options?.url?.endsWith("/")) {
+          options.url += "/";
+        }
+        if (options?.url && includes(options.params, "compressed") && (options.params as any).compressed === ("true" || true)) {
+          options.url = LZString.compressToEncodedURIComponent(options?.url);
+        }
+        let response = await axios.post(options?.url || "/", options.data || options.body, options)
+        return response
+      }
     }
   }
 }

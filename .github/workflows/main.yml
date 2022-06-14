@@ -9,7 +9,7 @@ on:
 env:
   STACK_NAME: remix-gun
   IMAGE: rmx-gun
-  VERSION: 0.2.4
+  VERSION: ""
 jobs:
   docker_build:
     runs-on:
