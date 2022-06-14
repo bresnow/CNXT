@@ -49,9 +49,7 @@ await $`git status`
 // GITHUB WORKFLOW VERSION ENV REVISION
 let status = await $`git status`.pipe($`grep "On branch"`)
 let branch = status.stdout.replace("On branch ", "").trim()
-const yml = YAML.parse(fs.readFileSync(`.github/workflows/${branch}.yml`, "utf8"))
-yml.env.VERSION = version
-await write(`.github/workflows/${branch}.yml`, YAML.stringify(yml))
+
 
 
 
@@ -61,7 +59,7 @@ if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
     await $`git tag -a ${version} -m "${message}"`
     let docker = await question(`Build and push image to ghcr.io? (y/n) `)
     if (docker === ('Y' || 'y' || "Yes" || "yes")) {
-        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${JSON.parse(await read('package.json')).name + branch === "main" ? null : `-${branch}`} --version=${version}`
+        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name + "-" + branch} --version=${version}`
     }
 }
 

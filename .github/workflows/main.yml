@@ -8,7 +8,6 @@ on:
       - main
 env:
   STACK_NAME: dev-cnxt_temp
-  VERSION: 0.3.333
 jobs:
   docker:
     runs-on:
@@ -22,7 +21,7 @@ jobs:
         run: |
           npx zx ./scripts/docker/build-push-dh.mjs
       - name: Update Swarm Stack
-        run: >
+        run: |
           npx zx ./scripts/docker/update-stack.mjs --stack-name ${{env.STACK_NAME}}
       - name: Clean Up
         run: |

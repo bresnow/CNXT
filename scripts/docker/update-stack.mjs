@@ -1,9 +1,10 @@
+#!/usr/bin/npx zx
 import { $, chalk, question } from "zx";
 import { read } from 'fsxx'
 let pkg = JSON.parse(await read('package.json'))
 let status = await $`git status`.pipe($`grep "On branch"`)
 let branch = status.stdout.replace("On branch ", "").trim()
-let image = `${pkg.name + branch === "main" ? null : `-${branch}`, version = pkg.version}`, stack
+let image = pkg.name + branch, version = pkg.version, stack
 let args = process.argv.slice(3);
 
 if (args.length > 0) {
