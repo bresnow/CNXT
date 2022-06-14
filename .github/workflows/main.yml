@@ -24,7 +24,7 @@ jobs:
           yarn zx ./scripts/docker/build-push-dh.mjs
       - name: Update Swarm Stack
         run: |
-          yarn zx ./scripts/docker/update-stack.mjs --stack-name ${{env.STACK_NAME}}
+          yarn zx ./scripts/docker/update-stack.mjs -s=${{env.STACK_NAME}}
       - name: Clean Up
         run: |
           docker image prune --force
