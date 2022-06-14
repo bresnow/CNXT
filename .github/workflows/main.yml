@@ -9,19 +9,21 @@ on:
 env:
   STACK_NAME: dev-cnxt_temp
   IMAGE: cnxt
-  VERSION: "0.3"
+  VERSION: "0.31"
 jobs:
   docker:
     runs-on:
       - self-hosted
     steps:
       - uses: actions/checkout@v3
+      - name: Yarn Install for Google/ZX to run scripts
+        run: yarn install
       - name: Build Docker Image & Push to Github Registry
-        run: npx zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
+        run: yarn zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Build Docker Image & Push to Docker Registry
-        run: npx zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
+        run: yarn zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Update Swarm Stack
-        run: npx zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
+        run: yarn zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}} --stack-name ${{env.STACK_NAME}}
