@@ -47,7 +47,7 @@ if (version === undefined) {
     version = await question(`Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)}: `)
     typeof version === 'undefined' ? version = (Number(pkg.data.version) + .01).toString().trim() : version = version.trim()
 }
-let tag$ = await question(`Are we tagging version ${version} ? (y/n/help) `)
+let tag$ = await question(`Are we tagging version ${version} ? (y/n) `)
 
 if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
     await $`git tag -a ${version} -m "${message}"`
