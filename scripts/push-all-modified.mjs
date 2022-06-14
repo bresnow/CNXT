@@ -47,8 +47,7 @@ pkg.data.version = version
 await pkg.save()
 await $`git status`
 // GITHUB WORKFLOW VERSION ENV REVISION
-let status = await $`git status`.pipe($`grep "On branch"`)
-let branch = status.stdout.replace("On branch ", "").trim()
+
 
 
 
