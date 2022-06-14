@@ -12,12 +12,12 @@ env:
   VERSION: 0.3.2
 jobs:
   docker:
-    runs-on:
-      - self-hosted
+    runs-on: [self-hosted, main-server]
     steps:
       - uses: actions/checkout@v2
       - name: Check for exisiting directory
-        run: (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
+        run:
+          (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
           skipping step
       - name: Clone Repository
         run: >
@@ -28,11 +28,14 @@ jobs:
       - name: Yarn Install for Google/ZX to run scripts
         run: yarn install
       - name: Build Docker Image & Push to Github Registry
-        run: yarn zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
+        run:
+          yarn zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Build Docker Image & Push to Docker Registry
-        run: yarn zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
+        run:
+          yarn zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Update Swarm Stack
-        run: yarn zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
+        run:
+          yarn zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}} --stack-name ${{env.STACK_NAME}}
