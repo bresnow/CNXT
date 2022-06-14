@@ -65,5 +65,5 @@ await $`git status`
 // }
 await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`
-await $`git push -uf ${await $`git remote show`.trim()} ${await $`git branch --show-current`.trim()}`
+await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`
 
