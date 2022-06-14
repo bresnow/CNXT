@@ -11,8 +11,6 @@ ARG version=${VERSION}
 COPY . /app
 
 WORKDIR  /app
-RUN yarn \
-    && yarn build 
-
+RUN yarn
 CMD ["yarn", "build:start"] 
 LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun-react-18-streaming
