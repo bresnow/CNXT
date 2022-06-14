@@ -1,27 +1,20 @@
-import { $, chalk } from "zx";
-
+import { $, chalk, question } from "zx";
+import { read } from 'fsxx'
+let pkg = JSON.parse(await read('package.json'))
+let status = await $`git status`.pipe($`grep "On branch"`)
+let branch = status.stdout.replace("On branch ", "").trim()
+let image = `${pkg.name + branch === "main" ? null : `-${branch}`, version = pkg.version}`, stack
 let args = process.argv.slice(3);
 
-/**
- * Export all the env variables. Maps are so much cleaner than switch statements.
- */
-let handler = new Map([
-    ["--version" || "-v", async (arg) => {
-        let version = arg
-        await $`export VERSION=${version}`
-    }], ["--image" || "-i", async (arg) => {
-        let image = arg
-        await $`export IMAGE=${image}`
-    },
-    ["--stack-name" || "-s", async (arg) => {
-        let stackname = arg
-        await $`export STACK_NAME=${stackname}`
-    }]]]);
-for (let i = 0; i < args.length; i++) {
-    if (handler.has(args[i])) {
-        await handler.get(args[i + 1])()
+if (args.length > 0) {
+    for (let i = 0; i < args.length; i++) {
+        let arg = args[i]
+        if (arg.startsWith('--stack-name=' || '-s=' || '--stack-name' || '-s')) {
+            stack = arg.includes("=") ? arg.split('=')[1] : args[i + 1]
+        }
     }
 }
-console.log(chalk.cyanBright('Updating stack ${env.STACK_NAME}'))
-await $`docker service update $STACK_NAME --image=bresnow/$IMAGE:$VERSION` 
+stack = await question(`Stack name ? `)
+console.log(chalk.cyanBright(`Updating stack ${stack}`))
+await $`docker service update ${stack} --image=bresnow/${image}:${version}`
 console.log(chalk.cyanBright('Fin'))

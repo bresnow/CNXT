@@ -1,13 +1,7 @@
 import { $, question, YAML, chalk, sleep } from 'zx'
-import { cd, io, write } from 'fsxx'
-import path from 'path'
+import { read, io, write } from 'fsxx'
 import 'zx/globals';
-
-function argumentsArray() {
-
-}
-
-
+let pkg = await io.json`package.json`
 let message, version
 let args = process.argv.slice(3)
 if (args.length > 0) {
@@ -42,25 +36,15 @@ if (message === undefined) {
     }
 }
 
-let pkg = await io.json`package.json`
 if (version === undefined) {
     version = await question(`Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)}: `)
     typeof version === 'undefined' ? version = (Number(pkg.data.version) + .01).toString().trim() : version = version.trim()
 }
-let tag$ = await question(`Are we tagging version ${version} ? (y/n) `)
-
-if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
-    await $`git tag -a ${version} -m "${message}"`
-}
-if (tag$ === ('N' || 'n' || "No" || "no")) {
-    console.log(`Not tagging version ${version}`)
-}
-
 
 //PACKAGE>JSON MODIFY VERSION
+
 pkg.data.version = version
 await pkg.save()
-
 await $`git status`
 // GITHUB WORKFLOW VERSION ENV REVISION
 let status = await $`git status`.pipe($`grep "On branch"`)
@@ -71,6 +55,15 @@ await write(`.github/workflows/${branch}.yml`, YAML.stringify(yml))
 
 
 
+let tag$ = await question(`Are we tagging version ${version} ? (y/n) `)
+
+if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
+    await $`git tag -a ${version} -m "${message}"`
+    let docker = await question(`Build and push image to ghcr.io? (y/n) `)
+    if (docker === ('Y' || 'y' || "Yes" || "yes")) {
+        await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${JSON.parse(await read('package.json')).name + branch === "main" ? null : `-${branch}`} --version=${version}`
+    }
+}
 
 await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`

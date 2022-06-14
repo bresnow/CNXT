@@ -8,32 +8,24 @@ on:
       - main
 env:
   STACK_NAME: dev-cnxt_temp
-  IMAGE: cnxt
-  VERSION: 0.3.2
+  VERSION: 0.3.333
 jobs:
   docker:
-    runs-on: [self-hosted, main-server]
+    runs-on:
+      - self-hosted
+      - main-server
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
         run: zsh
-      #     (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
-      #     skipping step
-      # - name: Clone Repository
-      #   run: >
-      #     git clone https://github.com/bresnow/remix.gun-react-18-streaming
-      #     ~/remix_gun
-
-      #     cd ~/remix_gun
-      - name: Build Docker Image & Push to Github Registry
-        run:
-          zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
-          ${{env.VERSION}}
       - name: Build Docker Image & Push to Docker Registry
-        run:
-          zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
-          ${{env.VERSION}}
+        run: |
+          npx zx ./scripts/docker/build-push-dh.mjs
       - name: Update Swarm Stack
-        run:
-          zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
-          ${{env.VERSION}} --stack-name ${{env.STACK_NAME}}
+        run: >
+          npx zx ./scripts/docker/update-stack.mjs --stack-name ${{env.STACK_NAME}}
+      - name: Clean Up
+        run: |
+          docker image prune --force
+          docker volume prune --force
+          docker container prune --force
