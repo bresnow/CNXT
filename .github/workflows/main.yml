@@ -15,27 +15,25 @@ jobs:
     runs-on: [self-hosted, main-server]
     steps:
       - uses: actions/checkout@v2
-      - name: Check for exisiting directory
-        run:
-          (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
-          skipping step
-      - name: Clone Repository
-        run: >
-          git clone https://github.com/bresnow/remix.gun-react-18-streaming
-          ~/remix_gun
+      # - name: Check for exisiting directory
+      #   run:
+      #     (test -d ~/remix_gun && rm -rf ~/remix_gun) || echo app does not exist,
+      #     skipping step
+      # - name: Clone Repository
+      #   run: >
+      #     git clone https://github.com/bresnow/remix.gun-react-18-streaming
+      #     ~/remix_gun
 
-          cd ~/remix_gun
-      - name: Yarn Install for Google/ZX to run scripts
-        run: yarn install
+      #     cd ~/remix_gun
       - name: Build Docker Image & Push to Github Registry
         run:
-          yarn zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
+          zx ./scripts/docker/build-push-gh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Build Docker Image & Push to Docker Registry
         run:
-          yarn zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
+          zx ./scripts/docker/build-push-dh.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}}
       - name: Update Swarm Stack
         run:
-          yarn zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
+          zx ./scripts/docker/update-stack.mjs --image ${{env.IMAGE}} --version
           ${{env.VERSION}} --stack-name ${{env.STACK_NAME}}
