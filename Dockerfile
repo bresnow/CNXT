@@ -12,5 +12,5 @@ COPY . /app
 
 WORKDIR  /app
 RUN yarn
-CMD ["yarn", "build:start"] 
+CMD ["yarn", "start", "-b"] 
 LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun-react-18-streaming
