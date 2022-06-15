@@ -6,5 +6,6 @@ let args = process.argv.slice(3)
 
 let t = await $`docker stack deploy  -c swarm-stacks/traefik.yml traefik-${pkg.name.replace(".", "-")}`
 if (!t.stderr) {
-    await $`export VERSION=${pkg.version} docker stack deploy -c swarm-stacks/remix-gun.yml app-${pkg.name.replace(".", "-")}`
+    await $`export VERSION=${pkg.version}`
+    await $`docker stack deploy -c swarm-stacks/remix-gun.yml app-${pkg.name.replace(".", "-")}`
 }
