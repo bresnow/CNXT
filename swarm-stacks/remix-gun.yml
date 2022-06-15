@@ -11,11 +11,14 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.remix-gun-${LABEL:-}.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
-        - traefik.http.routers.remix-gun-${LABEL:-}.entrypoints=${SCHEME:-https}
-        - traefik.http.routers.remix-gun-${LABEL:-}.service=remix-gun-${LABEL:-}
-        - traefik.http.routers.remix-gun-${LABEL:-}.tls.certresolver=letsencrypt
-        - traefik.http.services.remix-gun-${LABEL:-}.loadbalancer.server.port=${CLIENT_PORT:-3334}
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.peer-http.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
+        - traefik.http.routers.peer-http.entrypoints=http
+        - traefik.http.routers.peer-http.middlewares=https-redirect
+        - traefik.http.routers.peer-https.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
+        - traefik.http.routers.peer-https.entrypoints=https
+        - traefik.http.routers.peer-https.tls.certresolver=http
+        - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT:-3334}
     environment:
       - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
       - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
@@ -23,7 +26,7 @@ services:
       - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
       - PEER_DOMAIN=${PEER_DOMAIN:-}
       - CLIENT_PORT=${CLIENT_PORT:-3334}
-      - DOMAIN=${DOMAIN:-dev.cnxt.app}`
+      - DOMAIN=${DOMAIN:-dev.cnxt.app}
     networks:
       - traefik-public
 networks:
