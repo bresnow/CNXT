@@ -3,16 +3,14 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    branches:
-      - main
-env:
-  STACK_NAME: dev-cnxt-temp_fltngmmth
+
 jobs:
   docker:
     runs-on:
       - self-hosted
       - main-server
+    env:
+      SERVICE: fltngmmth
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
@@ -21,10 +19,10 @@ jobs:
           yarn
       - name: Build Docker Image & Push to Docker Registry
         run: |
-          yarn zx ./scripts/docker/build-push-dh.mjs
+          yarn zx scripts/docker/build-push-dh.mjs
       - name: Update Swarm Stack
         run: |
-          yarn zx ./scripts/docker/update-stack.mjs -s=${{env.STACK_NAME}}
+          yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
       - name: Clean Up
         run: |
           docker image prune --force
