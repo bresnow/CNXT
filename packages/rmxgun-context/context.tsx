@@ -1,6 +1,4 @@
 import { createContext, useContext } from "react";
-import type { FC } from "react";
-import type { IGun } from "gun";
 import { createBrowserLoader, Options } from "./browser";
 import { EntryContext, RemixBrowser, RemixServer } from "remix";
 import { LoadCtx } from "types";

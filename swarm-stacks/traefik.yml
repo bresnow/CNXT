@@ -11,7 +11,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --pilot.token=4f869d98-2658-48e6-9405-c97c9183d932
-      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@xdesk.app}
+      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@me.com}
       - --certificatesresolvers.http.acme.storage=/certificates/acme.json
       - --certificatesresolvers.http.acme.tlschallenge=true
       - --accesslog
@@ -49,6 +49,68 @@ services:
 
     networks:
       - traefik-public
+
+  # FRONTEND
+
+  fltngmmth:
+    image: ${IMAGE:-remix.gun}:${VERSION:-latest}
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.traefik-public.traefik-public-certificates == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-rmx-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-http.entrypoints=http
+        - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
+        - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-rmx-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-https.entrypoints=https
+        - traefik.http.routers.fltngmmth-https.tls.certresolver=http
+        - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
+    environment:
+      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
+      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
+      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
+      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
+      - PEER_DOMAIN=${PEER_DOMAIN:-rmx-gun-peer.fltngmmth.com}
+      - CLIENT_PORT=${CLIENT_PORT:-3333}
+      - DOMAIN=${DOMAIN:-rmx-gun.fltngmmth.com}
+    networks:
+      - traefik-public
+
+      #PEER DB
+  peer:
+    image: ${IMAGE:-remix.gun}:${VERSION:-latest}
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.traefik-public.traefik-public-certificates == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.peer-http.rule=Host(`${DOMAIN:-rmx-gun-peer.fltngmmth.com}`)
+        - traefik.http.routers.peer-http.entrypoints=http
+        - traefik.http.routers.peer-http.middlewares=https-redirect
+        - traefik.http.routers.peer-https.rule=Host(`${DOMAIN:-rmx-gun-peer.fltngmmth.com}`)
+        - traefik.http.routers.peer-https.entrypoints=https
+        - traefik.http.routers.peer-https.tls.certresolver=http
+        - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT:-3334}
+    environment:
+      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
+      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
+      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
+      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
+      - PEER_DOMAIN=${PEER_DOMAIN:-rmx-gun.fltngmmth.com}
+      - CLIENT_PORT=${CLIENT_PORT:-3334}
+      - DOMAIN=${DOMAIN:-rmx-gun-peer.fltngmmth.com}
+    networks:
+      - traefik-public
+
 volumes:
   traefik-certs:
   # peer1:
