@@ -1,32 +1,32 @@
-name: Main Branch Workflow
-on:
-  push:
-    branches:
-      - main
+# name: Main Branch Workflow
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  docker:
-    runs-on:
-      - self-hosted
-      - main-server
-    env:
-      SERVICE: app
-    steps:
-      - uses: actions/checkout@v2
-      - name: zsh exec
-        run: |
-          zsh
-          yarn
-      - name: Build Docker Image & Push to Docker Registry
-        run: |
-          yarn zx scripts/docker/build-push-dh.mjs
-      - name: Deploy Swarm Services
-        run: yarn zx scripts/docker/swarm/traefik-service.mjs
-      - name: Update Swarm Stack
-        run: |
-          yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
-      - name: Clean Up
-        run: |
-          docker image prune --force
-          docker volume prune --force
-          docker container prune --force
+# jobs:
+#   docker:
+#     runs-on:
+#       - self-hosted
+#       - main-server
+#     env:
+#       SERVICE: app
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: zsh exec
+#         run: |
+#           zsh
+#           yarn
+#       - name: Build Docker Image & Push to Docker Registry
+#         run: |
+#           yarn zx scripts/docker/build-push-dh.mjs
+#       - name: Deploy Swarm Services
+#         run: yarn zx scripts/docker/swarm/traefik-service.mjs
+#       - name: Update Swarm Stack
+#         run: |
+#           yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
+#       - name: Clean Up
+#         run: |
+#           docker image prune --force
+#           docker volume prune --force
+#           docker container prune --force

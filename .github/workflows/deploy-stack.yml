@@ -2,14 +2,6 @@ name: Deploy Stack
 on:
   workflow_dispatch:
     inputs:
-      version:
-        type: string
-        description: Version Number
-        required: true
-      stack_name:
-        type: string
-        description: Stack Name
-        required: true
       traefik_deploy:
         type: boolean
         description: Deploy Traefik Service?
@@ -23,8 +15,6 @@ jobs:
     runs-on:
       - self-hosted
       - main-server
-    env:
-      SERVICE: fltngmmth
     steps:
       - uses: actions/checkout@v2
       # Execute zsh in case I use aliases in the scripting
