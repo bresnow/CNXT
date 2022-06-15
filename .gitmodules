@@ -1,2 +1,2 @@
-[submodule "zx-scripts"]
-	url = "https://github.com/bresnow/zx-dev-scripts.git"
+[submodule "./scripts"]
+	url = git@github.com:bresnow/zx-dev-scripts.git

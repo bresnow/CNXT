@@ -1,5 +1,5 @@
 import { $, question, YAML, chalk, sleep } from 'zx'
-import { read, io, write } from 'fsxx'
+import { io } from 'fsxx'
 import 'zx/globals';
 let pkg = await io.json`package.json`
 let message, version
@@ -47,22 +47,6 @@ if (version === undefined) {
 pkg.data.version = version
 await pkg.save()
 await $`git status`
-// GITHUB WORKFLOW VERSION ENV REVISION
-
-
-
-
-
-// let tag$ = await question(`Are we tagging version ${version} ? (Y/n) `)
-
-// if (tag$ === ('Y' || 'y' || "Yes" || "yes")) {
-//     await $`git tag -a ${version} -m "${message}"`
-
-// }
-// let docker = await question(`Build and push image to ghcr.io? (Y/n) `)
-// if (docker === ('Y' || 'y' || "Yes" || "yes")) {
-//     await $`npx zx scripts/docker/build-push-gh.mjs --image=ghcr.io/bresnow/${pkg.name} --version=${version}`
-// }
 await $`git add --all`
 await $`git commit -s -m ${`${message} | ${version}`}`
 await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`

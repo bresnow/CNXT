@@ -1,9 +1,8 @@
 version: "3.3"
 
 services:
-  #PEER DB
-  cnxt-dev:
-    image: ${IMAGE:-}
+  remix-gun:
+    image: ${IMAGE:-remix.gun}:${VERSION:-latest}
     deploy:
       replicas: 1
       placement:
@@ -12,29 +11,21 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.cnxt-dev-http.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
-        - traefik.http.routers.cnxt-dev-http.entrypoints=http
-        - traefik.http.routers.cnxt-dev-http.middlewares=https-redirect
-        - traefik.http.routers.cnxt-dev-https.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
-        - traefik.http.routers.cnxt-dev-https.entrypoints=https
-        - traefik.http.routers.cnxt-dev-https.tls.certresolver=http
-        - traefik.http.services.cnxt-dev.loadbalancer.server.port=${CLIENT_PORT:-3334}
+        - traefik.http.routers.remix-gun-${LABEL:-}.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
+        - traefik.http.routers.remix-gun-${LABEL:-}.entrypoints=${SCHEME:-https}
+        - traefik.http.routers.remix-gun-${LABEL:-}.service=remix-gun-${LABEL:-}
+        - traefik.http.routers.remix-gun-${LABEL:-}.tls.certresolver=letsencrypt
+        - traefik.http.services.remix-gun-${LABEL:-}.loadbalancer.server.port=${CLIENT_PORT:-3334}
     environment:
       - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
       - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
       - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
       - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
-      - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
+      - PEER_DOMAIN=${PEER_DOMAIN:-}
       - CLIENT_PORT=${CLIENT_PORT:-3334}
-      - DOMAIN=${DOMAIN:-rmx-gun.fltngmmth.com}
+      - DOMAIN=${DOMAIN:-dev.cnxt.app}`
     networks:
       - traefik-public
-
-volumes:
-  traefik-certs:
-  # peer1:
-
 networks:
   traefik-public:
     external: true

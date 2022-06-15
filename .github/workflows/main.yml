@@ -20,11 +20,14 @@ jobs:
       - name: Build Docker Image & Push to Docker Registry
         run: |
           yarn zx scripts/docker/build-push-dh.mjs
-      - name: Update Swarm Stack
-        run: |
-          yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
-      - name: Clean Up
-        run: |
-          docker image prune --force
-          docker volume prune --force
-          docker container prune --force
+      - name: Deploy Swarm Services
+        run: yarn zx scripts/docker/swarm/traefik-service.mjs
+
+      # - name: Update Swarm Stack
+      #   run: |
+      #     yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
+      # - name: Clean Up
+      #   run: |
+      #     docker image prune --force
+      #     docker volume prune --force
+      #     docker container prune --force
