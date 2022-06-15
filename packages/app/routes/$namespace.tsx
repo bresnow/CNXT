@@ -87,7 +87,7 @@ export default function NameSpaceRoute() {
   return (
     <Navigation search={searchProps} logo={<CNXTLogo />}>
       <Suspense fallback={<Fallback defered={defered} />}>
-        <SuspendedTest load={defered.load} />
+        <SuspendedTest load={defered.response} />
       </Suspense>
       <Outlet />
     </Navigation>

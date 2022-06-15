@@ -8,7 +8,6 @@ import { getDomain } from ".";
 import { unprocessableEntity } from "remix-utils";
 import objectAssign from "object-assign";
 export function RemixGunContext(Gun: IGun, request: Request) {
-    // log((req), "Request")
     const ENV = {
         DOMAIN: process.env.DOMAIN,
         PEER_DOMAIN: process.env.PEER_DOMAIN?.split(", " || " " || "/" || ""),
@@ -118,69 +117,6 @@ export function RemixGunContext(Gun: IGun, request: Request) {
             },
         });
     }
-    /**
-     * * @param path - Path to the desired node. Each node label separated by forward slash  "path/to/the/node"
-     * @param keys - optional Keypair to authorize node access
-     * @returns - get: get data from node, map - map numerical sets as an array , put: update node with data with option to set data as a numerical set,
-     */
-    // const graph: ChainCtx = {
-    //     get: (path: string) => {
-    //         let chainref: IGunChain<T>
-    //         chainref = (gun as any).path(`${path}`)
-    //         return {
-    //             val: (opts) => new Promise((resolve, reject) =>
-    //                 opts?.open ? chainref.open((data) => {
-    //                     if (!data) {
-    //                         reject("No data found")
-    //                     }
-    //                     resolve(data)
-    //                 }) : chainref.once((data) => {
-    //                     if (!data) {
-    //                         reject("No data found")
-    //                     }
-    //                     resolve(data)
-    //                 })
-    //             ),
-    //             put: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-    //                 chainref.put(data, (ack: any) => {
-    //                     ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
-    //                 })
-    //             })
-    //             ,
-    //             set: async (data: NodeValues | IGunChain<Record<string, any>, any>) => new Promise((resolve, reject) => {
-    //                 chainref.set(data, (ack: any) => {
-    //                     ack.ok ? resolve(`node ${path} -  values updated to ${data}`) : reject(ack.err);
-    //                 })
-    //             }),
-    //             map: async (callback?: (args?: any) => any) => {
-
-    //                 let object = await (chainref as any).then();
-
-    //                 return new Promise(async (resolve, reject) => {
-    //                     if (!object) {
-    //                         reject("No data set");
-    //                     }
-    //                     let set: NodeValues[] = await Promise.all(
-    //                         Object.keys(object).map(async (key) => {
-    //                             // @ts-ignore
-    //                             let data = await chainref.get({ "#": key });
-    //                             return data
-    //                         })
-    //                     );
-    //                     if (!set) {
-    //                         reject("Error getting data - set is undefined");
-    //                     }
-    //                     if (callback) {
-    //                         let cbd = callback(set)
-    //                         resolve(cbd)
-    //                     }
-    //                     resolve([...new Set(set)]);
-
-    //                 })
-    //             },
-    //         }
-    //     },
-
 
     //     /**
     //      * add or remove peer addresses 
@@ -188,21 +124,21 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     //      * @param remove 
     //      * @returns 
     //      */
-    //     options: (peers: string | string[], remove?: boolean) => {
-    //         var peerOpt = (gun as any).back('opt.peers');
-    //         var mesh = (gun as any).back('opt.mesh');  // DAM
-    //         if (remove) {
-    //             if (Array.isArray(peers)) {
-    //                 peers.forEach((peer) => {
-    //                     mesh.bye(peer);
-    //                 });
-    //             } mesh.bye(peers);
-    //             return { message: `Peers ${peers} removed` };
-    //         }
-    //         // Ask local peer to connect to another peer. //
-    //         mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
-    //         return { message: `Peers ${peers} added` };
-    //     }
+       const  gunServerMesh= (peers: string | string[], remove?: boolean) => {
+            var peerOpt = (gun as any).back('opt.peers');
+            var mesh = (gun as any).back('opt.mesh');  // DAM
+            if (remove) {
+                if (Array.isArray(peers)) {
+                    peers.forEach((peer) => {
+                        mesh.bye(peer);
+                    });
+                } mesh.bye(peers);
+                return { message: `Peers ${peers} removed` };
+            }
+            // Ask local peer to connect to another peer. //
+            mesh.say({ dam: 'opt', opt: { peers: typeof peers === 'string' ? peers : peers.map((peer) => peer) } });
+            return { message: `Peers ${peers} added` };
+        }
 
 
     // }
@@ -217,7 +153,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
         // graph,
         seaAuth: { keypair, credentials, logout },
         formData: async () => {
-            let values: Record<string, string> | Record<string, FormDataEntryValue>
+            let values: Record<string, any> | Record<string, FormDataEntryValue>
             if (request.headers.get("Content-Type") === "application/json") {
                 values = Object.fromEntries(await request.json())
             }

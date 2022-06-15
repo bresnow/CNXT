@@ -7,7 +7,7 @@ import { useFetcherAsync } from "~/rmxgun-context/useFetcherAsync";
 
 export default function FormatRoute() {
   let location = useLocation();
-  let { load, cached } = useFetcherAsync(location.pathname);
+  let { response: load, cached } = useFetcherAsync(location.pathname);
   return <SuspendedLayout />;
 }
 

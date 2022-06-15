@@ -9,10 +9,6 @@ import { createServerDataloader } from "./server";
 export type ClientContext = {
   load: Load;
 };
-interface DataFetcher {
-  load: Load;
-  submit: Submit;
-}
 interface Load {
   (route: string, options?: Options): Promise<Response & any>;
 }
@@ -20,14 +16,14 @@ interface Load {
 export interface Submit {
   (options: Options): Promise<Response & any>;
 }
-let context = createContext<DataFetcher | undefined>(undefined);
+let context = createContext<ClientContext | undefined>(undefined);
 
 export let DataloaderProvider = ({
   children,
   dataloader,
 }: {
   children: React.PropsWithChildren<any>;
-  dataloader: DataFetcher;
+  dataloader: ClientContext;
 }) => {
   return <context.Provider value={dataloader}>{children}</context.Provider>;
 };

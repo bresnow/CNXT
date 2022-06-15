@@ -10,7 +10,7 @@ jobs:
       - self-hosted
       - main-server
     env:
-      SERVICE: fltngmmth
+      SERVICE: app
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
@@ -22,12 +22,11 @@ jobs:
           yarn zx scripts/docker/build-push-dh.mjs
       - name: Deploy Swarm Services
         run: yarn zx scripts/docker/swarm/traefik-service.mjs
-
-      # - name: Update Swarm Stack
-      #   run: |
-      #     yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
-      # - name: Clean Up
-      #   run: |
-      #     docker image prune --force
-      #     docker volume prune --force
-      #     docker container prune --force
+      - name: Update Swarm Stack
+        run: |
+          yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
+      - name: Clean Up
+        run: |
+          docker image prune --force
+          docker volume prune --force
+          docker container prune --force

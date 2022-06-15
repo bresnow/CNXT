@@ -23,27 +23,22 @@ export function createServerDataloader(
       }
 
       let loader = route.loader
-      if (!loader) {
-        throw new Error(`Route ${id} has no loader`);
-      }
-
-      let result = await loader({ request, params, context })
-      return isResponse(result) ? result : json(result);
-    },
-    async submit(options: Options) {
-      let { url: id } = options
-      invariant(id, "Invalid Submit Url")
-      let route: ServerRouteModule = build.routeModules["routes/" + id];
-      let url = request.url
-      console.log(url, "SERVER URL")
-      if (!route) {
-        throw new Error(`Route ${id} not found`);
-      }
       let action = route.action
-      let { RemixGunContext } = context
-      let { formData } = RemixGunContext(Gun, request)
-      let subData = await formData()
-      return json(subData)
+      if (!options?.data || !options.body) {
+        if (!loader) {
+          throw new Error(`Route ${id} has no loader`);
+        }
+        let result = await loader({ request, params, context })
+        return isResponse(result) ? result : json(result);
+      }
+      else {
+        if (!action) {
+          throw new Error(`Route ${id} has no action`);
+        }
+        // This should be able to handle a POST method JSON data: Lets check
+        let result = await action({ request, params, context })
+        return isResponse(result) ? result : json(result);
+      }
     }
-  };
+  }
 }

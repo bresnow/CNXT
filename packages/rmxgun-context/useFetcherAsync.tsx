@@ -3,7 +3,7 @@ import { useLocation } from "remix";
 import invariant from "@remix-run/react/invariant";
 import jsesc from "jsesc";
 import Gun from "gun";
-import { useDataLoader } from "./context";
+import { ClientContext, useDataLoader } from "./context";
 import { useIf, useSafeCallback } from "bresnow_utility-react-hooks";
 import { useGunStatic } from "~/lib/gun/hooks";
 import React from "react";
@@ -25,10 +25,7 @@ export interface DeferedData {
  * @param options Redaxios options
  * @returns
  */
-export function useFetcherAsync<FetchedLoaderData>(
-  routePath: string,
-  options?: Options
-): DeferedData {
+export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
   let deferred = useMemo(() => {
@@ -36,7 +33,7 @@ export function useFetcherAsync<FetchedLoaderData>(
     let _deferred = { resolved: false } as {
       resolved: boolean;
       cache?: Record<string, any>;
-      value?: FetchedLoaderData;
+      value?: any;
       error?: any;
       promise: Promise<void>;
     };
@@ -54,30 +51,9 @@ export function useFetcherAsync<FetchedLoaderData>(
       });
     return _deferred;
   }, [routePath, key]);
-  let dSubmit = useMemo(() => {
-    invariant(dataloader, "Context Provider is undefined for useGunFetcher");
-    let _deferred = { resolved: false } as {
-      resolved: boolean;
-      cache?: Record<string, any>;
-      value?: FetchedLoaderData;
-      error?: any;
-      promise: Promise<void>;
-    };
-    _deferred.promise = dataloader
-      .submit(options ? options : {})
-      .then(({ data, cache }) => ({ data, cache }))
-      .then((value) => {
-        _deferred.value = value.data;
-        _deferred.resolved = true;
-      })
-      .catch((error) => {
-        _deferred.error = error;
-        _deferred.resolved = true;
-      });
-    return _deferred;
-  }, [routePath, key]);
+
   return {
-    load(): FetchedLoaderData {
+    response() {
       if (typeof deferred.value !== "undefined") {
         return deferred.value;
       }
@@ -88,16 +64,6 @@ export function useFetcherAsync<FetchedLoaderData>(
       throw deferred.promise;
     },
     cached: deferred.cache && deferred.cache,
-    submit() {
-      if (typeof dSubmit.value !== "undefined") {
-        return dSubmit.value;
-      }
-      if (typeof dSubmit.error !== "undefined") {
-        throw dSubmit.error;
-      }
-
-      throw dSubmit.promise;
-    },
   };
 }
 export const includes = (object: any, prop: string) => {

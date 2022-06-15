@@ -1,0 +1,43 @@
+name: Deploy Stack
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: Version Number
+        required: true
+      stack_name:
+        type: string
+        description: Stack Name
+        required: true
+      traefik_deploy:
+        type: boolean
+        description: Deploy Traefik Service?
+        required: true
+env:
+  STACK_NAME: ${{ github.event.inputs.stack_name }}
+  IMAGE: ${{ github.event.inputs.image }}
+  VERSION: ${{ github.event.inputs.version }}
+jobs:
+  stack_deploy:
+    runs-on:
+      - self-hosted
+      - main-server
+    env:
+      SERVICE: fltngmmth
+    steps:
+      - uses: actions/checkout@v2
+      # Execute zsh in case I use aliases in the scripting
+      - name: zsh exec
+        run: |
+          zsh
+          yarn
+      - name: Build Docker Image & Push to Docker Registry
+        run: |
+          yarn zx scripts/docker/build-push-dh.mjs
+      - name: Deploy App With Traefik
+        if: ${{ github.event.inputs.traefik_deploy }} === true
+        run: yarn zx scripts/docker/swarm/traefik-service.mjs
+      - name: Deploy App
+        if: ${{ github.event.inputs.traefik_deploy }} === false
+        run: yarn zx scripts/docker/swarm/remix-gun-service.mjs
