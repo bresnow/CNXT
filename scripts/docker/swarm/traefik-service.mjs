@@ -4,4 +4,4 @@ import { read } from 'fsxx'
 let pkg = JSON.parse(await read('package.json'))
 let args = process.argv.slice(3)
 
-let t = await $`docker stack deploy  -c swarm-stacks/traefik.yml ${pkg.name.replace(".", "-")}`
+await $`docker stack deploy  -c swarm-stacks/traefik.yml ${pkg.name.replace(".", "-")}`

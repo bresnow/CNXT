@@ -1,1 +1,1 @@
-{"name":"zx-scripts","version":"1.0.1","description":"A collection of Google ZX shell scripts. SysAdmin automation with all the wiggle room of Javascript.","type":"module","scripts":{"push":"npx zx git/push-all-modified.mjs"},"author":"Bresnow","license":"MIT","private":true}
+{"name":"zx-scripts","version":"1.0.2","description":"A collection of Google ZX shell scripts. SysAdmin automation with all the wiggle room of Javascript.","type":"module","scripts":{"push":"npx zx git/push-all-modified.mjs"},"author":"Bresnow","license":"MIT","private":true}
