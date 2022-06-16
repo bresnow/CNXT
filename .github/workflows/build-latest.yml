@@ -17,4 +17,4 @@ jobs:
         run: yarn
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
-        run: npx zx scripts/docker/swarm/build-push-latest.mjs
+        run: yarn zx scripts/docker/swarm/build-push-latest.mjs
