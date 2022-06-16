@@ -3,8 +3,5 @@ import { read } from 'fsxx';
 let pkg = JSON.parse(await read('package.json'));
 import 'zx/globals';
 
-await $`docker service ls --format  {{.Name}}`.stdout.toString()
-  .slice('\n')
-  .forEach(async (line) => {
-    await $`docker service logs ${line}`;
-  });
+await $`docker service logs ${pkg.name.replace('.', '-')}_fltngmmth`;
+await $`docker service logs ${pkg.name.replace('.', '-')}_cnxt`;
