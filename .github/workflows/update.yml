@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Name and Version From package.json
         id: pkg
-        run: echo "::set-output name=package::$( ts-node-esm scripts/pkg-utils.ts )"
+        run: echo "::set-output name=package::$( npm run ts-node-esm scripts/pkg-utils.ts )"
   docker:
     needs: pkg_props
     if: ${{ fromJson(steps.package_version.output.package) != null }}

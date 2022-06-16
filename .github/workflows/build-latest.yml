@@ -15,13 +15,9 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: zsh exec
-        run: zsh
-      - name: Node Dependencies
-        run: |
-          yarn
-          yarn add global ts-node
-          yarn add global zx
-      - uses: actions/checkout@v3
       - name: Build and Push As Latest
-        run: ts-node-esm scripts/docker/swarm/build-push-latest.ts
+        run: |
+          npm run ts-node-esm scripts/docker/build-push-dh.ts -L
+          npm run ts-node-esm scripts/docker/build-push-dh.ts -L -G
+          npm run ts-node-esm scripts/docker/build-push-dh.ts
+          npm run ts-node-esm scripts/docker/build-push-dh.ts -G

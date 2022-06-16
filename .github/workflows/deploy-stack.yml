@@ -9,11 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy App With Traefik
-        run: yarn ts-node-esm scripts/docker/swarm/traefik-service.ts
+        run: npm run ts-node-esm scripts/docker/swarm/traefik-service.ts
       - name: Cleanup
         run: |
           docker image prune --force
           docker volume prune --force
           docker container prune --force
       - name: Logs
-        run: yarn ts-node-esm scripts/docker/swarm/service-log.ts
+        run: npm run ts-node-esm scripts/docker/swarm/service-log.ts
