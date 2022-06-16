@@ -10,5 +10,9 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
+      - name: zsh exec
+        run: zsh
+      - name: yarn install
+        run: yarn
       - name: Logs
         run: npx zx scripts/docker/swarm/service-log.mjs
