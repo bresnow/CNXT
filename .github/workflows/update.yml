@@ -10,9 +10,9 @@ jobs:
       - self-hosted
       - main-server
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Dependencies Script
-        uses: ./.github/workflows/node-dependencies.yml
+        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main@main
   pkg_props:
     needs: install_deps
     if: ${{ success() }}
@@ -43,6 +43,6 @@ jobs:
       - self-hosted
       - main-server
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Dependencies Script
-        uses: ./.github/workflows/cleanup.yml
+        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main@main
