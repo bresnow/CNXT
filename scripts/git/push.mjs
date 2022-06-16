@@ -39,10 +39,10 @@ if (!version) {
     version = vanswer;
   } else {
     console.log(chalk.yellow(`Keeping current version ${pkg.data.version}`));
-    version = pkg.data.version;
-    await pkg.save();
   }
 }
+version = pkg.data.version;
+await pkg.save();
 
 let mod = await $`git status`.pipe($`grep modified:`);
 // Prettier writes all modified files
