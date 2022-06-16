@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
         run: |
-          npm run ts-node-esm scripts/docker/build-push-dh.ts -L
-          npm run ts-node-esm scripts/docker/build-push-dh.ts -L -G
-          npm run ts-node-esm scripts/docker/build-push-dh.ts
-          npm run ts-node-esm scripts/docker/build-push-dh.ts -G
+          ts-node-esm scripts/docker/build-push-dh.ts -L
+          ts-node-esm scripts/docker/build-push-dh.ts -L -G
+          ts-node-esm scripts/docker/build-push-dh.ts
+          ts-node-esm scripts/docker/build-push-dh.ts -G

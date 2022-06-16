@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: Update Swarm Stack
         run: |
-          echo "$( npm run ts-node-esm scripts/pkg-utils.ts -v)"
-          export VERSION="$( npm run ts-node-esm scripts/pkg-utils.ts -v)"
-          docker stack deploy -c swarm-stacks/remix-gun.yml "$( npm run ts-node-esm scripts/pkg-utils.ts -n)"
+          echo "$( ts-node-esm scripts/pkg-utils.ts -v)"
+          export VERSION="$( ts-node-esm scripts/pkg-utils.ts -v)"
+          docker stack deploy -c swarm-stacks/remix-gun.yml "$( ts-node-esm scripts/pkg-utils.ts -n)"
   cleanup:
     needs: docker
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main

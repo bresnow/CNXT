@@ -14,4 +14,5 @@ jobs:
           npm install \
           npm i -g zx \
           npm i -g typescript \
+          npm i -g ts-node-esm \
           npm i -g ts-node
