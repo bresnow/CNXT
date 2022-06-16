@@ -1,4 +1,4 @@
-name: Deploy Stack
+name: Traefik Service Prep
 on:
   workflow_dispatch:
   workflow_call:
@@ -17,4 +17,4 @@ jobs:
       - name: yarn install
         run: yarn
       - name: Deploy App With Traefik
-        run: npx zx scripts/docker/swarm/swarm-init.mjs
+        run: npx zx scripts/docker/swarm/prep.mjs
