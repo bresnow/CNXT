@@ -9,10 +9,8 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
-      # Execute zsh in case I use aliases in the scripting
       - name: zsh exec
         run: |
           zsh
-          yarn
       - name: Deploy App With Traefik
         run: npx zx scripts/docker/swarm/traefik-service.mjs

@@ -63,10 +63,10 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-rmx-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-http.rule=Host(`${TRAEFIK_URL:-mou65pf.fltngmmth.com}`)
         - traefik.http.routers.fltngmmth-http.entrypoints=http
         - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
-        - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-rmx-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-https.rule=Host(`${TRAEFIK_URL:--mou65pf.fltngmmth.com}`)
         - traefik.http.routers.fltngmmth-https.entrypoints=https
         - traefik.http.routers.fltngmmth-https.tls.certresolver=http
         - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
