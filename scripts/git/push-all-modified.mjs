@@ -34,13 +34,16 @@ if (!version) {
         `Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
         }: `
     );
-    vanswer !== '' && (version = vanswer);
+    if (vanswer !== '') { version = vanswer } else {
+        version = pkg.data.version
+        await pkg.save();
+    };
 }
 
 //PACKAGE>JSON MODIFY VERSION
 
-pkg.data.version = version;
-await pkg.save();
+
+
 let mod = await $`git status`.pipe($`grep modified:`);
 $.verbose = true;
 mod.stdout.split('modified: ').forEach(async (line) => {
