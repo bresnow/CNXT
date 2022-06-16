@@ -7,18 +7,8 @@ on:
 jobs:
   install_deps:
     uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
-  pkg_props:
-    needs: install_deps
-    if: ${{ success() }}
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v3
-      - name: Name and Version From package.json
-        id: pkg
-        run: echo "::set-output name=package::$( npm run ts-node-esm scripts/pkg-utils.ts )"
   docker:
+    needs: install_deps
     runs-on:
       - self-hosted
       - main-server
