@@ -17,11 +17,9 @@ export function createServerDataloader(
   return {
     async load(id: string, options?: Options) {
       let route: ServerRouteModule = build.routeModules["routes/" + id];
-
       if (!route) {
         throw new Error(`Route ${id} not found`);
       }
-
       let loader = route.loader
       let action = route.action
       if (!options?.data || !options.body) {
@@ -34,8 +32,7 @@ export function createServerDataloader(
       else {
         if (!action) {
           throw new Error(`Route ${id} has no action`);
-        }
-        // This should be able to handle a POST method JSON data: Lets check
+        }     // This should be able to handle a POST method JSON data: Lets check
         let result = await action({ request, params, context })
         return isResponse(result) ? result : json(result);
       }

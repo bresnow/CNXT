@@ -5,11 +5,11 @@ on:
       build_image:
         type: boolean
         description: Build Image?
-        required: true
+        required: false
       traefik_deploy:
         type: boolean
         description: Deploy Traefik Service?
-        required: true
+        required: false
 env:
   STACK_NAME: ${{ github.event.inputs.stack_name }}
   IMAGE: ${{ github.event.inputs.image }}
@@ -21,17 +21,6 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
-      # Execute zsh in case I use aliases in the scripting
-      - name: zsh exec
-        run: |
-          zsh
-          yarn
-      - name: Build Docker Image & Push to Docker Registry
-        if: ${{ github.event.inputs.build_image }} === true
-        run: yarn zx scripts/docker/build-push-dh.mjs
       - name: Deploy App With Traefik
         if: ${{ github.event.inputs.traefik_deploy }} === true
         run: yarn zx scripts/docker/swarm/traefik-service.mjs
-      - name: Deploy App
-        if: ${{ github.event.inputs.traefik_deploy }} === false
-        run: yarn zx scripts/docker/swarm/remix-gun-service.mjs

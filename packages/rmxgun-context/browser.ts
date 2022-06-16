@@ -7,11 +7,8 @@ export function createBrowserLoader() {
   return {
     async load(routePath: string, options?: Options) {
       let Gun = (window as Window).Gun
-
       let { host, protocol } = window.location
       const cacheRef = Gun({ peers: [`${protocol + host + '/gun'}`], localStorage: false });
-
-
       if (options && options.params) {
         if (!routePath.endsWith("/")) {
           routePath += "/";
@@ -19,9 +16,7 @@ export function createBrowserLoader() {
         if (includes(options.params, "compressed") && (options.params as any).compressed === ("true" || true)) {
           routePath = LZString.compressToEncodedURIComponent(routePath);
         }
-      }
-
-
+      };
       let { data } = await axios.request(routePath, options);
       let cache
       if (includes(options?.params, "path")) {
@@ -30,8 +25,7 @@ export function createBrowserLoader() {
         cache = await new Promise((res, rej) => cacheRef.path((path as string).replace("/", ".")).open((data) => { data ? res(data) : rej(data) }));
       }
       return { data, cache: cache && cache as Record<string, any> }
-    },
-
+    }
   }
 }
 
