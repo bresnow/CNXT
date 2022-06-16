@@ -19,7 +19,7 @@ async function build() {
   }
 
   let name = pkg.name;
-  let image = `${git ? 'ghcr.io/' : null}bresnow/${name}:${
+  let image = `${git && 'ghcr.io/'}bresnow/${name}:${
     !version ? 'latest' : pkg.version
   }`;
   console.log(chalk.cyanBright(`Building ${image}`));
