@@ -10,7 +10,7 @@ jobs:
   push_docker:
     uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
   docker:
-    needs: install_deps
+    needs: [install_deps, push_docker]
     runs-on:
       - self-hosted
       - main-server
