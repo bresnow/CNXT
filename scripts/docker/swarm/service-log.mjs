@@ -1,6 +1,8 @@
 import { $, chalk, question } from 'zx';
 import { read } from 'fsxx';
 let pkg = JSON.parse(await read('package.json'));
+import 'zx/globals';
 
-let service = pkg.name;
-await $`docker service ls --format  {{.Name}}`.pipe($`docker service logs ${service}`)
+await $`docker service ls --format  {{.Name}}`.stdout.split('\n').forEach(async (line) => {
+  await $`docker service logs ${line}`;
+});
