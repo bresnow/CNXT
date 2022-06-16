@@ -1,19 +1,7 @@
 name: Deploy Stack
 on:
   workflow_dispatch:
-    inputs:
-      build_image:
-        type: boolean
-        description: Build Image?
-        required: false
-      traefik_deploy:
-        type: boolean
-        description: Deploy Traefik Service?
-        required: false
-env:
-  STACK_NAME: ${{ github.event.inputs.stack_name }}
-  IMAGE: ${{ github.event.inputs.image }}
-  VERSION: ${{ github.event.inputs.version }}
+
 jobs:
   stack_deploy:
     runs-on:
@@ -21,6 +9,10 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
+      # Execute zsh in case I use aliases in the scripting
+      - name: zsh exec
+        run: |
+          zsh
+          yarn
       - name: Deploy App With Traefik
-        if: ${{ github.event.inputs.traefik_deploy }} === true
-        run: yarn zx scripts/docker/swarm/traefik-service.mjs
+        run: npx zx scripts/docker/swarm/traefik-service.mjs
