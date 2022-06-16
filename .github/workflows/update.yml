@@ -33,7 +33,7 @@ jobs:
           docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.package_version.output.package).name }}
   cleanup:
     needs: docker
-    uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main@main
+    uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main
   logs:
     needs: docker
-    uses: bresnow/remix.gun/.github/workflows/log.yml@main@main
+    uses: bresnow/remix.gun/.github/workflows/log.yml@main
