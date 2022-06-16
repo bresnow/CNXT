@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  yarn:
+  docker:
     runs-on:
       - self-hosted
       - main-server
@@ -15,11 +15,6 @@ jobs:
         run: zsh
       - name: yarn install
         run: yarn
-  docker:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
       - uses: actions/checkout@v3
       - name: Version From package.json
         id: package_version
@@ -31,22 +26,10 @@ jobs:
         run: |
           export VERSION=${{ steps.package_version.output.PKG_VERSION}}
           docker stack deploy -c swarm-stacks/remix-gun.yml ${{ steps.package_name.output.PKG_NAME }}
-  cleanup:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v3
       - name: Clean Up
         run: |
           docker image prune --force
           docker volume prune --force
           docker container prune --force
-  logs:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v3
       - name: Logs
         run: npx zx scripts/docker/swarm/service-log.mjs

@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  yarn:
+  build_latest:
     runs-on:
       - self-hosted
       - main-server
@@ -15,11 +15,6 @@ jobs:
         run: zsh
       - name: yarn install
         run: yarn
-  build_latest:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
         run: npx zx scripts/docker/swarm/build-push-latest.mjs
