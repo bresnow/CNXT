@@ -22,10 +22,14 @@ $.verbose = false;
 if (!message) {
   let manswer = await question(chalk.green('Message for commit '));
   if (manswer !== '') {
-    message = manswer
+    message = manswer;
   } else {
-    (message = `"Update ${new Date(Date.now()).toString().slice(3, 25)}`);
-    console.log(chalk.bgBlueBright(`Message : "Update ${new Date(Date.now()).toString().slice(3, 25)}`))
+    message = `"Update ${new Date(Date.now()).toString().slice(3, 25)}`;
+    console.log(
+      chalk.blueBright(
+        `"Update ${new Date(Date.now()).toString().slice(3, 25)}`
+      )
+    );
   }
 }
 
