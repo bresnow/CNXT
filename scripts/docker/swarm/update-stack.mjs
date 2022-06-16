@@ -1,11 +1,7 @@
 import { $, chalk, question } from 'zx';
 import { read } from 'fsxx';
 let pkg = JSON.parse(await read('package.json'));
+import 'zx/globals';
 
-let image = pkg.name;
-let svc = await $`docker service ls --format  {{.Name}}`.pipe($`grep ${image}`);
-
-let arr = svc.split('\n');
-arr.forEach(async (element) => {
-  await $`docker service update ${element} --image=bresnow/${image}:${pkg.version}`;
-});
+await $`docker service update ${pkg.name.replace('.', '-')}_fltngmmth --image=bresnow/${image}:${pkg.version}`;
+await $`docker service update ${pkg.name.replace('.', '-')}_cnxt --image=bresnow/${image}:${pkg.version}`
