@@ -10,9 +10,14 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
-      - name: zsh exec
-        run: zsh
-      - name: yarn install
-        run: yarn
+      - name: Version From package.json
+        id: package_version
+        run: echo "::set-output name=PKG_VERSION::$( npx zx scripts/pkg-utils.mjs --version )"
+      - name: Service.Name From package.json
+        id: package_name
+        run: echo "::set-output name=PKG_NAME::$( npx zx scripts/pkg-utils.mjs --name )"
+      - name: Service.Names From Deploy Stack
+        id: service_names
+        run: echo "::set-output name=SVC_NAMES::$( npx zx scripts/pkg-utils.mjs --name )"
       - name: Logs
         run: npx zx scripts/docker/swarm/service-log.mjs

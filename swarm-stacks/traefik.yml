@@ -59,17 +59,17 @@ services:
       placement:
         constraints:
           - node.labels.traefik-public.traefik-public-certificates == true
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmth-http.entrypoints=http
-        - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
-        - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmth-https.entrypoints=https
-        - traefik.http.routers.fltngmmth-https.tls.certresolver=http
-        - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.constraint-label=traefik-public
+      - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
+      - traefik.http.routers.fltngmmth-http.entrypoints=http
+      - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
+      - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
+      - traefik.http.routers.fltngmmth-https.entrypoints=https
+      - traefik.http.routers.fltngmmth-https.tls.certresolver=http
+      - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
     environment:
       - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
       - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
@@ -88,17 +88,17 @@ services:
       placement:
         constraints:
           - node.labels.traefik-public.traefik-public-certificates == true
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.cnxt-http.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
-        - traefik.http.routers.cnxt-http.entrypoints=http
-        - traefik.http.routers.cnxt-http.middlewares=https-redirect
-        - traefik.http.routers.cnxt-https.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
-        - traefik.http.routers.cnxt-https.entrypoints=https
-        - traefik.http.routers.cnxt-https.tls.certresolver=http
-        - traefik.http.services.cnxt.loadbalancer.server.port=${CLIENT_PORT_1:-3334}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.constraint-label=traefik-public
+      - traefik.http.routers.cnxt-http.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
+      - traefik.http.routers.cnxt-http.entrypoints=http
+      - traefik.http.routers.cnxt-http.middlewares=https-redirect
+      - traefik.http.routers.cnxt-https.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
+      - traefik.http.routers.cnxt-https.entrypoints=https
+      - traefik.http.routers.cnxt-https.tls.certresolver=http
+      - traefik.http.services.cnxt.loadbalancer.server.port=${CLIENT_PORT_1:-3334}
     environment:
       - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
       - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}

@@ -1,0 +1,33 @@
+name: Update App Services
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Version From package.json
+        id: package_version
+        run: echo "::set-output name=PKG_VERSION::$( npx zx scripts/pkg-utils.mjs --version )"
+      - name: Service.Name From package.json
+        id: package_name
+        run: echo "::set-output name=PKG_NAME::$( npx zx scripts/pkg-utils.mjs --name )"
+      - name: Update Swarm Stack
+        run: |
+          export VERSION=${{ steps.package_version.output.PKG_VERSION}}
+          docker stack deploy -c swarm-stacks/remix-gun.yml ${{ steps.package_name.output.PKG_NAME }}
+      - name: Clean Up
+        run: |
+          docker image prune --force
+          docker volume prune --force
+          docker container prune --force
+      - name: Logs
+        run: npx zx scripts/docker/swarm/service-log.mjs
