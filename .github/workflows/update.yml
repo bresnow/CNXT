@@ -14,8 +14,12 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
       - name: Update Swarm Stack
         run: |
+          yarn
           echo $( npx zx scripts/esm/pkg-utils.mjs -v)
           export VERSION=$( npx zx scripts/esm/pkg-utils.mjs -v)
           docker stack deploy -c swarm-stacks/remix-gun.yml "$( npx zx scripts/esm/pkg-utils.mjs -n)"
