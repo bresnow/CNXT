@@ -10,4 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Logs
-        run: ts-node scripts/docker/swarm/service-log.ts
+        run: npx zx scripts/esm/docker/swarm/service-log.mjs

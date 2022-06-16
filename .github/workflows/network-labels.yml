@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Deploy App With Traefik
-        run: npx zx scripts/esm/docker/swarm/prep.ts
+        run: npx zx scripts/esm/docker/swarm/prep.mjs

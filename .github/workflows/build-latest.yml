@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
         run: |
-          npx zx scripts/esm/docker/build-push-dh.ts -L
-          npx zx scripts/esm/docker/build-push-dh.ts -L -G
-          npx zx scripts/esm/docker/build-push-dh.ts
-          npx zx scripts/esm/docker/build-push-dh.ts -G
+          npx zx scripts/esm/docker/build-push-dh.mjs -L
+          npx zx scripts/esm/docker/build-push-dh.mjs -L -G
+          npx zx scripts/esm/docker/build-push-dh.mjs
+          npx zx scripts/esm/docker/build-push-dh.mjs -G

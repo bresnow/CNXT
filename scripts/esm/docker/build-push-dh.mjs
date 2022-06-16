@@ -32,4 +32,4 @@ async function build() {
   await $`docker push bresnow/${image}`;
   console.log(chalk.greenBright('Fin'));
 }
- await build();
+await build();

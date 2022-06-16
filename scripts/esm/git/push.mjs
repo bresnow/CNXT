@@ -24,13 +24,11 @@ if (args.length > 0) {
 // Version prompt ... (if not provided current version is used)
 if (version === undefined) {
   version = await question(
-    `${chalk.green('Version? \n Current Version ') +
-    chalk.cyan(pkg.data.version)
+    `${
+      chalk.green('Version? \n Current Version ') + chalk.cyan(pkg.data.version)
     }: `
   );
-  version === ''
-    ? (version = pkg.data.version)
-    : (version = version.trim());
+  version === '' ? (version = pkg.data.version) : (version = version.trim());
 }
 //PACKAGE>JSON MODIFY VERSION
 pkg.data.version = version;
