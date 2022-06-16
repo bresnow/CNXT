@@ -1,17 +1,18 @@
 name: Docker Service Log
 on:
   workflow_dispatch:
-
+  workflow_call:
+    branches:
+      - main
 jobs:
   stack_deploy:
-    runs-on:
-      - self-hosted
-      - main-server
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 17.x]
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
         run: zsh
-      - name: yarn install
-        run: yarn
       - name: Logs
         run: npx zx scripts/docker/swarm/service-log.mjs

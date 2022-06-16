@@ -1,9 +1,10 @@
-name: Docker Cleanup
+name: Deploy Stack
 on:
   workflow_dispatch:
   workflow_call:
     branches:
       - main
+
 jobs:
   stack_deploy:
     runs-on:
@@ -15,8 +16,5 @@ jobs:
         run: zsh
       - name: yarn install
         run: yarn
-      - name: Cleanup
-        run: |
-          docker image prune --force
-          docker volume prune --force
-          docker container prune --force
+      - name: Deploy App With Traefik
+        run: npx zx scripts/docker/swarm/swarm-init.mjs

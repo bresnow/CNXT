@@ -1,17 +1,28 @@
 name: Deploy Stack
 on:
   workflow_dispatch:
-
 jobs:
   stack_deploy:
     runs-on:
       - self-hosted
       - main-server
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: zsh exec
         run: zsh
       - name: yarn install
         run: yarn
       - name: Deploy App With Traefik
         run: npx zx scripts/docker/swarm/traefik-service.mjs
+  cleanup:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: ./.github/workflows/cleanup.yml
+  logs:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: ./.github/workflows/log.yml
