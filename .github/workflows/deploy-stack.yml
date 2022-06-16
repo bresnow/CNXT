@@ -14,15 +14,7 @@ jobs:
         run: yarn
       - name: Deploy App With Traefik
         run: npx zx scripts/docker/swarm/traefik-service.mjs
-  cleanup:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
+      - name: Cleanup
       - uses: ./.github/workflows/cleanup.yml
-  logs:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
+      - name: Logs
       - uses: ./.github/workflows/log.yml

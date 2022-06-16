@@ -2,8 +2,7 @@ name: Docker Service Log
 on:
   workflow_dispatch:
   workflow_call:
-    branches:
-      - main
+
 jobs:
   stack_deploy:
     runs-on: ubuntu-latest
