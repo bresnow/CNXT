@@ -16,14 +16,11 @@ if (args.length > 0) {
     if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
       version = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
     }
-    if (arg.startsWith('--silent' || '-s')) {
-      $.verbose = false;
-    }
   }
 }
-
+$.verbose = false
 if (!message) {
-  let manswer = await question('Message for commit : ');
+  let manswer = await question(chalk.green('Message for commit '));
   manswer !== ''
     ? (message = manswer)
     : (message = `"Update ${new Date(Date.now()).toString().slice(3, 25)}`);
@@ -31,8 +28,7 @@ if (!message) {
 
 if (!version) {
   let vanswer = await question(
-    `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)
-    } \n
+    `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
     New Version ? `
   );
   if (vanswer !== '') {
