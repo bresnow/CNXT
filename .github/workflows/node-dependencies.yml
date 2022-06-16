@@ -9,12 +9,9 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 17
       - name: Node Dependencies
         run: |
-          npm install
-          npm i -g zx
-          npm i -g typescript
+          npm install \
+          npm i -g zx \
+          npm i -g typescript \
           npm i -g ts-node
