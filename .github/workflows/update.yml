@@ -7,6 +7,8 @@ on:
 jobs:
   install_deps:
     uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
+  push_docker:
+    uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
   docker:
     needs: install_deps
     runs-on:
@@ -20,9 +22,8 @@ jobs:
       - name: Update Swarm Stack
         run: |
           yarn
-          echo $( npx zx scripts/esm/pkg-utils.mjs -v)
-          export VERSION=$( npx zx scripts/esm/pkg-utils.mjs -v)
-          docker stack deploy -c swarm-stacks/remix-gun.yml "$( npx zx scripts/esm/pkg-utils.mjs -n)"
+          npx zx scripts/esm/docker/deploy-stack.mjs
+
   cleanup:
     needs: docker
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main

@@ -10,4 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Logs
-        run: npx zx scripts/esm/docker/swarm/service-log.mjs
+        run: |
+          yarn
+          npx zx scripts/esm/docker/swarm/service-log.mjs

@@ -3,15 +3,16 @@ on:
   workflow_call:
 
 jobs:
-  build_latest:
+  build:
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
       - name: Node Dependencies
         run: |
-          node -v
-          yarn install
-          yarn add global zx
-          yarn add global typescript
+          yarn 
+          yarn build
