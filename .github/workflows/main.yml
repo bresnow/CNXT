@@ -24,7 +24,7 @@ jobs:
         run: yarn zx scripts/docker/swarm/traefik-service.mjs
       - name: Update Swarm Stack
         run: |
-          yarn zx scripts/docker/update-stack.mjs ${{env.SERVICE}}
+          yarn zx scripts/docker/swarm/update-stack.mjs ${{env.SERVICE}}
       - name: Clean Up
         run: |
           docker image prune --force
