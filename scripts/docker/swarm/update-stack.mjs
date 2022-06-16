@@ -6,7 +6,7 @@ import 'zx/globals';
 await $`docker service update ${pkg.name.replace(
   '.',
   '-'
-)}_fltngmmth --image=bresnow/${image}:${pkg.version}`;
+)}_fltngmmth --image=bresnow/${pkg.name}:${pkg.version}`;
 await $`docker service update ${pkg.name.replace(
   '.',
   '-'
