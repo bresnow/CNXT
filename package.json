@@ -5,19 +5,15 @@
   "author": "Bresnow",
   "license": "MIT",
   "module": "es2022",
-  "resolutions": {
-    "react": "react@18.1.0-next-fc47cb1b6-20220404",
-    "react-dom": "react-dom@18.1.0-next-fc47cb1b6-20220404"
-  },
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
     "build:css": "unocss \"packages/**/*.tsx\" --out-file \"packages/app/uno.css\"",
-    "dev": "ts-node --esm ./scripts/remix/dev.ts",
+    "dev": "npx zx scripts/esm/dev.mjs",
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,mjs,js,jsx,ts,tsx}'",
     "prettier:rad": "prettier --write 'radata/!'",
     "purge": "rm -rf radata *.tmp",
-    "push": " zx scripts/esm/git/push.mjs",
+    "push": " npx zx scripts/esm/git/push.mjs",
     "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
   },
   "dependencies": {
@@ -34,8 +30,8 @@
     "mime": "^3.0.0",
     "object-assign": "^4.1.1",
     "patch-package": "^6.4.7",
-    "react": "react@18.1.0-next-fc47cb1b6-20220404",
-    "react-dom": "react-dom@18.1.0-next-fc47cb1b6-20220404",
+    "react": "18.0.0-rc.0",
+    "react-dom": "18.0.0-rc.0",
     "redaxios": "^0.5.0",
     "remix": "0.0.0-experimental-4e814511",
     "remix-utils": "^3.0.0",
@@ -51,8 +47,8 @@
     "@types/mime": "^2.0.3",
     "@types/node": "^17.0.35",
     "@types/object-assign": "^4.0.30",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
     "@types/uuid": "^8.3.4",
     "@unocss/cli": "^0.38.2",
     "@unocss/preset-attributify": "^0.38.2",
