@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import Gun from "gun";
+import { Suspense } from 'react';
+import Gun from 'gun';
 import {
   ActionFunction,
   json,
@@ -9,34 +9,34 @@ import {
   useCatch,
   Outlet,
   useParams,
-} from "remix";
-import { DeferedData, useFetcherAsync } from "~/rmxgun-context/useFetcherAsync";
-import { LoadCtx } from "types";
-import Display from "~/components/DisplayHeading";
-import { HashtagLarge } from "~/components/svg/Icons";
-import { InputTextProps } from "~/components/InputText";
-import CNXTLogo from "~/components/svg/logos/CNXT";
-import { Navigation } from "~/components/Navigator";
-import { SuspendedTest } from "./$namespace/edit";
+} from 'remix';
+import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
+import { LoadCtx } from 'types';
+import Display from '~/components/DisplayHeading';
+import { HashtagLarge } from '~/components/svg/Icons';
+import { InputTextProps } from '~/components/InputText';
+import CNXTLogo from '~/components/svg/logos/CNXT';
+import { Navigation } from '~/components/Navigator';
+import { SuspendedTest } from './$namespace/edit';
 
 export function Fallback({ defered }: { defered: DeferedData }) {
   return (
-    <div className="grid grid-cols-1 gap-4 p-4">
-      <div className="col-span-1">
+    <div className='grid grid-cols-1 gap-4 p-4'>
+      <div className='col-span-1'>
         <h5>Cached Data From Radisk/ IndexedDB</h5>
         {defered.cached &&
           Object.entries(defered.cached).map((val) => {
             let [key, value] = val;
-            if (key === "_") {
+            if (key === '_') {
               return;
             }
             return (
               <div
                 key={key}
-                className="flex animate-pulse flex-row items-center space-y-5 justify-center space-x-5"
+                className='flex animate-pulse flex-row items-center space-y-5 justify-center space-x-5'
               >
-                <div className="w-1/3 p-5 rounded-md ">{key}</div>
-                <div className="w-1/2 bg-gray-300 p-5 rounded-md flex-wrap">
+                <div className='w-1/3 p-5 rounded-md '>{key}</div>
+                <div className='w-1/2 bg-gray-300 p-5 rounded-md flex-wrap'>
                   {`${value}`}
                 </div>
               </div>
@@ -80,9 +80,9 @@ export default function NameSpaceRoute() {
   let searchProps: InputTextProps = {
     value: namespace,
     placeholder: namespace,
-    icon: <HashtagLarge className={`${"fill-primary"} `} />,
+    icon: <HashtagLarge className={`${'fill-primary'} `} />,
     className:
-      "w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex",
+      'w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex',
   };
   return (
     <Navigation search={searchProps} logo={<CNXTLogo />}>
@@ -102,12 +102,12 @@ export function CatchBoundary() {
     case 403:
     case 404:
       return (
-        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+        <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
           <Display
             title={`${caught.status}`}
-            titleColor="white"
+            titleColor='white'
             span={`${caught.statusText}`}
-            spanColor="pink-500"
+            spanColor='pink-500'
             description={`${caught.statusText}`}
           />
         </div>
@@ -120,12 +120,12 @@ export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error.message);
   console.trace(error.message);
   return (
-    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+    <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
       <Display
-        title="Error:"
-        titleColor="#cb2326"
+        title='Error:'
+        titleColor='#cb2326'
         span={error.message}
-        spanColor="#fff"
+        spanColor='#fff'
         description={`error`}
       />
     </div>

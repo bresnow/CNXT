@@ -1,5 +1,5 @@
-import reset from "@unocss/reset/tailwind.css";
-import unocss from "@/uno.css";
+import reset from '@unocss/reset/tailwind.css';
+import unocss from '@/uno.css';
 import {
   json,
   Links,
@@ -11,21 +11,21 @@ import {
   useCatch,
   useLoaderData,
   useMatches,
-} from "remix";
-import type { MetaFunction, LinksFunction, LoaderFunction } from "remix";
-import { LoadCtx } from "types";
-import Gun, { ISEAPair } from "gun";
-import Display from "../components/DisplayHeading";
-import jsesc from "jsesc";
+} from 'remix';
+import type { MetaFunction, LinksFunction, LoaderFunction } from 'remix';
+import { LoadCtx } from 'types';
+import Gun, { ISEAPair } from 'gun';
+import Display from '../components/DisplayHeading';
+import jsesc from 'jsesc';
 
 export const links: LinksFunction = () => {
   return [
     {
-      rel: "stylesheet",
+      rel: 'stylesheet',
       href: unocss,
     },
     {
-      rel: "stylesheet",
+      rel: 'stylesheet',
       href: reset,
     },
   ];
@@ -69,7 +69,7 @@ export type RootLoaderData = {
 /** Dynamically load meta tags from root loader*/
 export const meta: MetaFunction = () => {
   const matches = useMatches();
-  let root = matches.find((match) => match.id === "root");
+  let root = matches.find((match) => match.id === 'root');
   const metaDoc: Record<string, string> = root?.data?.meta;
   return metaDoc;
 };
@@ -82,10 +82,10 @@ export type MenuLinks = {
 export let handle = {
   links: [
     {
-      label: "HOME",
-      id: "home",
-      link: "/",
-      icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z",
+      label: 'HOME',
+      id: 'home',
+      link: '/',
+      icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
     },
   ],
 };
@@ -93,10 +93,10 @@ export let handle = {
 export default function App() {
   let { ENV } = useLoaderData();
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
       </head>
@@ -112,7 +112,7 @@ export default function App() {
 
         <Scripts />
 
-        {process.env.NODE_ENV === "development" && <LiveReload />}
+        {process.env.NODE_ENV === 'development' && <LiveReload />}
       </body>
     </html>
   );
@@ -126,12 +126,12 @@ export function CatchBoundary() {
     case 403:
     case 404:
       return (
-        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+        <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
           <Display
             title={`${caught.status}`}
-            titleColor="white"
+            titleColor='white'
             span={`${caught.statusText}`}
-            spanColor="pink-500"
+            spanColor='pink-500'
             description={`${caught.statusText}`}
           />
         </div>
@@ -143,12 +143,12 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return (
-    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+    <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
       <Display
-        title="Error:"
-        titleColor="#cb2326"
+        title='Error:'
+        titleColor='#cb2326'
         span={error.message}
-        spanColor="#fff"
+        spanColor='#fff'
         description={`error`}
       />
     </div>

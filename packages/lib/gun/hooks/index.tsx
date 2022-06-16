@@ -1,15 +1,15 @@
-import { useFetcher, useLocation, useMatches } from "remix";
-import Gun from "gun";
-import React from "react";
-import "gun/sea";
-import "gun/lib/path";
-import "gun/lib/open";
-import "gun/lib/load";
-import "gun/lib/radix";
-import "gun/lib/radisk";
-import "gun/lib/store";
-import "gun/lib/rindexed";
-import "gun/lib/then";
+import { useFetcher, useLocation, useMatches } from 'remix';
+import Gun from 'gun';
+import React from 'react';
+import 'gun/sea';
+import 'gun/lib/path';
+import 'gun/lib/open';
+import 'gun/lib/load';
+import 'gun/lib/radix';
+import 'gun/lib/radisk';
+import 'gun/lib/store';
+import 'gun/lib/rindexed';
+import 'gun/lib/then';
 import type {
   IGun,
   ISEAPair,
@@ -19,9 +19,9 @@ import type {
   IGunUserInstance,
   IGunInstanceRoot,
   ISEA,
-} from "gun/types";
-import type { FormProps } from "remix";
-import { Form } from "remix";
+} from 'gun/types';
+import type { FormProps } from 'remix';
+import { Form } from 'remix';
 
 import {
   useIf,
@@ -29,15 +29,15 @@ import {
   useLZObject,
   useSafeCallback,
   useSafeEffect,
-} from "bresnow_utility-react-hooks";
+} from 'bresnow_utility-react-hooks';
 
 // import { useContextReducer } from "bresnow_utility-react-hooks/context-utils";
 import type {
   ActionSubmission,
   LoaderSubmission,
-} from "@remix-run/react/transition";
-import invariant from "@remix-run/react/invariant";
-import { lzObject } from "lz-object";
+} from '@remix-run/react/transition';
+import invariant from '@remix-run/react/invariant';
+import { lzObject } from 'lz-object';
 
 /**
  * @abstract GunDB hooks to use in react - specifically remix.run to mutate data in the render without side effects.
@@ -54,16 +54,16 @@ export type Nodevalues = {
 };
 
 export const log = (...args: any) =>
-  process.env.NODE_ENV !== "production" ? console.log(args) : console.log;
+  process.env.NODE_ENV !== 'production' ? console.log(args) : console.log;
 export const error = (...args: any) =>
-  process.env.NODE_ENV !== "production" ? console.error(args) : console.log;
+  process.env.NODE_ENV !== 'production' ? console.error(args) : console.log;
 
 export function useGunStatic(
   Gun: IGun,
   opt?: GunOptions
 ): [instance: IGunInstance, sea: ISEA] {
   let gunOptions = opt || {};
-  const { data } = useRouteData("/"),
+  const { data } = useRouteData('/'),
     opts = data.gunOpts;
   let [options] = React.useState<GunOptions>(opts ? opts : gunOptions);
   let gunInstance = Gun(options);
@@ -102,10 +102,10 @@ export function useNodeFetcher(
   opt?: { unsubscribe?: boolean }
 ): NodeFetcherHook {
   let [value, setValue] = React.useState<Nodevalues>();
-  let [compress, decompress] = useLZObject({ output: "utf16" });
+  let [compress, decompress] = useLZObject({ output: 'utf16' });
 
   const put = useSafeCallback((val: any) => {
-    if (typeof value !== "undefined") {
+    if (typeof value !== 'undefined') {
       gunRef.put(null);
       gunRef.put(val);
     }
@@ -115,7 +115,7 @@ export function useNodeFetcher(
   useNodeSubscribe(
     (d: any) => {
       if (d) {
-        log(d, "VALUES");
+        log(d, 'VALUES');
         setValue(d);
       }
     },
@@ -150,10 +150,10 @@ export const useSEAFetcher = (
 
   // Load Fetcher
   const fetcher = useFetcher(),
-    authenticate = fetcher.type === "init" && !keys,
+    authenticate = fetcher.type === 'init' && !keys,
     generate =
-      fetcher.type == "done" && !existingKeys && !keys && !fetcher.data.pair,
-    loadedPair = fetcher.type === "done" && fetcher.data.pair;
+      fetcher.type == 'done' && !existingKeys && !keys && !fetcher.data.pair,
+    loadedPair = fetcher.type === 'done' && fetcher.data.pair;
 
   // If theres keys... use them
   useSafeEffect(() => {
@@ -165,7 +165,7 @@ export const useSEAFetcher = (
   // Check to see if there are keys in cookie storage
   useSafeEffect(() => {
     if (authenticate) {
-      fetcher.load("/gun/auth/sea/authenticate"); // session route
+      fetcher.load('/gun/auth/sea/authenticate'); // session route
     }
     // If you get keys from cookies... use them
     if (loadedPair) {
@@ -173,7 +173,7 @@ export const useSEAFetcher = (
     }
     // if not ... generate new keys
     if (generate) {
-      fetcher.load("/gun/auth/sea/generate");
+      fetcher.load('/gun/auth/sea/generate');
     }
   }, [fetcher]);
   // authorize nodes and create user
@@ -183,9 +183,9 @@ export const useSEAFetcher = (
 
       user.auth(keys, (ack: any) => {
         if (ack.err) {
-          error(ack?.err, "AUTH");
+          error(ack?.err, 'AUTH');
         }
-        log("logged In");
+        log('logged In');
         setIsLoggedIn(true);
       });
     }
@@ -209,9 +209,9 @@ export const useSEAFetcher = (
 export interface EnhancedFormProps {
   hiddenInputs: React.InputHTMLAttributes<HTMLInputElement>[];
   children: JSX.Element[] | JSX.Element;
-  method?: "post" | "get";
+  method?: 'post' | 'get';
   action?: string;
-  encType?: "multipart/form-data" | "application/x-www-form-urlencoded";
+  encType?: 'multipart/form-data' | 'application/x-www-form-urlencoded';
   reloadDocument?: boolean;
   replace?: boolean;
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
@@ -235,7 +235,7 @@ export function EnhancedForm({
   return (
     <Form
       action={action ?? current}
-      method={method ?? "post"}
+      method={method ?? 'post'}
       encType={encType ?? undefined}
       onSubmit={onSubmit ?? undefined}
       replace={replace ?? false}
@@ -262,7 +262,7 @@ const HiddenInputs = ({
               Math.random() * (Math.ceil(1000) - Math.floor(100) + 1) + i
             ).toString()
           }
-          type="hidden"
+          type='hidden'
           name={prop.name}
           value={prop.value}
         />
@@ -341,13 +341,13 @@ export function useFileUploader(): [
     // blob.readAsBinaryString(file);
     reader.onloadstart = () => {
       setLoading(true);
-      console.log(loading, "loading");
+      console.log(loading, 'loading');
     };
     reader.onload = (r: any) => {
       let result = r.target.result;
       let { file } = lzObject.compress(
         { file: result },
-        { output: "uint8array" }
+        { output: 'uint8array' }
       );
       let arr: number[] = Object.values(file);
       setResult(r.target.result);

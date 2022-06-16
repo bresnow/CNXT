@@ -23,16 +23,16 @@ const Avatar = ({ withBorder, size, withInfo, type, img, to }: Props) => {
     roundedClasses = type === 'square' ? '' : 'rounded-lg';
   }
   return (
-    <Link to={`${to}`} className="block relative">
+    <Link to={`${to}`} className='block relative'>
       <img
-        alt="profil"
+        alt='profil'
         src={img || '/images/person/1.jpg'}
         className={`mx-auto object-cover ${roundedClasses} ${sizeClasses} ${
           withBorder ? ' border-2 border-white dark:border-gray-800' : ''
         }`}
       />
       {withInfo && (
-        <span className="absolute w-3 border-2 left-1/2 -bottom-2 transform -translate-x-1/2 border-white h-3 bg-green-500 rounded-full"></span>
+        <span className='absolute w-3 border-2 left-1/2 -bottom-2 transform -translate-x-1/2 border-white h-3 bg-green-500 rounded-full'></span>
       )}
     </Link>
   );

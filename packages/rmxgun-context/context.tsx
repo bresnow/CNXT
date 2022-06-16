@@ -1,8 +1,8 @@
-import { createContext, useContext } from "react";
-import { createBrowserLoader, Options } from "./browser";
-import { EntryContext, RemixBrowser, RemixServer } from "remix";
-import { LoadCtx } from "types";
-import { createServerDataloader } from "./server";
+import { createContext, useContext } from 'react';
+import { createBrowserLoader, Options } from './browser';
+import { EntryContext, RemixBrowser, RemixServer } from 'remix';
+import { LoadCtx } from 'types';
+import { createServerDataloader } from './server';
 
 export type ClientContext = {
   load: Load;

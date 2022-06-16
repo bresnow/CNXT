@@ -1,4 +1,4 @@
 export type RootLoaderData = {
-    peers: string[];
-    meta: { title: string; description: string };
+  peers: string[];
+  meta: { title: string; description: string };
 };

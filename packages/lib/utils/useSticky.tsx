@@ -1,5 +1,5 @@
-import { useSafeEffect } from "bresnow_utility-react-hooks";
-import React from "react";
+import { useSafeEffect } from 'bresnow_utility-react-hooks';
+import React from 'react';
 
 const useSticky = () => {
   const [totalHeaderHeight, setTotalHeaderHeight] = React.useState(0);
@@ -20,9 +20,9 @@ const useSticky = () => {
         setSticky(false);
       }
     };
-    window.addEventListener("scroll", scrollHandler);
+    window.addEventListener('scroll', scrollHandler);
     return () => {
-      window.removeEventListener("scroll", scrollHandler);
+      window.removeEventListener('scroll', scrollHandler);
     };
   }, [sticky, totalHeaderHeight]);
 

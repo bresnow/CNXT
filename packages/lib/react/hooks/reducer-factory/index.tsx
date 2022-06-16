@@ -1,4 +1,4 @@
-import invariant from "@remix-run/react/invariant";
+import invariant from '@remix-run/react/invariant';
 
 export function ReducerFactory<InitialState, HandlerKey, ActionPayload>(
   handler: Map<

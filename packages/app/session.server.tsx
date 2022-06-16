@@ -1,18 +1,18 @@
-import { createCookieSessionStorage } from "@remix-run/server-runtime";
+import { createCookieSessionStorage } from '@remix-run/server-runtime';
 
 let sessionSecret = process.env.PRIV as string;
-if (typeof sessionSecret !== "string") {
-  throw new Error("SESSION_SECRET must be set");
+if (typeof sessionSecret !== 'string') {
+  throw new Error('SESSION_SECRET must be set');
 }
 
 export let { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
-      name: "AUTH SESSION",
+      name: 'AUTH SESSION',
       secure: true,
       secrets: [sessionSecret],
-      sameSite: "strict",
-      path: "/",
+      sameSite: 'strict',
+      path: '/',
       maxAge: 60 * 60 * 24 * 30,
       httpOnly: true,
     },

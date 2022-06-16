@@ -1,35 +1,33 @@
-import * as fs from "fs";
-import * as fsp from "fs/promises";
-import { createServer } from "http";
-import type { RequestListener, ServerResponse } from "http";
-import * as path from "path";
-import { installGlobals, formatServerError } from "@remix-run/node";
-import { createRequestHandler } from "@remix-run/server-runtime";
-import * as build from "@remix-run/server-build";
-import mime from "mime";
-import { RemixGunContext } from "./load-context";
-import Gun, { ISEAPair } from "gun";
-import 'gun/lib/path'
-import 'gun/sea'
-import 'gun/lib/webrtc'
-import 'gun/lib/radix'
-import 'gun/lib/radisk'
-import 'gun/lib/store'
-import 'gun/lib/rindexed'
-import 'gun/lib/then'
-import 'gun/lib/later'
-import 'gun/lib/load'
-import 'gun/lib/open'
-import 'gun/lib/not'
-import 'gun/lib/axe'
-import { data } from "../../data.config";
-
-
+import * as fs from 'fs';
+import * as fsp from 'fs/promises';
+import { createServer } from 'http';
+import type { RequestListener, ServerResponse } from 'http';
+import * as path from 'path';
+import { installGlobals, formatServerError } from '@remix-run/node';
+import { createRequestHandler } from '@remix-run/server-runtime';
+import * as build from '@remix-run/server-build';
+import mime from 'mime';
+import { RemixGunContext } from './load-context';
+import Gun, { ISEAPair } from 'gun';
+import 'gun/lib/path';
+import 'gun/sea';
+import 'gun/lib/webrtc';
+import 'gun/lib/radix';
+import 'gun/lib/radisk';
+import 'gun/lib/store';
+import 'gun/lib/rindexed';
+import 'gun/lib/then';
+import 'gun/lib/later';
+import 'gun/lib/load';
+import 'gun/lib/open';
+import 'gun/lib/not';
+import 'gun/lib/axe';
+import { data } from '../../data.config';
 
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,
-  PEER_DOMAIN: process.env.PEER_DOMAIN?.split(", " || " " || "/" || ""),
+  PEER_DOMAIN: process.env.PEER_DOMAIN?.split(', ' || ' ' || '/' || ''),
   CLIENT: process.env.CLIENT_PORT,
   APP_KEY_PAIR: {
     pub: process.env.PUB,
@@ -48,10 +46,15 @@ let remixHandler = createRequestHandler(
 let cwd = process.cwd();
 let requestListener: RequestListener = async (req, res) => {
   try {
-    let url = new URL(req.url || "/", process.env.NODE_ENV !== "production" ? `http://${req.headers.host}` : `https://${req.headers.host}`);
+    let url = new URL(
+      req.url || '/',
+      process.env.NODE_ENV !== 'production'
+        ? `http://${req.headers.host}`
+        : `https://${req.headers.host}`
+    );
     path.resolve();
 
-    let filepath = path.resolve(cwd, path.join("public", url.pathname));
+    let filepath = path.resolve(cwd, path.join('public', url.pathname));
     let exists = await fsp
       .stat(filepath)
       .then((r) => r.isFile())
@@ -59,21 +62,26 @@ let requestListener: RequestListener = async (req, res) => {
     if (exists) {
       let stream = fs.createReadStream(filepath);
       res.statusCode = 200;
-      res.setHeader("Content-Type", mime.getType(filepath) || "text/plain");
+      res.setHeader('Content-Type', mime.getType(filepath) || 'text/plain');
       res.setHeader(
-        "Cache-Control",
-        url.pathname.startsWith("/build/")
-          ? "public, max-age=31536000, immutable"
-          : "public, max-age=10"
+        'Cache-Control',
+        url.pathname.startsWith('/build/')
+          ? 'public, max-age=31536000, immutable'
+          : 'public, max-age=10'
       );
 
       stream.pipe(res);
       return;
     }
-  } catch (error) { }
+  } catch (error) {}
 
   try {
-    let url = new URL(req.url || "/", process.env.NODE_ENV !== "production" ? `http://${req.headers.host}` : `https://${req.headers.host}`);
+    let url = new URL(
+      req.url || '/',
+      process.env.NODE_ENV !== 'production'
+        ? `http://${req.headers.host}`
+        : `https://${req.headers.host}`
+    );
 
     let headers = new Headers();
 
@@ -88,8 +96,8 @@ let requestListener: RequestListener = async (req, res) => {
       headers.append(key, value);
     }
 
-    let method = (req.method || "get").toLowerCase();
-    let body: any = ["get", "head"].includes(method) ? undefined : req;
+    let method = (req.method || 'get').toLowerCase();
+    let body: any = ['get', 'head'].includes(method) ? undefined : req;
 
     let request = new Request(url.toString(), {
       headers,
@@ -116,21 +124,21 @@ let requestListener: RequestListener = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.statusCode = 500;
-    res.end("Internal Server Error");
+    res.end('Internal Server Error');
   }
 };
 
 let server = createServer(requestListener);
 
 export const getDomain = () => {
-  if (process.env.NODE_ENV === "development") {
-    return `http://${env.DOMAIN}/gun`
+  if (process.env.NODE_ENV === 'development') {
+    return `http://${env.DOMAIN}/gun`;
   }
-  return `https://${env.DOMAIN}/gun`
-}
+  return `https://${env.DOMAIN}/gun`;
+};
 let peerList = {
   DOMAIN: getDomain(),
-  PEERS: (env.PEER_DOMAIN as string[]).map((domain) => `https://${domain}/gun`)
+  PEERS: (env.PEER_DOMAIN as string[]).map((domain) => `https://${domain}/gun`),
 };
 
 export const gun = Gun({
@@ -138,19 +146,20 @@ export const gun = Gun({
   web: server.listen(env.CLIENT, () => {
     console.log(`Remix.Gun Relay Server is listening on ${getDomain()}`);
   }),
-  radisk: true
-
+  radisk: true,
 });
 
 //@ts-ignore
 gun.on('out', { get: { '#': { '*': '' } } });
 const user = gun.user();
 
-
 user.auth(env.APP_KEY_PAIR as any, (ack) => {
   if ((ack as any).err) {
-    throw new Error("APP AUTH FAILED - Check your app keypair environment variables " + (ack as any).err)
+    throw new Error(
+      'APP AUTH FAILED - Check your app keypair environment variables ' +
+        (ack as any).err
+    );
   }
-  console.log("APP AUTH SUCCESS")
-})
-user.get('pages').put(data.pages)
+  console.log('APP AUTH SUCCESS');
+});
+user.get('pages').put(data.pages);

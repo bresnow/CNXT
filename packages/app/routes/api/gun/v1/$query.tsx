@@ -1,12 +1,12 @@
-import { ActionFunction, json, LoaderFunction } from "remix";
-import { LoadCtx } from "types";
-import Gun, { ISEAPair } from "gun";
-import { getSession } from "../../../../session.server";
-import LZString from "lz-string";
+import { ActionFunction, json, LoaderFunction } from 'remix';
+import { LoadCtx } from 'types';
+import Gun, { ISEAPair } from 'gun';
+import { getSession } from '../../../../session.server';
+import LZString from 'lz-string';
 
 let QueryType = {
-  GET: "g" || "get",
-  OPEN: "o" || "open",
+  GET: 'g' || 'get',
+  OPEN: 'o' || 'open',
 };
 type QueryHandler = Map<string, () => Promise<Record<string, any>>>;
 export let loader: LoaderFunction = async ({ params, request, context }) => {
@@ -15,12 +15,12 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let url = new URL(request.url);
   let data;
   let session = await getSession();
-  let path = url.searchParams.get("path");
-  let auth = url.searchParams.get("auth") === ("true" || true) ? true : false;
+  let path = url.searchParams.get('path');
+  let auth = url.searchParams.get('auth') === ('true' || true) ? true : false;
   let compressed =
-    url.searchParams.get("compressed") === ("true" || true) ? true : false;
-  let sessionKP = session.get("key_pair")
-    ? (JSON.parse(session.get("key_pair") as string) as ISEAPair)
+    url.searchParams.get('compressed') === ('true' || true) ? true : false;
+  let sessionKP = session.get('key_pair')
+    ? (JSON.parse(session.get('key_pair') as string) as ISEAPair)
     : undefined;
   if (auth && sessionKP) {
     gun = gun.user().auth(sessionKP);
@@ -33,21 +33,21 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   }
   let queryHandler: QueryHandler = new Map([
     [
-      "undefined" || null,
+      'undefined' || null,
       () => {
-        throw new Error("No query type specified");
+        throw new Error('No query type specified');
       },
     ],
     [
       QueryType.GET,
       async () =>
-        (data = await gun.path((path as string).replace("/", ".")).then()),
+        (data = await gun.path((path as string).replace('/', '.')).then()),
     ],
     [
       QueryType.OPEN,
       () =>
         new Promise((res, _rej) =>
-          gun.path((path as string).replace("/", ".")).open((data) => {
+          gun.path((path as string).replace('/', '.')).open((data) => {
             res(data);
           })
         ),
@@ -55,6 +55,6 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   ]);
   let query = queryHandler.get(params.query as string),
     res = query && (await query());
-  console.log(res, "res");
-  return json(res, { status: 200, headers: { "FLTNGMMTH-DEV": "true" } });
+  console.log(res, 'res');
+  return json(res, { status: 200, headers: { 'FLTNGMMTH-DEV': 'true' } });
 };

@@ -1,18 +1,18 @@
-import { useMatches } from "@remix-run/react";
+import { useMatches } from '@remix-run/react';
 /**
  *https://github.com/sergiodxa/remix-utils/blob/main/src/react/external-scripts.tsx
  */
 type ReferrerPolicy =
-  | "no-referrer-when-downgrade"
-  | "no-referrer"
-  | "origin-when-cross-origin"
-  | "origin"
-  | "same-origin"
-  | "strict-origin-when-cross-origin"
-  | "strict-origin"
-  | "unsafe-url";
+  | 'no-referrer-when-downgrade'
+  | 'no-referrer'
+  | 'origin-when-cross-origin'
+  | 'origin'
+  | 'same-origin'
+  | 'strict-origin-when-cross-origin'
+  | 'strict-origin'
+  | 'unsafe-url';
 
-type CrossOrigin = "anonymous" | "use-credentials";
+type CrossOrigin = 'anonymous' | 'use-credentials';
 
 type ScriptDescriptor = {
   async?: boolean;
@@ -32,15 +32,15 @@ export function ExternalScripts() {
   let matches = useMatches();
   let scripts = matches.flatMap((match) => {
     let scripts = match.handle?.scripts as ExternalScriptsFunction | undefined;
-    if (typeof scripts === "function") return scripts();
+    if (typeof scripts === 'function') return scripts();
     return [];
   });
 
   return (
     <>
       {scripts.map((props) => {
-        let rel = props.noModule ? "modulepreload" : "preload";
-        let as = !props.noModule ? "script" : undefined;
+        let rel = props.noModule ? 'modulepreload' : 'preload';
+        let as = !props.noModule ? 'script' : undefined;
         return (
           <link
             key={props.src}

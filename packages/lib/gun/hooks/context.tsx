@@ -20,12 +20,12 @@
  */
 
 const CONSTANTS = {
-  RMX_GUN_ACCESS_TOKEN: "RMX-GUN-Access-Token",
-  ERROR_MESSAGE: { ACCESS_TOKEN_MISSING: "Access token missing" },
+  RMX_GUN_ACCESS_TOKEN: 'RMX-GUN-Access-Token',
+  ERROR_MESSAGE: { ACCESS_TOKEN_MISSING: 'Access token missing' },
 };
-import React, { createContext, useContext, useRef, useEffect } from "react";
-import Gun from "gun/gun";
-import "gun/sea";
+import React, { createContext, useContext, useRef, useEffect } from 'react';
+import Gun from 'gun/gun';
+import 'gun/sea';
 import {
   GunHookMessageOut,
   IGun,
@@ -33,10 +33,10 @@ import {
   IGunInstance,
   IGunInstanceHookHandler,
   _GunRoot,
-} from "gun";
-import { useFetcher } from "remix";
-import { useGunStatic } from ".";
-import { useIf } from "bresnow_utility-react-hooks";
+} from 'gun';
+import { useFetcher } from 'remix';
+import { useGunStatic } from '.';
+import { useIf } from 'bresnow_utility-react-hooks';
 
 const GunContext = createContext<any>({
   getGun: () => {},
@@ -61,20 +61,20 @@ export const GunContextProvider = ({
   const [gun, SEA] = useGunStatic(Gun);
   const fetcher = useFetcher();
 
-  useIf([fetcher.type === "init", !fetcher.data], () => {
-    fetcher.load("/api/gun/token");
+  useIf([fetcher.type === 'init', !fetcher.data], () => {
+    fetcher.load('/api/gun/token');
   });
   useIf(
-    [fetcher.type === "done", !fetcher.data.error, fetcher.data.token],
+    [fetcher.type === 'done', !fetcher.data.error, fetcher.data.token],
     () => {
       accessTokenRef.current = fetcher.data.token;
     }
   );
   useEffect(() => {
-    Gun.on("opt", function (this: IGunHookContext<_GunRoot>, ctx: _GunRoot) {
+    Gun.on('opt', function (this: IGunHookContext<_GunRoot>, ctx: _GunRoot) {
       if ((ctx as any).once) return;
 
-      ctx.on("out", function <
+      ctx.on('out', function <
         MessageExtension extends Partial<{
           headers: { accessToken: string };
           err: string;
@@ -95,14 +95,14 @@ export const GunContextProvider = ({
   // create user
   const user = gun.user();
   useEffect(() => {
-    gun.on("auth", (...args) => {
+    gun.on('auth', (...args) => {
       if (!accessTokenRef.current) {
         // get new token
-        user.get("alias").once((username: any) => {
-          fetch("http://localhost:8765/api/tokens", {
-            method: "POST",
+        user.get('alias').once((username: any) => {
+          fetch('http://localhost:8765/api/tokens', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               username,
@@ -119,11 +119,11 @@ export const GunContextProvider = ({
 
       if (!certificateRef.current) {
         // get new certificate
-        user.get("alias").once((username: any) => {
-          fetch("http://localhost:8765/api/certificates", {
-            method: "POST",
+        user.get('alias').once((username: any) => {
+          fetch('http://localhost:8765/api/certificates', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               username,

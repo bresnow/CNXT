@@ -1,14 +1,14 @@
-import { useMemo } from "react";
-import { useLocation } from "remix";
-import invariant from "@remix-run/react/invariant";
-import jsesc from "jsesc";
-import Gun from "gun";
-import { ClientContext, useDataLoader } from "./context";
-import { useIf, useSafeCallback } from "bresnow_utility-react-hooks";
-import { useGunStatic } from "~/lib/gun/hooks";
-import React from "react";
-import { Options } from "./browser";
-export { DataloaderProvider } from "./context";
+import { useMemo } from 'react';
+import { useLocation } from 'remix';
+import invariant from '@remix-run/react/invariant';
+import jsesc from 'jsesc';
+import Gun from 'gun';
+import { ClientContext, useDataLoader } from './context';
+import { useIf, useSafeCallback } from 'bresnow_utility-react-hooks';
+import { useGunStatic } from '~/lib/gun/hooks';
+import React from 'react';
+import { Options } from './browser';
+export { DataloaderProvider } from './context';
 /**
  * @param {string} remix route path to load
  * @param {Options} options Redaxios options
@@ -29,7 +29,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
   let deferred = useMemo(() => {
-    invariant(dataloader, "Context Provider is undefined for useGunFetcher");
+    invariant(dataloader, 'Context Provider is undefined for useGunFetcher');
     let _deferred = { resolved: false } as {
       resolved: boolean;
       cache?: Record<string, any>;
@@ -54,10 +54,10 @@ export function useFetcherAsync(routePath: string, options?: Options) {
 
   return {
     response() {
-      if (typeof deferred.value !== "undefined") {
+      if (typeof deferred.value !== 'undefined') {
         return deferred.value;
       }
-      if (typeof deferred.error !== "undefined") {
+      if (typeof deferred.error !== 'undefined') {
         throw deferred.error;
       }
 
@@ -67,7 +67,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
   };
 }
 export const includes = (object: any, prop: string) => {
-  if (typeof object !== "object") {
+  if (typeof object !== 'object') {
     return;
   }
   return Object.getOwnPropertyNames(object).includes(prop);

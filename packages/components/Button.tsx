@@ -1,14 +1,14 @@
-import { ButtonHTMLAttributes } from "react";
-import { Link } from "remix";
+import { ButtonHTMLAttributes } from 'react';
+import { Link } from 'remix';
 
 interface ButtonType<ButtonProps = ButtonHTMLAttributes<any>> {
   children: string | JSX.Element[] | HTMLElement[] | JSX.Element | HTMLElement;
   path?: string;
-  type: "button" | "submit" | "reset";
+  type: 'button' | 'submit' | 'reset';
   className?: string;
-  size?: "md" | "lg" | "xl";
-  shape?: "rounded" | "square" | "square20xl" | "square2xl" | "square22xl";
-  color?: "primary" | "secondary";
+  size?: 'md' | 'lg' | 'xl';
+  shape?: 'rounded' | 'square' | 'square20xl' | 'square2xl' | 'square22xl';
+  color?: 'primary' | 'secondary';
   image?: { large?: string; small?: string };
 }
 
@@ -23,9 +23,9 @@ const Button = ({
   type,
 }: ButtonType) => {
   const btnstyle = {
-    size: size || "md",
-    shape: shape || "square22xl",
-    color: color || "primary",
+    size: size || 'md',
+    shape: shape || 'square22xl',
+    color: color || 'primary',
   };
   const sizeStyle = {
     md: `leading-11 h-12 w-32 sm:h-15 sm:w-40 sm:leading-12`,
@@ -46,31 +46,31 @@ const Button = ({
 
   const buttonClasses = [
     className,
-    "font-exo",
-    "inline-block",
-    "text-center",
-    "font-bold",
-    "group",
-    "hover:opacity-80",
+    'font-exo',
+    'inline-block',
+    'text-center',
+    'font-bold',
+    'group',
+    'hover:opacity-80',
     sizeStyle[btnstyle.size],
-    shapeStyle[btnstyle.shape ?? "square22xl"],
-    colorStyle[btnstyle.color ?? "primary"]
-  ].join(" ");
+    shapeStyle[btnstyle.shape ?? 'square22xl'],
+    colorStyle[btnstyle.color ?? 'primary'],
+  ].join(' ');
 
   const btnImageSm = {
     backgroundImage: `url(${image?.small})`,
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
   };
   const btnImageLg = {
     backgroundImage: `url(${image?.large})`,
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
   };
 
   if (path) {
     const internal = /^\/(?!\/)/.test(path);
-    const isHash = path.startsWith("#");
+    const isHash = path.startsWith('#');
 
     if (internal) {
       return (
@@ -99,10 +99,10 @@ const Button = ({
     return (
       <a
         href={path}
-        target="_blank"
+        target='_blank'
         style={size ? btnImageLg : btnImageSm}
         className={buttonClasses}
-        rel="noopener noreferrer"
+        rel='noopener noreferrer'
       >
         {children}
       </a>

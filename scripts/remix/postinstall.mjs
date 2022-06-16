@@ -1,8 +1,8 @@
-import { write, remove, exists } from 'fsxx'
-import jsesc from 'jsesc'
-import { $, chalk } from 'zx'
-$.verbose = true
-let _t = () => $.verbose = !$.verbose
+import { write, remove, exists } from 'fsxx';
+import jsesc from 'jsesc';
+import { $, chalk } from 'zx';
+$.verbose = true;
+let _t = () => ($.verbose = !$.verbose);
 /**
  * PATCHWORK
  * overwrites the server runtime script instead of patching it.
@@ -16,6 +16,4 @@ let _t = () => $.verbose = !$.verbose
 // await write("node_modules/@remix-run/server-runtime/index.js", patchedMarkup.toString())
 // console.log(`${chalk.green('Patched server runtime')}`)
 
-
-
-await $`patch-package && remix setup node`
+await $`patch-package && remix setup node`;

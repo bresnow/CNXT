@@ -1,5 +1,5 @@
-import { json as remixJson, redirect } from "@remix-run/server-runtime";
-import { json } from "remix";
+import { json as remixJson, redirect } from '@remix-run/server-runtime';
+import { json } from 'remix';
 
 export type ReplacerFunction = (key: string, value: unknown) => unknown;
 
@@ -17,7 +17,7 @@ export type ExtendedResponseInit = ResponseInit & {
  */
 export function created<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json(data, { ...init, status: 201 });
 }
@@ -40,7 +40,7 @@ export function redirectBack(
   request: Request,
   { fallback, ...init }: ResponseInit & { fallback: string }
 ): Response {
-  return redirect(request.headers.get("Referer") ?? fallback, init);
+  return redirect(request.headers.get('Referer') ?? fallback, init);
 }
 
 /**
@@ -53,7 +53,7 @@ export function redirectBack(
  */
 export function badRequest<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 400 });
 }
@@ -68,7 +68,7 @@ export function badRequest<Data = unknown>(
  */
 export function unauthorized<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 401 });
 }
@@ -83,7 +83,7 @@ export function unauthorized<Data = unknown>(
  */
 export function forbidden<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 403 });
 }
@@ -98,7 +98,7 @@ export function forbidden<Data = unknown>(
  */
 export function notFound<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 404 });
 }
@@ -113,7 +113,7 @@ export function notFound<Data = unknown>(
  */
 export function unprocessableEntity<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 422 });
 }
@@ -128,7 +128,7 @@ export function unprocessableEntity<Data = unknown>(
  */
 export function serverError<Data = unknown>(
   data: Data,
-  init?: Omit<ExtendedResponseInit, "status">
+  init?: Omit<ExtendedResponseInit, 'status'>
 ) {
   return json<Data>(data, { ...init, status: 500 });
 }
@@ -141,8 +141,8 @@ export function serverError<Data = unknown>(
  *   return notModified();
  * }
  */
-export function notModified(init?: Omit<ResponseInit, "status">) {
-  return new Response("", { ...init, status: 304 });
+export function notModified(init?: Omit<ResponseInit, 'status'>) {
+  return new Response('', { ...init, status: 304 });
 }
 
 /**
@@ -160,11 +160,11 @@ export function javascript(
   content: string,
   init: number | ResponseInit = {}
 ): Response {
-  let responseInit = typeof init === "number" ? { status: init } : init;
+  let responseInit = typeof init === 'number' ? { status: init } : init;
 
   let headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/javascript; charset=utf-8");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/javascript; charset=utf-8');
   }
 
   return new Response(content, {
@@ -188,11 +188,11 @@ export function stylesheet(
   content: string,
   init: number | ResponseInit = {}
 ): Response {
-  let responseInit = typeof init === "number" ? { status: init } : init;
+  let responseInit = typeof init === 'number' ? { status: init } : init;
 
   let headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "text/css; charset=utf-8");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'text/css; charset=utf-8');
   }
 
   return new Response(content, {
@@ -216,11 +216,11 @@ export function pdf(
   content: Blob | Buffer | ArrayBuffer,
   init: number | ResponseInit = {}
 ): Response {
-  let responseInit = typeof init === "number" ? { status: init } : init;
+  let responseInit = typeof init === 'number' ? { status: init } : init;
 
   let headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/pdf");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/pdf');
   }
 
   return new Response(content, {
@@ -244,11 +244,11 @@ export function html(
   content: string,
   init: number | ResponseInit = {}
 ): Response {
-  let responseInit = typeof init === "number" ? { status: init } : init;
+  let responseInit = typeof init === 'number' ? { status: init } : init;
 
   let headers = new Headers(responseInit.headers);
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "text/html; charset=utf-8");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'text/html; charset=utf-8');
   }
 
   return new Response(content, {
@@ -258,13 +258,13 @@ export function html(
 }
 
 export type ImageType =
-  | "image/jpeg"
-  | "image/png"
-  | "image/gif"
-  | "image/svg+xml"
-  | "image/webp"
-  | "image/bmp"
-  | "image/avif";
+  | 'image/jpeg'
+  | 'image/png'
+  | 'image/gif'
+  | 'image/svg+xml'
+  | 'image/webp'
+  | 'image/bmp'
+  | 'image/avif';
 
 /**
  * Create a response with a image file response.
@@ -283,8 +283,8 @@ export function image(
 ): Response {
   let headers = new Headers(init.headers);
 
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", type);
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', type);
   }
 
   return new Response(content, {

@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import Gun from "gun";
+import { Suspense } from 'react';
+import Gun from 'gun';
 import {
   ActionFunction,
   json,
@@ -7,20 +7,20 @@ import {
   useActionData,
   useCatch,
   useParams,
-} from "remix";
-import { DeferedData, useFetcherAsync } from "~/rmxgun-context/useFetcherAsync";
-import { useIf } from "bresnow_utility-react-hooks";
-import { LoadCtx } from "types";
-import Display from "~/components/DisplayHeading";
-import { useGunStatic } from "~/lib/gun/hooks";
-import FormBuilder from "~/components/FormBuilder";
-import invariant from "@remix-run/react/invariant";
-import React from "react";
-import { InputTextProps } from "~/components/InputText";
-import CNXTLogo from "~/components/svg/logos/CNXT";
-import { HashtagLarge } from "~/components/svg/Icons";
-import { Fallback } from "../$namespace";
-import { Navigation } from "~/components/Navigator";
+} from 'remix';
+import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
+import { useIf } from 'bresnow_utility-react-hooks';
+import { LoadCtx } from 'types';
+import Display from '~/components/DisplayHeading';
+import { useGunStatic } from '~/lib/gun/hooks';
+import FormBuilder from '~/components/FormBuilder';
+import invariant from '@remix-run/react/invariant';
+import React from 'react';
+import { InputTextProps } from '~/components/InputText';
+import CNXTLogo from '~/components/svg/logos/CNXT';
+import { HashtagLarge } from '~/components/svg/Icons';
+import { Fallback } from '../$namespace';
+import { Navigation } from '~/components/Navigator';
 
 type ErrObj = {
   path?: string;
@@ -38,7 +38,7 @@ export let loader: LoaderFunction = async ({ request, context }) => {
   user.auth(ENV.APP_KEY_PAIR);
   let data;
   try {
-    data = await user.get("pages").get("builder").then();
+    data = await user.get('pages').get('builder').then();
   } catch (error) {
     data = { error };
   }
@@ -52,19 +52,19 @@ export let action: ActionFunction = async ({ request, context }) => {
   try {
     let { prop, _value, path } = await formData();
     if (!path) {
-      error.path = "Namespace is required";
+      error.path = 'Namespace is required';
     }
     if (!/^(?![0-9])[a-zA-Z0-9$_]+$/.test(prop)) {
       error.key =
-        "Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/";
+        'Invalid property name : Follow Regex Pattern /^(?![0-9])[a-zA-Z0-9$_]+$/';
     }
     if (
-      typeof _value !== "string" ||
+      typeof _value !== 'string' ||
       _value.length < 1 ||
       _value.length > 240
     ) {
       error.value =
-        "Property values must be greater than 1 and less than 240 characters";
+        'Property values must be greater than 1 and less than 240 characters';
     }
 
     if (Object.values(error).length > 0) {
@@ -83,26 +83,26 @@ export function SuspendedTest({ load }: { load: () => Record<string, any> }) {
     if (data.error) {
       return <></>;
     }
-    let path = data._ ? data._["#"] : "";
+    let path = data._ ? data._['#'] : '';
     return (
-      <div className="grid grid-cols-1 gap-4 p-4">
-        <div className="col-span-1">
+      <div className='grid grid-cols-1 gap-4 p-4'>
+        <div className='col-span-1'>
           <h5>
             Fetched data at document path <pre>{path}</pre>
           </h5>
           {data &&
             Object.entries(data).map((val) => {
               let [key, value] = val;
-              if (key === "_") {
+              if (key === '_') {
                 return;
               }
               return (
                 <div
                   key={key}
-                  className="flex flex-row items-center space-y-5 justify-center space-x-5"
+                  className='flex flex-row items-center space-y-5 justify-center space-x-5'
                 >
-                  <div className="w-1/3 p-5 rounded-md ">{key}</div>
-                  <div className="w-1/2 bg-gray-300 p-5 rounded-md flex-wrap">
+                  <div className='w-1/3 p-5 rounded-md '>{key}</div>
+                  <div className='w-1/2 bg-gray-300 p-5 rounded-md flex-wrap'>
                     {`${value}`}
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function BuilderRoute() {
   let namespace = useParams().namespace as string;
   const ObjectBuilder = FormBuilder();
   useIf([ackData, !error], () => {
-    invariant(ackData, "ackData is undefined");
+    invariant(ackData, 'ackData is undefined');
     gun.path(namespace).put(ackData);
   });
   let buildLoader = useFetcherAsync(`/api/gun/q`, {
@@ -135,46 +135,46 @@ export default function BuilderRoute() {
   let searchProps = {
     value: namespace,
     placeholder: namespace,
-    name: "path",
+    name: 'path',
   };
   return (
     <ObjectBuilder.Form
-      className="grid grid-cols-1  gap-3 px-3"
-      method={"post"}
+      className='grid grid-cols-1  gap-3 px-3'
+      method={'post'}
     >
-      <input type="hidden" {...searchProps} />
-      <div className="col-span-1">
-        <div className="flex flex-col lg:flex-row items-center space-y-5 justify-center space-x-5">
-          <div className="w-1/3 p-5 rounded-md ">
+      <input type='hidden' {...searchProps} />
+      <div className='col-span-1'>
+        <div className='flex flex-col lg:flex-row items-center space-y-5 justify-center space-x-5'>
+          <div className='w-1/3 p-5 rounded-md '>
             <ObjectBuilder.Input
-              type="text"
+              type='text'
               required
-              name="prop"
-              label={"Key"}
+              name='prop'
+              label={'Key'}
               shadow={true}
               className={
-                "w-full bg-primary-80 hover:bg-primary-70 py-2 focus:outline-none  rounded-md flex"
+                'w-full bg-primary-80 hover:bg-primary-70 py-2 focus:outline-none  rounded-md flex'
               }
               error={error?.key}
             />
           </div>
-          <div className="w-1/2 bg-primary-80  hover:bg-primary-70 rounded-md flex-wrap">
+          <div className='w-1/2 bg-primary-80  hover:bg-primary-70 rounded-md flex-wrap'>
             <ObjectBuilder.Input
-              type="text"
+              type='text'
               required
-              name="_value"
-              label={"Value"}
+              name='_value'
+              label={'Value'}
               shadow={true}
               textArea={true}
               className={
-                "w-full bg-primary-80 hover:bg-primary-70 focus:outline-none mb-5 flex"
+                'w-full bg-primary-80 hover:bg-primary-70 focus:outline-none mb-5 flex'
               }
               error={error?.value}
             />
           </div>
         </div>
       </div>
-      <ObjectBuilder.Submit label={"Submit"} />
+      <ObjectBuilder.Submit label={'Submit'} />
     </ObjectBuilder.Form>
   );
 }
@@ -188,16 +188,16 @@ export const SectionTitle = ({
 }: TitleProps) => {
   const title = {
     showDescription: showDescription || false,
-    align: align ? align : "center",
-    color: color ? color : "primary",
+    align: align ? align : 'center',
+    color: color ? color : 'primary',
   };
   return (
-    <div className="section-title">
-      <div className="container">
+    <div className='section-title'>
+      <div className='container'>
         <div className={`align-${title.align} mx-auto`}>
-          <h2 className="font-bold max-w-3xl">{heading}</h2>
+          <h2 className='font-bold max-w-3xl'>{heading}</h2>
           {title.showDescription && (
-            <p className="max-w-xl mt-2 leading-7 text-18base">{description}</p>
+            <p className='max-w-xl mt-2 leading-7 text-18base'>{description}</p>
           )}
         </div>
       </div>
@@ -207,8 +207,8 @@ export const SectionTitle = ({
 type TitleProps = {
   heading: string;
   description: string;
-  align?: "left" | "right" | "center";
-  color?: "white" | "primary";
+  align?: 'left' | 'right' | 'center';
+  color?: 'white' | 'primary';
   showDescription: boolean;
 };
 
@@ -220,12 +220,12 @@ export function CatchBoundary() {
     case 403:
     case 404:
       return (
-        <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+        <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
           <Display
             title={`${caught.status}`}
-            titleColor="white"
+            titleColor='white'
             span={`${caught.statusText}`}
-            spanColor="pink-500"
+            spanColor='pink-500'
             description={`${caught.statusText}`}
           />
         </div>
@@ -237,12 +237,12 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return (
-    <div className="min-h-screen py-4 flex flex-col justify-center items-center">
+    <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
       <Display
-        title="Error:"
-        titleColor="#cb2326"
+        title='Error:'
+        titleColor='#cb2326'
         span={error.message}
-        spanColor="#fff"
+        spanColor='#fff'
         description={`error`}
       />
     </div>

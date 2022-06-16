@@ -1,4 +1,4 @@
-import { LoaderFunction } from "remix";
+import { LoaderFunction } from 'remix';
 
 export type Post = {
   id: string;
@@ -7,7 +7,6 @@ export type Post = {
   postedAt: { date: string; slug: string };
   slug: string;
   image: { src: string };
-
 };
 
 export let loader: LoaderFunction = async (): Promise<Post[]> => {
@@ -21,8 +20,7 @@ export let loader: LoaderFunction = async (): Promise<Post[]> => {
       author: `Author ${i}`,
       postedAt: { date: Date.now().toString(), slug: `post-${i}` },
       slug: `post-${i}`,
-      image: { src: '/assets/images/placeholder-image.png' }
-
+      image: { src: '/assets/images/placeholder-image.png' },
     });
   }
 

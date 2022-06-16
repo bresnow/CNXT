@@ -1,9 +1,7 @@
-import { LoaderFunction } from "remix";
+import { LoaderFunction } from 'remix';
 
-import { html } from "remix-utils";
+import { html } from 'remix-utils';
 
 export const loader: LoaderFunction = async ({ request }) => {
-
-	return null
+  return null;
 };
-

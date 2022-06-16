@@ -1,0 +1,5 @@
+public/**/*.js
+.cache/*
+build/*
+node_modules/*
+patches/*
