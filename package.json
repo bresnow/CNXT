@@ -6,8 +6,8 @@
   "license": "MIT",
   "module": "es2022",
   "resolutions": {
-    "react": "18.0.0-rc.0",
-    "react-dom": "18.0.0-rc.0"
+    "react": "react@18.1.0-next-fc47cb1b6-20220404",
+    "react-dom": "react-dom@18.1.0-next-fc47cb1b6-20220404"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
@@ -51,8 +51,8 @@
     "@types/mime": "^2.0.3",
     "@types/node": "^17.0.35",
     "@types/object-assign": "^4.0.30",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.9",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@types/uuid": "^8.3.4",
     "@unocss/cli": "^0.38.2",
     "@unocss/preset-attributify": "^0.38.2",
@@ -62,7 +62,6 @@
     "nodemon": "^2.0.15",
     "postinstall": "^0.7.4",
     "prettier": "2.7.0",
-    "ts-node --esm": "^10.8.1",
     "typescript": "^4.7.3",
     "unocss": "^0.38.2"
   },
