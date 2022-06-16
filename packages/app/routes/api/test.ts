@@ -5,5 +5,5 @@ import { Readable } from 'stream';
 import { LoadCtx } from 'types';
 
 export const loader: LoaderFunction = async ({ request, context }) => {
-  return null
+  return null;
 };
