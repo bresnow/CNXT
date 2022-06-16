@@ -19,18 +19,20 @@ jobs:
         id: pkg
         run: echo "::set-output name=package::$( npm run ts-node-esm scripts/pkg-utils.ts )"
   docker:
-    needs: pkg_props
-    if: ${{ fromJson(pkg_props.steps.package_version.output.package) != null }}
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
+      - name: Name and Version From package.json
+        id: pkg
+        run: echo "::set-output name=package::$( npm run ts-node-esm scripts/pkg-utils.ts )"
+      - uses: actions/checkout@v3
       - name: Update Swarm Stack
         run: |
-          echo ${{ fromJson(pkg_props.steps.package_version.output.package) }} 
-          export VERSION=${{ fromJson(pkg_props.steps.package_version.output.package).version }}
-          docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(pkg_props.steps.package_version.output.package).name }}
+          echo ${{ fromJson(steps.pkg.output.package) }} 
+          export VERSION=${{ fromJson(steps.pkg.output.package).version }}
+          docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.pkg.output.package).name }}
   cleanup:
     needs: docker
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main
