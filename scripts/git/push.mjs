@@ -29,7 +29,7 @@ if (!message) {
     console.log(chalk.blueBright(`${message}`));
   }
 }
-let noop = () => {};
+let noop = () => { };
 if (!version) {
   let vanswer = await question(
     `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
@@ -37,12 +37,14 @@ if (!version) {
   );
   if (vanswer !== '') {
     version = vanswer;
+    vanswer = `${pkg.data.version}`
+    await pkg.save();
   } else {
     console.log(chalk.yellow(`Keeping current version ${pkg.data.version}`));
   }
 }
-version = `${pkg.data.version}`.trim();
-await pkg.save();
+
+
 
 let mod = await $`git status`.pipe($`grep modified:`);
 // Prettier writes all modified files
