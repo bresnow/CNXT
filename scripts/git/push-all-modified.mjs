@@ -31,8 +31,7 @@ if (!message) {
 
 if (!version) {
   let vanswer = await question(
-    `Version ? \n ${
-      chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
+    `Version ? \n ${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)
     }: `
   );
   if (vanswer !== '') {
