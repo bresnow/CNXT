@@ -1,50 +1,62 @@
-import { $, question, YAML, chalk, sleep } from 'zx';
-import { io } from 'fsxx';
+import { $, question, YAML, chalk, sleep } from 'zx'
+import { io } from 'fsxx'
 import 'zx/globals';
-let pkg = await io.json`package.json`;
-let message, version;
-let args = process.argv.slice(3);
-await $`yarn prettier --check`;
+let pkg = await io.json`package.json`
+let message, version
+let args = process.argv.slice(3)
+
 if (args.length > 0) {
-  for (let i = 0; i < args.length; i++) {
-    let arg = args[i];
 
-    arg.startsWith('--message=' || '-m=' || '--message' || '-m')
-      ? (message = arg.includes('=') ? arg.split('=')[1] : args[i + 1])
-      : null;
+    for (let i = 0; i < args.length; i++) {
 
-    arg.startsWith('--version=' || '-v=' || '--version' || '-v')
-      ? (version = arg.includes('=') ? arg.split('=')[1] : args[i + 1])
-      : null;
+        let arg = args[i]
 
-    arg.startsWith('--silent' || '-s') ? ($.verbose = false) : null;
-  }
+        if (arg.startsWith('--message=' || '-m=' || '--message' || '-m')) {
+
+            message = arg.includes("=") ? arg.split('=')[1] : args[i + 1]
+        }
+
+        if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
+
+            version = arg.includes("=") ? arg.split('=')[1] : args[i + 1]
+        }
+        if (arg.startsWith('--silent' || '-s')) {
+
+            $.verbose = false
+
+        }
+
+    }
+
 }
 
-message =
-  !message && (await question('Message for commit : ')) !== ''
-    ? await question('Message for commit : ')
-    : 'Quick Update';
 
-version =
-  !version &&
-  (await question(
-    `Version ? \n ${
-      chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
-    }: `
-  )) !== ''
-    ? await question(
-        `Version ? \n ${
-          chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
-        }: `
-      )
-    : pkg.data.version;
+if (!message) {
+    let manswer = await question("Message for commit : ")
+    manswer !== "" ? message = manswer : message = `"Update ${Date.now().toLocaleString()}`
+}
+
+
+if (!version) {
+    let vanswer = await question(`Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)}: `)
+    vanswer !== "" ? version = vanswer : version = pkg.data.version
+}
+
+
 
 //PACKAGE>JSON MODIFY VERSION
 
-pkg.data.version = version;
-await pkg.save();
-await $`git status`;
-await $`git add --all`;
-await $`git commit -s -m ${`${message} | ${version}`}`;
-await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`;
+pkg.data.version = version
+await pkg.save()
+let mod = await $`git status`.pipe($`grep modified:`)
+$.verbose = true
+mod.stdout.split("modified: ").forEach(async (line) => {
+    let filename = line.trim()
+    if (filename.length > 1) {
+        await $`npx prettier --write ${filename}`
+    }
+})
+await $`git add --all`
+await $`git commit -s -m ${`${message} | ${version}`}`
+await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`
+
