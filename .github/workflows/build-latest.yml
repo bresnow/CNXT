@@ -5,11 +5,11 @@ on:
       - main
 
 jobs:
-  install_deps:
-    uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
+  # install_deps:
+  #   uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
   build_latest:
-    needs: install_deps
-    if: ${{ success() }}
+    # needs: install_deps
+    # if: ${{ success() }}
     runs-on:
       - self-hosted
       - main-server
@@ -17,7 +17,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
         run: |
-          npx zx scripts/esm/docker/build-push-dh.mjs -L
-          npx zx scripts/esm/docker/build-push-dh.mjs -L -G
-          npx zx scripts/esm/docker/build-push-dh.mjs
-          npx zx scripts/esm/docker/build-push-dh.mjs -G
+          yarn
+          yarn zx scripts/esm/docker/build-push-dh.mjs -L
+          yarn zx scripts/esm/docker/build-push-dh.mjs -L -G
+          yarn zx scripts/esm/docker/build-push-dh.mjs
+          yarn zx scripts/esm/docker/build-push-dh.mjs -G
