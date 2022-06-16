@@ -10,7 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: zsh exec
-        run: |
-          zsh
+        run: zsh
+      - name: yarn install
+        run: yarn
       - name: Deploy App With Traefik
         run: npx zx scripts/docker/swarm/traefik-service.mjs
