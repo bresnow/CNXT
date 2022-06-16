@@ -10,6 +10,8 @@ ENV DOMAIN=${DOMAIN}
 COPY . /app
 
 WORKDIR  /app
-RUN yarn
+RUN yarn \
+    && yarn build \
+    && yarn build:css
 CMD ["yarn", "start"] 
 LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun-react-18-streaming
