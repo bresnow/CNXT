@@ -6,13 +6,13 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "push": "ts-node-esm ./git/push.ts"
+    "push": "ts-node --esm ./git/push.ts"
   },
   "author": "Bresnow",
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "ts-node": "^10.8.1",
+    "ts-node --esm": "^10.8.1",
     "typescript": "^4.7.3"
   }
 }
