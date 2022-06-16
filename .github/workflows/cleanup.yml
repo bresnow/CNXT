@@ -1,19 +1,14 @@
 name: Docker Cleanup
 on:
-  workflow_dispatch:
   workflow_call:
 
 jobs:
-  stack_deploy:
+  cleanup:
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v2
-      - name: zsh exec
-        run: zsh
-      - name: yarn install
-        run: yarn
       - name: Cleanup
         run: |
           docker image prune --force

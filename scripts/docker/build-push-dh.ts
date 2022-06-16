@@ -2,7 +2,6 @@
 import { $, chalk } from 'zx';
 import { read } from 'fsxx';
 
-
 async function build() {
   let pkg = JSON.parse(await read('package.json'));
 
@@ -17,4 +16,4 @@ async function build() {
   console.log(chalk.greenBright('Fin'));
 }
 
-build()
+build();

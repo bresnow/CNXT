@@ -4,15 +4,23 @@ on:
   workflow_call:
 
 jobs:
-  stack_deploy:
+  install_deps:
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v2
-      - name: zsh exec
-        run: zsh
-      - name: npm install
-        run: yarn
+      - name: Dependencies Script
+        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml
+  stack_deploy:
+    needs: install_deps
+    if: ${{ success() }}
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deps Install
+        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml
       - name: Deploy App With Traefik
-        run: yarn ts-node-esm scripts/docker/swarm/prep.ts
+        run: ts-node-esm scripts/docker/swarm/prep.ts

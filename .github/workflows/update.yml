@@ -5,28 +5,44 @@ on:
       - main
 
 jobs:
-  docker:
+  install_deps:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v2
+      - name: Dependencies Script
+        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml
+  pkg_props:
+    needs: install_deps
+    if: ${{ success() }}
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: zsh exec
-        run: zsh
-      - name: yarn install
-        run: yarn
-      - uses: actions/checkout@v3
       - name: Name and Version From package.json
-        id: package_version
-        run: echo "::set-output name=package::$( yarn ts-node-esm scripts/pkg-utils.ts )"
+        id: pkg
+        run: echo "::set-output name=package::$( ts-node-esm scripts/pkg-utils.ts )"
+  docker:
+    needs: pkg_props
+    if: ${{ fromJson(steps.package_version.output.package) != null }}
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v3
       - name: Update Swarm Stack
         run: |
+          echo ${{ fromJson(steps.package_version.output.package) }} 
           export VERSION=${{ fromJson(steps.package_version.output.package).version }}
           docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.package_version.output.package).name }}
-      - name: Clean Up
-        run: |
-          docker image prune --force
-          docker volume prune --force
-          docker container prune --force
-      - name: Logs
-        run: yarn ts-node-esm scripts/docker/swarm/service-log.ts
+  cleanup:
+    needs: docker
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v2
+      - name: Dependencies Script
+        uses: bresnow/remix.gun/.github/workflows/cleanup.yml

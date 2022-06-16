@@ -1,6 +1,5 @@
 name: Docker Service Log
 on:
-  workflow_dispatch:
   workflow_call:
 
 jobs:
@@ -10,7 +9,5 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
-      - name: yarn install
-        run: npm install
       - name: Logs
-        run: npm run ts-node-esm scripts/docker/swarm/service-log.ts
+        run: ts-node-esm scripts/docker/swarm/service-log.ts

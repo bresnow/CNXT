@@ -1,0 +1,18 @@
+name: Dependency Install
+on:
+  workflow_call:
+
+jobs:
+  build_latest:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v3
+      - name: zsh exec
+        run: zsh
+      - name: Node Dependencies
+        run: |
+          yarn
+          yarn add global ts-node
+          yarn add global zx

@@ -1,8 +1,6 @@
 import { $, chalk } from 'zx';
 import { read } from 'fsxx';
 
-
-
 async function build() {
   let pkg = JSON.parse(await read('package.json'));
 
@@ -13,12 +11,13 @@ async function build() {
   await $`docker build -t ghcr.io/bresnow/${image}:${version} .`;
 
   console.log(
-    chalk.cyanBright(`Pushing ghcr.io/bresnow/${image}:${version} to Docker Hub`)
+    chalk.cyanBright(
+      `Pushing ghcr.io/bresnow/${image}:${version} to Docker Hub`
+    )
   );
   await $`docker push ghcr.io/bresnow/${image}:${version}`;
 
   console.log(chalk.greenBright('Fin'));
-
 }
 
-build()
+build();
