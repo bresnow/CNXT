@@ -16,7 +16,7 @@
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,js,jsx,ts,tsx}'",
     "purge": "rm -rf radata *.tmp",
-    "push": "ts-node --esm ./scripts/git/push.ts",
+    "push": " zx scripts/esm/git/push.mjs",
     "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
   },
   "dependencies": {
