@@ -36,10 +36,10 @@ if (!version) {
   );
   if (vanswer !== '') {
     version = vanswer;
-    version = pkg.data.version;
+    version = pkg.version;
     await pkg.save();
   } else {
-    version = pkg.data.version;
+    version = pkg.version;
     await pkg.save();
   }
 }
