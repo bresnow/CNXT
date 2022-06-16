@@ -29,7 +29,7 @@ if (!message) {
     console.log(chalk.blueBright(`${message}`));
   }
 }
-let noop = () => {};
+let noop = () => { };
 if (!version) {
   let vanswer = await question(
     `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
@@ -52,10 +52,6 @@ mod.stdout.split('modified: ').forEach(async (line) => {
     await $`npx prettier --write ${filename}`;
   }
 });
-if (mod.stdout.length > 1) {
-  await $`git add --all`;
-  await $`git commit -s -m ${`${message} | ${version}`}`;
-  await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`;
-} else {
-  console.log(chalk.yellow(`No changes to push`));
-}
+await $`git add --all`;
+await $`git commit -s -m ${`${message} | ${version}`}`;
+await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`;

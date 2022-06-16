@@ -1,0 +1,19 @@
+name: Build Latest
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  stack_deploy:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v3
+      - name: zsh exec
+        run: zsh
+      - name: yarn install
+        run: yarn
+      - name: Deploy App With Traefik
+        run: npx zx scripts/docker/swarm/build-push-latest.mjs

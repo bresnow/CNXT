@@ -1,7 +1,9 @@
-import { LoaderFunction } from 'remix';
+import { json, LoaderFunction } from 'remix';
+import fs from 'fs';
+import { html, pdf } from 'remix-utils';
+import { Readable } from 'stream';
+import { LoadCtx } from 'types';
 
-import { html } from 'remix-utils';
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return null;
+export const loader: LoaderFunction = async ({ request, context }) => {
+  return null
 };
