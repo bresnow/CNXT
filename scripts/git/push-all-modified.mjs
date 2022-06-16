@@ -24,13 +24,9 @@ if (!message) {
   if (manswer !== '') {
     message = manswer;
   } else {
-    message = `Update ${new Date(Date.now()).toString().slice(3, 25)}`;
+    message = `Default Push - ${new Date(Date.now()).toString().slice(3, 25)}`;
     console.log(chalk.yellow(`Using default message`));
-    console.log(
-      chalk.blueBright(
-        `${message}`
-      )
-    );
+    console.log(chalk.blueBright(`${message}`));
   }
 }
 let noop = () => { };
