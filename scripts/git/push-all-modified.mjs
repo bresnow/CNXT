@@ -32,7 +32,7 @@ if (!message) {
     );
   }
 }
-
+let noop = () => { }
 if (!version) {
   let vanswer = await question(
     `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
