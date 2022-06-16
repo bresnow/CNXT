@@ -26,7 +26,7 @@ if (!message) {
     let manswer = await question('Message for commit : ');
     manswer !== ''
         ? (message = manswer)
-        : (message = `"Update ${new Date(Date.now()).toISOString()}`);
+        : (message = `"Update ${new Date(Date.now()).toString().slice(3, 25)}`);
 }
 
 if (!version) {
@@ -42,10 +42,8 @@ if (!version) {
     }
 }
 
-//PACKAGE>JSON MODIFY VERSION
-
 let mod = await $`git status`.pipe($`grep modified:`);
-$.verbose = true;
+// Prettier writes all modified files 
 mod.stdout.split('modified: ').forEach(async (line) => {
     let filename = line.trim();
     if (filename.length > 1) {
