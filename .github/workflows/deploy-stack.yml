@@ -2,6 +2,10 @@ name: Deploy Stack
 on:
   workflow_dispatch:
     inputs:
+      build_image:
+        type: boolean
+        description: Build Image?
+        required: true
       traefik_deploy:
         type: boolean
         description: Deploy Traefik Service?
@@ -23,8 +27,8 @@ jobs:
           zsh
           yarn
       - name: Build Docker Image & Push to Docker Registry
-        run: |
-          yarn zx scripts/docker/build-push-dh.mjs
+        if: ${{ github.event.inputs.build_image }} === true
+        run: yarn zx scripts/docker/build-push-dh.mjs
       - name: Deploy App With Traefik
         if: ${{ github.event.inputs.traefik_deploy }} === true
         run: yarn zx scripts/docker/swarm/traefik-service.mjs
