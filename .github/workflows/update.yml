@@ -14,15 +14,11 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Name and Version From package.json
-        id: pkg
-        run: echo "::set-output name=package::$( npm run ts-node-esm scripts/pkg-utils.ts )"
-      - uses: actions/checkout@v3
       - name: Update Swarm Stack
         run: |
-          echo ${{ fromJson(steps.pkg.output.package) }} 
-          export VERSION=${{ fromJson(steps.pkg.output.package).version }}
-          docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.pkg.output.package).name }}
+          echo "$( npm run ts-node-esm scripts/pkg-utils.ts -v)"
+          export VERSION="$( npm run ts-node-esm scripts/pkg-utils.ts -v)"
+          docker stack deploy -c swarm-stacks/remix-gun.yml "$( npm run ts-node-esm scripts/pkg-utils.ts -n)"
   cleanup:
     needs: docker
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main
