@@ -24,15 +24,16 @@ if (!message) {
   if (manswer !== '') {
     message = manswer;
   } else {
-    message = `"Update ${new Date(Date.now()).toString().slice(3, 25)}`;
+    message = `Update ${new Date(Date.now()).toString().slice(3, 25)}`;
+    console.log(chalk.yellow(`Using default message`));
     console.log(
       chalk.blueBright(
-        `"Update ${new Date(Date.now()).toString().slice(3, 25)}`
+        `${message}`
       )
     );
   }
 }
-let noop = () => { }
+let noop = () => { };
 if (!version) {
   let vanswer = await question(
     `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
