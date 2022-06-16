@@ -7,7 +7,7 @@ let svc = await $`docker service ls --format  {{.Name}}`.pipe(
   $`grep ${service}`
 );
 
-let arr = svc.split('\n');
+let arr = svc.split(`\n`);
 arr.forEach(async (element) => {
   await $`docker service logs ${element}`;
 });
