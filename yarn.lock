@@ -4870,15 +4870,6 @@ rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@18.0.0-rc.0:
-  version "18.0.0-rc.0"
-  resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.0.0-rc.0.tgz"
-  integrity sha512-tdD1n0svTndHBQvVAq/f2Kx7FgQ30CpSLp87/neQKAHPW5WtdgW1sBSwmFAcMQOrmstTuP0M+zRlH86f9kMX/A==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    scheduler "^0.21.0-rc.0"
-
 react-dom@18.1.0-next-fc47cb1b6-20220404:
   version "18.1.0-next-fc47cb1b6-20220404"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.1.0-next-fc47cb1b6-20220404.tgz#48eeeed8c177d82d7a5bef0ea632f752470dfbb8"
@@ -4886,6 +4877,14 @@ react-dom@18.1.0-next-fc47cb1b6-20220404:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "0.22.0-next-fc47cb1b6-20220404"
+
+react-dom@react-dom@18.1.0-next-fc47cb1b6-20220404:
+  version "18.3.0-next-522f47345-20220614"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.0-next-522f47345-20220614.tgz#6773e3862682229035f0e671cba6840fb4204408"
+  integrity sha512-duMgquJvtn9FCUZnFKv2BCiOZOtkQdtFeJ2l7CSBh90g9v92GWZUK5RWwFLbrPU0imLT1Ifxyu1mBnjqxqiIqg==
+  dependencies:
+    loose-envify "^1.1.0"
+    scheduler "0.24.0-next-522f47345-20220614"
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -4912,18 +4911,17 @@ react-router@6.2.1:
   dependencies:
     history "^5.2.0"
 
-react@18.0.0-rc.0:
-  version "18.0.0-rc.0"
-  resolved "https://registry.npmjs.org/react/-/react-18.0.0-rc.0.tgz"
-  integrity sha512-PawosMBgF8k5Nlc3++ibzjFqPvo1XKv80MNtVYqz3abHHB2w3IpU65sSdSmBd2ooCwVhcp9b1vkx/twqhakNtA==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-
 react@18.1.0-next-fc47cb1b6-20220404:
   version "18.1.0-next-fc47cb1b6-20220404"
   resolved "https://registry.yarnpkg.com/react/-/react-18.1.0-next-fc47cb1b6-20220404.tgz#d195407c79e8ab4f6e0c064ee730242575694c88"
   integrity sha512-M65kLxubFzA18EGgklwzKoU0xjepTkHxIRkomGOXkPmC9PACVjKbKChEwEdtHoidNM5bZCn+Sd2+KuvT9ECluA==
+  dependencies:
+    loose-envify "^1.1.0"
+
+react@react@18.1.0-next-fc47cb1b6-20220404:
+  version "18.3.0-next-522f47345-20220614"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.3.0-next-522f47345-20220614.tgz#58fb0d2bdb710291706f6bc656bd00963e691ecd"
+  integrity sha512-/9AWBzFdmqi3NNdYn5jS6ZuDV2ANROamgZX13+7mIFD3ev3b+FeO4JJfpF/sHRK2rO1j8cLfCF9j0gzsoOyOZA==
   dependencies:
     loose-envify "^1.1.0"
 
@@ -5218,13 +5216,12 @@ scheduler@0.22.0-next-fc47cb1b6-20220404:
   dependencies:
     loose-envify "^1.1.0"
 
-scheduler@^0.21.0-rc.0:
-  version "0.21.0-rc.0-next-fe905f152-20220107"
-  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.21.0-rc.0-next-fe905f152-20220107.tgz"
-  integrity sha512-+sY0WajWdMjoxbmHM8P6P1FKGw8sSVKKG/HthqTFQFPxVGbKLmV1BiFPaVF9gOyQWqmnLYSXJMN+4Bs5ZygsTw==
+scheduler@0.24.0-next-522f47345-20220614:
+  version "0.24.0-next-522f47345-20220614"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.24.0-next-522f47345-20220614.tgz#f6a3c18f6bb4f8ae92821150737a6ae6284e571d"
+  integrity sha512-qBFhffpt9BnnJfCESmfhDVG91M6U4e0Yp0K5RL0AZ5RAh/5elEA27RcuNl5bplFrwEivX4cK9R/jZtJG7cOK8g==
   dependencies:
     loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 schema-dts@^1.1.0:
   version "1.1.0"
