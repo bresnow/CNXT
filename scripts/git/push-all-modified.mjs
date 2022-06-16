@@ -20,7 +20,7 @@ if (args.length > 0) {
 }
 $.verbose = false;
 if (!message) {
-  let manswer = await question(chalk.green('Message for commit '));
+  let manswer = await question(chalk.green('\n Message for commit '));
   if (manswer !== '') {
     message = manswer;
   } else {
@@ -33,7 +33,7 @@ let noop = () => { };
 if (!version) {
   let vanswer = await question(
     `${chalk.green('Current Version ') + chalk.cyan(pkg.data.version)} \n
-    New Version ? `
+    ${chalk.green('Change version?')} `
   );
   if (vanswer !== '') {
     version = vanswer;
