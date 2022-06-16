@@ -8,10 +8,6 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: zsh exec
-        run: zsh
-      - name: yarn install
-        run: yarn
       - name: Deploy App With Traefik
         run: yarn ts-node-esm scripts/docker/swarm/traefik-service.ts
       - name: Cleanup

@@ -6,13 +6,7 @@ on:
 
 jobs:
   install_deps:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v3
-      - name: Dependencies Script
-        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
+    uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
   build_latest:
     needs: install_deps
     if: ${{ success() }}

@@ -6,13 +6,7 @@ on:
 
 jobs:
   install_deps:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v2
-      - name: Dependencies Script
-        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main@main
+    uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main@main
   pkg_props:
     needs: install_deps
     if: ${{ success() }}
@@ -39,10 +33,7 @@ jobs:
           docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.package_version.output.package).name }}
   cleanup:
     needs: docker
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v2
-      - name: Dependencies Script
-        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main@main
+    uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main@main
+  logs:
+    needs: docker
+    uses: bresnow/remix.gun/.github/workflows/log.yml@main@main

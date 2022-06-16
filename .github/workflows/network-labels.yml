@@ -5,13 +5,7 @@ on:
 
 jobs:
   install_deps:
-    runs-on:
-      - self-hosted
-      - main-server
-    steps:
-      - uses: actions/checkout@v2
-      - name: Dependencies Script
-        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
+    uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
   stack_deploy:
     needs: install_deps
     if: ${{ success() }}
@@ -20,7 +14,5 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v2
-      - name: Deps Install
-        uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
       - name: Deploy App With Traefik
         run: ts-node-esm scripts/docker/swarm/prep.ts
