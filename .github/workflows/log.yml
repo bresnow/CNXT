@@ -1,4 +1,4 @@
-name: Deploy Stack
+name: Docker Service Log
 on:
   workflow_dispatch:
 

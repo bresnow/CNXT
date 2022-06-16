@@ -18,7 +18,7 @@ if (args.length > 0) {
     }
   }
 }
-$.verbose = false
+$.verbose = false;
 if (!message) {
   let manswer = await question(chalk.green('Message for commit '));
   manswer !== ''
