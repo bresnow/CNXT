@@ -11,6 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: yarn install
-        run: yarn
+        run: npm install
       - name: Logs
-        run: yarn ts-node-esm scripts/docker/swarm/service-log.ts
+        run: npm run ts-node-esm scripts/docker/swarm/service-log.ts

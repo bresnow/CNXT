@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: zsh exec
         run: zsh
-      - name: yarn install
+      - name: npm install
         run: yarn
       - name: Deploy App With Traefik
         run: yarn ts-node-esm scripts/docker/swarm/prep.ts
