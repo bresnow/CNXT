@@ -6,51 +6,52 @@ let message, version;
 let args = process.argv.slice(3);
 
 if (args.length > 0) {
-    for (let i = 0; i < args.length; i++) {
-        let arg = args[i];
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
 
-        if (arg.startsWith('--message=' || '-m=' || '--message' || '-m')) {
-            message = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
-        }
-
-        if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
-            version = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
-        }
-        if (arg.startsWith('--silent' || '-s')) {
-            $.verbose = false;
-        }
+    if (arg.startsWith('--message=' || '-m=' || '--message' || '-m')) {
+      message = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
     }
+
+    if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
+      version = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
+    }
+    if (arg.startsWith('--silent' || '-s')) {
+      $.verbose = false;
+    }
+  }
 }
 
 if (!message) {
-    let manswer = await question('Message for commit : ');
-    manswer !== ''
-        ? (message = manswer)
-        : (message = `"Update ${Date.now().toLocaleString()}`);
+  let manswer = await question('Message for commit : ');
+  manswer !== ''
+    ? (message = manswer)
+    : (message = `"Update ${Date.now().toLocaleString()}`);
 }
 
 if (!version) {
-    let vanswer = await question(
-        `Version ? \n ${chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
-        }: `
-    );
-    if (vanswer !== '') { version = vanswer } else {
-        version = pkg.data.version
-        await pkg.save();
-    };
+  let vanswer = await question(
+    `Version ? \n ${
+      chalk.bgCyan('Current Version ') + chalk.cyan(pkg.data.version)
+    }: `
+  );
+  if (vanswer !== '') {
+    version = vanswer;
+  } else {
+    version = pkg.data.version;
+    await pkg.save();
+  }
 }
 
 //PACKAGE>JSON MODIFY VERSION
 
-
-
 let mod = await $`git status`.pipe($`grep modified:`);
 $.verbose = true;
 mod.stdout.split('modified: ').forEach(async (line) => {
-    let filename = line.trim();
-    if (filename.length > 1) {
-        await $`npx prettier --write ${filename}`;
-    }
+  let filename = line.trim();
+  if (filename.length > 1) {
+    await $`npx prettier --write ${filename}`;
+  }
 });
 await $`git add --all`;
 await $`git commit -s -m ${`${message} | ${version}`}`;
