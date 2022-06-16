@@ -13,11 +13,11 @@ jobs:
       - name: yarn install
         run: yarn
       - name: Deploy App With Traefik
-        run: npx zx scripts/docker/swarm/traefik-service.mjs
+        run: yarn ts-node-esm scripts/docker/swarm/traefik-service.ts
       - name: Cleanup
         run: |
           docker image prune --force
           docker volume prune --force
           docker container prune --force
       - name: Logs
-        run: npx zx scripts/docker/swarm/service-log.mjs
+        run: yarn ts-node-esm scripts/docker/swarm/service-log.ts

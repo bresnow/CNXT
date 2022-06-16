@@ -16,20 +16,17 @@ jobs:
       - name: yarn install
         run: yarn
       - uses: actions/checkout@v3
-      - name: Version From package.json
+      - name: Name and Version From package.json
         id: package_version
-        run: echo "::set-output name=PKG_VERSION::$( yarn zx scripts/pkg-utils.mjs --version )"
-      - name: Service.Name From package.json
-        id: package_name
-        run: echo "::set-output name=PKG_NAME::$( yarn zx scripts/pkg-utils.mjs --name )"
+        run: echo "::set-output name=package::$( yarn ts-node-esm scripts/pkg-utils.ts )"
       - name: Update Swarm Stack
         run: |
-          export VERSION=${{ steps.package_version.output.PKG_VERSION}}
-          docker stack deploy -c swarm-stacks/remix-gun.yml ${{ steps.package_name.output.PKG_NAME }}
+          export VERSION=${{ fromJson(steps.package_version.output.package).version }}
+          docker stack deploy -c swarm-stacks/remix-gun.yml ${{fromJson(steps.package_version.output.package).name }}
       - name: Clean Up
         run: |
           docker image prune --force
           docker volume prune --force
           docker container prune --force
       - name: Logs
-        run: yarn zx scripts/docker/swarm/service-log.mjs
+        run: yarn ts-node-esm scripts/docker/swarm/service-log.ts
