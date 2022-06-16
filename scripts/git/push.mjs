@@ -31,11 +31,13 @@ if (!message) {
 }
 if (!version) {
   let vanswer = await question(
-    `${"New Version?"} ${chalk.cyan('Current Version ') + chalk.cyan(pkg.data.version)
+    `${'New Version?'} ${chalk.cyan('Current Version ') + chalk.cyan(pkg.data.version)
     }: `
   );
   if (vanswer !== '') {
     version = vanswer;
+    version = pkg.data.version;
+    await pkg.save();
   } else {
     version = pkg.data.version;
     await pkg.save();
