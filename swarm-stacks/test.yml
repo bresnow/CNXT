@@ -11,7 +11,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --pilot.token=4f869d98-2658-48e6-9405-c97c9183d932
-      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@xdesk.app}
+      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@me.com}
       - --certificatesresolvers.http.acme.storage=/certificates/acme.json
       - --certificatesresolvers.http.acme.tlschallenge=true
       - --accesslog
@@ -63,18 +63,21 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.fltngmmthhttp.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmthhttp.entrypoints=http
-        - traefik.http.routers.fltngmmthhttp.middlewares=https-redirect
-        - traefik.http.routers.fltngmmthhttps.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmthhttps.entrypoints=https
-        - traefik.http.routers.fltngmmthhttps.tls.certresolver=http
+        - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-http.entrypoints=http
+        - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
+        - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.fltngmmth-https.entrypoints=https
+        - traefik.http.routers.fltngmmth-https.tls.certresolver=http
         - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
     environment:
-      - APP_KEY_PAIR=${APP_KEY_PAIR:-'{pub:eg_p623RQuvf1gQzdR18UcXPp7NxVdSCBrftu04Szrw.Ub3hW6sAmM1xLc3aJvI5cJpK7gcaZnWPtM1lN753VSU,priv:gBswoGQmJXAx5LAABkAN4lbcWH2QhIPFFJtFQ0SEsK0}'}
-      - PEER_DOMAIN=${PEER_DOMAIN:-'peer.fltngmmth.com'}
+      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
+      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
+      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
+      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
+      - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
       - CLIENT_PORT=${CLIENT_PORT:-3333}
-      - DOMAIN=${DOMAIN:-'fltngmmth.com'}
+      - DOMAIN=${DOMAIN:-remix-gun.fltngmmth.com}
     networks:
       - traefik-public
 
@@ -90,18 +93,21 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.peer-http.rule=Host(`${DOMAIN:-peer.fltngmmth.com}`)
+        - traefik.http.routers.peer-http.rule=Host(`${DOMAIN1:-peer.fltngmmth.com}`)
         - traefik.http.routers.peer-http.entrypoints=http
         - traefik.http.routers.peer-http.middlewares=https-redirect
-        - traefik.http.routers.peer-https.rule=Host(`${DOMAIN:-peer.fltngmmth.com}`)
+        - traefik.http.routers.peer-https.rule=Host(`${DOMAIN1:-peer.fltngmmth.com}`)
         - traefik.http.routers.peer-https.entrypoints=https
         - traefik.http.routers.peer-https.tls.certresolver=http
-        - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT:-3334}
+        - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT1:-3334}
     environment:
-      - APP_KEY_PAIR=${APP_KEY_PAIR:-'{pub:eg_p623RQuvf1gQzdR18UcXPp7NxVdSCBrftu04Szrw.Ub3hW6sAmM1xLc3aJvI5cJpK7gcaZnWPtM1lN753VSU,priv:gBswoGQmJXAx5LAABkAN4lbcWH2QhIPFFJtFQ0SEsK0}'}
-      - PEER_DOMAIN=${PEER_DOMAIN:-'remix-gun.fltngmmth.com'}
-      - CLIENT_PORT=${CLIENT_PORT:-3334}
-      - DOMAIN=${DOMAIN:-'peer.fltngmmth.com'}
+      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
+      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
+      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
+      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
+      - PEER_DOMAIN=${PEER_DOMAIN1:-remix-gun.fltngmmth.com}
+      - CLIENT_PORT=${CLIENT_PORT1:-3333}
+      - DOMAIN=${DOMAIN1:-peer.fltngmmth.com}
     networks:
       - traefik-public
 
