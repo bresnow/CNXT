@@ -10,11 +10,9 @@ let args = process.argv.slice(3);
 if (args.length > 0) {
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
-
     if (arg.startsWith('--message=' || '-m=' || '--message' || '-m')) {
       message = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
     }
-
     if (arg.startsWith('--version=' || '-v=' || '--version' || '-v')) {
       version = arg.includes('=') ? arg.split('=')[1] : args[i + 1];
     }
@@ -36,7 +34,7 @@ await pkg.save();
 
 //Commit Message (if not provided default message is used)
 if (message === undefined) {
-  message = await question(chalk.green('Message for commit : '));
+  message = await question(chalk.green('Message for commit: '));
   if (message === '' || message.length < 2) {
     message = `Default Commit ${new Date(Date.now())
       .toLocaleString('en-US', { timeZone: 'America/New_York' })
