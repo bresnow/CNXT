@@ -45,7 +45,7 @@ services:
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certs:/certificates
+      - traefik:/certificates
 
     networks:
       - traefik-public
@@ -53,7 +53,7 @@ services:
   # FRONTEND
 
   fltngmmth:
-    image: ${IMAGE:-remix.gun}:${VERSION:-latest}
+    image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
     deploy:
       replicas: 2
       placement:
@@ -63,10 +63,10 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
-      - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
+      - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
       - traefik.http.routers.fltngmmth-http.entrypoints=http
       - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
-      - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix.gun.fltngmmth.com}`)
+      - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
       - traefik.http.routers.fltngmmth-https.entrypoints=https
       - traefik.http.routers.fltngmmth-https.tls.certresolver=http
       - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
@@ -77,12 +77,12 @@ services:
       - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
       - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
       - CLIENT_PORT=${CLIENT_PORT:-3333}
-      - DOMAIN=${DOMAIN:-remix.gun.fltngmmth.com}
+      - DOMAIN=${DOMAIN:-remix-gun.fltngmmth.com}
     networks:
       - traefik-public
 
   cnxt:
-    image: ${IMAGE:-remix.gun}:${VERSION:-latest}
+    image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
     deploy:
       replicas: 2
       placement:
@@ -111,7 +111,7 @@ services:
       - traefik-public
 
 volumes:
-  traefik-certs:
+  traefik:
 
 networks:
   traefik-public:
