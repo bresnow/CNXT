@@ -4,14 +4,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  stack_deploy:
+  service_logs:
     runs-on:
       - self-hosted
       - main-server
     steps:
-      - uses: actions/checkout@v2
-      - name: Logs
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
+      - name: Node Dependencies
         run: |
-          docker service logs remix-gun_traefik
-          docker service logs remix-gun_fltngmmth
-          docker service logs remix-gun_cnxt
+          yarn 
+          npx zx scripts/esm/docker/swarm/service-log.mjs

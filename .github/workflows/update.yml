@@ -5,12 +5,12 @@ on:
       - main
 
 jobs:
-  install_deps:
+  yarn_build:
     uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
-  push_docker:
+  build_push_image:
     uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
-  docker:
-    needs: [install_deps, push_docker]
+  deploy-stack_traefik:
+    needs: [yarn_build, build_push_image]
     runs-on:
       - self-hosted
       - main-server
@@ -25,8 +25,8 @@ jobs:
           npx zx scripts/esm/docker/deploy-stack.mjs
 
   cleanup:
-    needs: docker
+    needs: deploy-stack_traefik
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main
   logs:
-    needs: docker
+    needs: deploy-stack_traefik
     uses: bresnow/remix.gun/.github/workflows/log.yml@main

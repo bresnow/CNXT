@@ -1,6 +1,6 @@
 {
   "name": "zx-scripts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A collection of Google ZX shell scripts. SysAdmin automation with all the wiggle room of Javascript.",
   "type": "module",
   "scripts": {

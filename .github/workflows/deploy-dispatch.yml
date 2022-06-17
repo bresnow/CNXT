@@ -1,4 +1,4 @@
-name: Deploy Stack
+name: Deploy New App
 on:
   workflow_dispatch:
 jobs:

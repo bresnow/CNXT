@@ -30,7 +30,6 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.middlewares.admin-auth.basicauth.users=${BASIC_AUTH:-bresnow:$$2y$$05$$SaGrMs06FYtov8OQe8pcve6EEvhkSpd0rscFkDrZiHqgfnJPlCGJi}
         - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
         - traefik.http.routers.traefik-public-http.rule=Host(`${TRAEFIK_HOST:-mou65pf.fltngmmth.com}`)
@@ -45,7 +44,7 @@ services:
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik:/certificates
+      - traefik-certs:/certificates
 
     networks:
       - traefik-public
@@ -82,7 +81,7 @@ services:
       - traefik-public
 
   cnxt:
-    image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
+    image: ${IMAGE_1:-bresnow/remix-gun}:${VERSION_1:-latest}
     deploy:
       replicas: 2
       placement:
@@ -111,7 +110,7 @@ services:
       - traefik-public
 
 volumes:
-  traefik:
+  traefik-certs:
 
 networks:
   traefik-public:

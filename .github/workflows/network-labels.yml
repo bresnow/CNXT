@@ -4,11 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  install_deps:
-    uses: bresnow/remix.gun/.github/workflows/node-dependencies.yml@main
-  stack_deploy:
-    needs: install_deps
-    if: ${{ success() }}
+  prep_swarm:
     runs-on:
       - self-hosted
       - main-server

@@ -47,7 +47,11 @@ if (message === undefined) {
 // Prettier and finalize
 
 await $`git status`;
-await $`yarn prettier --check`;
+try {
+  await $`yarn prettier --check`;
+} catch (error) {
+  console.log(chalk.red(error));
+}
 await $`git add --all`;
 await $`git commit -s -m ${`${message} | ${version}`}`;
 await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`;
