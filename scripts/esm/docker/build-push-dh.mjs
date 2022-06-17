@@ -22,7 +22,7 @@ async function build() {
     !version ? 'latest' : pkg.version
   } `;
   console.log(chalk.cyanBright(`Building ${image} `));
-  // await $`docker build - t ${ image } .`;
+  await $`docker build - t ${image} .`;
   console.log(
     chalk.cyanBright(
       `Pushing ${image} to ${git ? 'Github Container Registry' : 'Docker Hub'} `
