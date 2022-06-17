@@ -26,7 +26,7 @@ services:
       - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
       - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
       - CLIENT_PORT=${CLIENT_PORT:-3333}
-      - DOMAIN=${DOMAIN:-remix.gun.fltngmmth.com
+      - DOMAIN=${DOMAIN:-remix.gun.fltngmmth.com}
     networks:
       - traefik-public
 

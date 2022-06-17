@@ -12,5 +12,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Logs
         run: |
-          yarn
-          npx zx scripts/esm/docker/swarm/service-log.mjs
+          docker service logs remix-gun_traefik
+          docker service logs remix-gun_fltngmmth
+          docker service logs remix-gun_cnxt
