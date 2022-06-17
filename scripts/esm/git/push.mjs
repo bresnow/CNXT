@@ -39,6 +39,10 @@ if (message === undefined) {
     message = `Default Commit ${new Date(Date.now())
       .toLocaleString('en-US', { timeZone: 'America/New_York' })
       .slice(0, -3)}`;
+  } else {
+    message += ` ${new Date(Date.now())
+      .toLocaleString('en-US', { timeZone: 'America/New_York' })
+      .slice(0, -3)}`;
   }
 }
 
