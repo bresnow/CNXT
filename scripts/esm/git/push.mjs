@@ -36,9 +36,11 @@ await pkg.save();
 
 //Commit Message (if not provided default message is used)
 if (message === undefined) {
-  message = await question('Message for commit : ');
+  message = await question(chalk.green('Message for commit : '));
   if (message === '' || message.length < 2) {
-    message = `Default Commit ${new Date(Date.now()).toLocaleString()}`;
+    message = `Default Commit ${new Date(Date.now())
+      .toLocaleString()
+      .slice(0, -3)}`;
   }
 }
 
