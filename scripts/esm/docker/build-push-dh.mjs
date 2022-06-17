@@ -18,9 +18,9 @@ async function build() {
   }
   let pkg = JSON.parse(await read('package.json'));
   let name = pkg.name;
-  let image = `${git ? 'ghcr.io/bresnow/' : 'bresnow/'}${name}:${
-    !version ? 'latest' : pkg.version
-  } `;
+  let image = git
+    ? 'ghcr.io/bresnow/'
+    : 'bresnow/' + `${name}:${!version ? 'latest' : pkg.version}`;
   console.log(chalk.cyanBright(`Building ${image} `));
   await $`docker build -t ${image} .`;
   console.log(
