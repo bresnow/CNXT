@@ -48,7 +48,7 @@ if (message === undefined) {
 
 await $`git status`;
 try {
-  await $`yarn prettier --check`;
+  await $`yarn prettier`;
 } catch (error) {
   console.log(chalk.red(error));
 }
