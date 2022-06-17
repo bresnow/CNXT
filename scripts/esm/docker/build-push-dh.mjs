@@ -3,7 +3,6 @@ import { $, chalk } from 'zx';
 import { read } from 'fsxx';
 
 async function build() {
-  let pkg = JSON.parse(await read('package.json'));
   let args = process.argv.slice(3);
   let version, git;
   if (args.length > 0) {
@@ -17,19 +16,19 @@ async function build() {
       }
     }
   }
-
+  let pkg = JSON.parse(await read('package.json'));
   let name = pkg.name;
-  let image = `${git && 'ghcr.io/'}bresnow/${name}:${
+  let image = `${git ? 'ghcr.io/bresnow/' : 'bresnow/'}${name}:${
     !version ? 'latest' : pkg.version
-  }`;
-  console.log(chalk.cyanBright(`Building ${image}`));
-  await $`docker build -t ${image} .`;
+  } `;
+  console.log(chalk.cyanBright(`Building ${image} `));
+  // await $`docker build - t ${ image } .`;
   console.log(
     chalk.cyanBright(
-      `Pushing ${image} to ${git ? 'Github Container Registry' : 'Docker Hub'}`
+      `Pushing ${image} to ${git ? 'Github Container Registry' : 'Docker Hub'} `
     )
   );
-  await $`docker push bresnow/${image}`;
+  await $`docker push bresnow / ${image} `;
   console.log(chalk.greenBright('Fin'));
 }
 await build();
