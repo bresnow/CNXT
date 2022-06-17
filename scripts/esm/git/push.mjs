@@ -39,7 +39,7 @@ if (message === undefined) {
   message = await question(chalk.green('Message for commit : '));
   if (message === '' || message.length < 2) {
     message = `Default Commit ${new Date(Date.now())
-      .toLocaleString()
+      .toLocaleString('en-US', { timeZone: 'America/New_York' })
       .slice(0, -3)}`;
   }
 }
