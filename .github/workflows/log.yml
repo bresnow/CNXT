@@ -1,6 +1,7 @@
 name: Docker Service Log
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   stack_deploy:
