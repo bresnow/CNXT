@@ -17,7 +17,7 @@ This is my white-label boilerplate when building full stack apps. Using GunDB, S
 
 ## Demo
 
-Visit the [Demo](https://rmx-gun.fltngmmth.com). In another window visit the [Peer](https://rmx-gun-peer.fltngmmth.com). In the first window use the object builder form by entering the key and value. Refresh the peer window to find your mutation.
+Visit the [Demo](https://remix-gun.fltngmmth.com). In another window visit the [Peer](https:/dev.cnxt.app). In the first window use the object builder form by entering the key and value. Refresh the peer window to find your mutation.
 
 ## Development
 
