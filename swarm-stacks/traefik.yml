@@ -10,7 +10,7 @@ services:
       - --providers.docker.swarmmode
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
-      - --pilot.token=4f869d98-2658-48e6-9405-c97c9183d932
+      - --pilot.token=${TRAEFIK_PILOT_TOKEN:-4f869d98-2658-48e6-9405-c97c9183d932}
       - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@xdesk.app}
       - --certificatesresolvers.http.acme.storage=/certificates/acme.json
       - --certificatesresolvers.http.acme.tlschallenge=true
@@ -42,14 +42,11 @@ services:
         - traefik.http.routers.traefik-public-https.service=api@internal
         - traefik.http.routers.traefik-public-https.tls.certresolver=http
         - traefik.http.services.traefik-public.loadbalancer.server.port=8080
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik-certs:/certificates
-
     networks:
       - traefik-public
-  # FRONTEND
 
   fltngmmth:
     image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}

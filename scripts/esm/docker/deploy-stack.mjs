@@ -8,6 +8,6 @@ async function deploy() {
   let version = pkg.version;
   console.log(chalk.cyanBright(`Deploying Stack ${name}`));
   await $`export VERSION=${version}`;
-  await $`docker stack deploy -c swarm-stacks/traefik.yml ${name}`;
+  await $`docker stack deploy -c swarm-stacks/test.yml ${name}`;
 }
 await deploy();
