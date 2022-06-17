@@ -38,9 +38,7 @@ await pkg.save();
 if (message === undefined) {
   message = await question('Message for commit : ');
   if (message === '' || message.length < 2) {
-    message = `Default Commit ${new Date(
-      Date.now()
-    ).toLocaleString()} | ${version}`;
+    message = `Default Commit ${new Date(Date.now()).toLocaleString()}`;
   }
 }
 
@@ -54,4 +52,4 @@ try {
 }
 await $`git add --all`;
 await $`git commit -s -m ${`${message} | ${version}`}`;
-await $`git push -f ${await $`git remote show`} ${await $`git branch --show-current`} `;
+await $`git push`;

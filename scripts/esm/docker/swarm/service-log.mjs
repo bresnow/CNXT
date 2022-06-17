@@ -7,7 +7,7 @@ async function logs() {
   let pkg = JSON.parse(await read('package.json'));
   let { name, version } = pkg;
   let services = await $`docker stack services ${name} --format "{{.Name}}"`;
-  services.split('\n').forEach(async (service) => {
+  services.stdout.split('\n').forEach(async (service) => {
     await $`docker service logs ${service}`;
   });
 }
