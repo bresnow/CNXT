@@ -54,4 +54,4 @@ try {
 }
 await $`git add --all`;
 await $`git commit -s -m ${`${message} | ${version}`}`;
-await $`git push -uf ${await $`git remote show`} ${await $`git branch --show-current`}`;
+await $`git push -f ${await $`git remote show`} ${await $`git branch --show-current`}`;
