@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  yarn_build:
+  npm_build:
     uses: bresnow/remix.gun/.github/workflows/node-build.yml@main
   push_image:
     uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
