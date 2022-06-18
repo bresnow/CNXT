@@ -2,7 +2,9 @@ name: Traefik Service Prep
 on:
   workflow_dispatch:
   workflow_call:
-
+##  - RUN ONLY ONCE IN PREP FOR TRAEFIK SERVICE DEPLOYMENT
+## Makes sure that the volume containing SSL certificates and the traefik service stay on the same node
+## No matter how many nodes are added to the swarm cluster
 jobs:
   prep_swarm:
     runs-on:

@@ -2,10 +2,6 @@ name: Deploy Remix.Gun App
 on:
   workflow_dispatch:
     inputs:
-      keypair:
-        description: SEA pair for app authentication
-        required: true
-        type: string
       domain:
         description: App host name
         required: true
@@ -19,23 +15,30 @@ on:
         required: true
         type: string
       service-name:
-        description: Service name in docker
+        description: Service name for traefik
         required: true
         type: string
-
+      stack-name:
+        description: Stack name for swarm deploy
+        required: true
+        type: string
+# App authentication only works iff SEA Keypair is destructured. Best to use repository secrets
 jobs:
-  deploy:
+  deploy_app:
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Deploy App
-        env:
-          SEA_PAIR: ${{ toJson(inputs.keypair) }}
-          DOMAIN: ${{ inputs.domain }}
-          PORT: ${{ inputs.port }}
-          RELAY_PEER: ${{ inputs.relay-peer }}
-          SERVICE_NAME: ${{ inputs.service-name }}
+      - name: Export Shell Prfix & Deploy ${{ inputs.stack-name }}_app
         run: |
-          echo ${{fromJson($SEA_PAIR)}}.pub
+          yarn
+          export VERSION="$(npx zx scripts/esm/pkg-utils.mjs -v)"
+          export SERVICE_NAME=${{ inputs.service-name }}
+          export DOMAIN=${{ inputs.domain }}
+          export CLIENT_PORT=${{ inputs.port }}
+          export PUB=${{ secrets.PUB }}
+          export PRIV=${{ secrets.PRIV }}
+          export EPUB=${{ secrets.EPUB }}
+          export EPRIV=${{ secrets.EPRIV }}
+          docker stack deploy -c swarm-stacks/demo.yml ${{ inputs.stack-name }}

@@ -1,7 +1,7 @@
 name: Docker Cleanup
 on:
   workflow_call:
-
+## Cleanup dangling artifacts to save server space
 jobs:
   cleanup:
     runs-on:

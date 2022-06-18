@@ -1,4 +1,5 @@
 name: Update Demo Services
+## Demo apps update to latest version (without using "latest" version tag) Bleeding edge baby!
 on:
   push:
     branches:
@@ -7,9 +8,10 @@ on:
 jobs:
   yarn_build:
     uses: bresnow/remix.gun/.github/workflows/node-build.yml@main
-  build_push_image:
+  push_image:
     uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
   update_apps:
+    ## Matrix strategy essentially running a forEach method
     strategy:
       matrix:
         service-name: [demo, app, cnxt]
@@ -23,7 +25,7 @@ jobs:
           - service-name: app
             domain: peer.fltngmmth.com
             stack-name: remix-peer
-    needs: [yarn_build, build_push_image]
+    needs: [yarn_build, push_image]
     runs-on:
       - self-hosted
       - main-server

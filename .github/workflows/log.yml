@@ -2,7 +2,7 @@ name: Docker Service Log
 on:
   workflow_call:
   workflow_dispatch:
-
+# RUNS LOGS FOR ALL SERVICES
 jobs:
   service_logs:
     runs-on:

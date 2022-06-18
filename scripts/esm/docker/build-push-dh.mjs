@@ -2,7 +2,7 @@
 import { $, chalk } from 'zx';
 import { read } from 'fsxx';
 
-async function build() {
+async function buildPush() {
   let args = process.argv.slice(3);
   let version, git;
   if (args.length > 0) {
@@ -31,4 +31,4 @@ async function build() {
   await $`docker push ${image} `;
   console.log(chalk.greenBright('Fin'));
 }
-await build();
+await buildPush();

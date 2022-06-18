@@ -1,15 +1,14 @@
-name: Build Latest
+name: Build Latest Docker Image and Push to Registries
 on:
   workflow_call:
 
 jobs:
   build_latest:
-    runs-on:
-      - self-hosted
-      - main-server
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build and Push As Latest
+      - name: Build and Push Version & Latest
+        uses: actions/setup-node@v3
         run: |
           yarn
           npx zx scripts/esm/docker/build-push-dh.mjs -L

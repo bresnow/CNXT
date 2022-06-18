@@ -1,7 +1,7 @@
 {
   "name": "remix-gun",
   "description": "Weaponize your Remix app with GunDB. UnoCSS styles.",
-  "version": "0.3.692",
+  "version": "0.3.693",
   "author": "Bresnow",
   "license": "MIT",
   "module": "es2022",

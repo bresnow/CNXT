@@ -1,18 +1,16 @@
-name: Dependency Install
+name: Yarn
 on:
   workflow_call:
 
 jobs:
   build:
-    runs-on:
-      - self-hosted
-      - main-server
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 17
-      - name: Node Dependencies
+      - name: Install & Build
+        uses: actions/setup-node@v3
         run: |
-          yarn 
+          yarn install
           yarn build
+
+
