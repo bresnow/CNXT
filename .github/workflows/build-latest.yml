@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  login_dh:
+  docker_hub:
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -11,10 +11,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DH_ACCESS_TOKEN }}
-  docker_hub:
-    needs: login_dh
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -22,7 +18,7 @@ jobs:
       - run: npm install --force
       - run: npx zx scripts/esm/docker/build-push-dh.mjs -L
       - run: npx zx scripts/esm/docker/build-push-dh.mjs
-  login_gh:
+  ghcr_io:
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
@@ -31,10 +27,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_ACCESS_TOKEN }}
-  ghcr:
-    needs: login_gh
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
