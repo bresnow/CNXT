@@ -26,15 +26,12 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Shell Prefix
+      - name: Deploy Traefik
         run: |
           export USERNAME=${{ inputs.auth_username }}
           export HASHED_PASSWORD=$(openssl passwd -apr1 ${{ inputs.auth_password }})
           export DOMAIN=${{ inputs.domain }}
-          export EMAIL=${{ inputs.email}}
-      - uses: actions/checkout@v3
-      - name: Deploy Traefik Service
-        run: |
+          export EMAIL=${{ inputs.email }}
           docker stack deploy -c swarm-stacks/traefik.yml traefik
       - name: Logging
         run: |
