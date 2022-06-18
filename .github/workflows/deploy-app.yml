@@ -38,4 +38,4 @@ jobs:
           RELAY_PEER: ${{ inputs.relay-peer }}
           SERVICE_NAME: ${{ inputs.service-name }}
         run: |
-          echo ${{ fromJson(env.SEA_PAIR) }}.pub
+          echo ${{ toJson(env.SEA_PAIR) }}.pub
