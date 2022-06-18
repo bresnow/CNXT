@@ -31,3 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy App
+        run: |
+          yarn
+          npx zx scripts/esm/docker/swarm/deploy-app.mjs --keypair ${{ inputs.keypair }} --domain ${{ inputs.domain }} --port ${{ inputs.port }} --relay-peer ${{ inputs.relay-peer }} ${{ inputs.service-name }}
