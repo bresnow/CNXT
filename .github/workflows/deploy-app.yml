@@ -38,4 +38,5 @@ jobs:
           RELAY_PEER: ${{ inputs.relay-peer }}
           SERVICE_NAME: ${{ inputs.service-name }}
         run: |
+          export SEA_PAIR=${{ env.SEA_PAIR }}
           echo ${{ fromJson($SEA_PAIR) }}.pub
