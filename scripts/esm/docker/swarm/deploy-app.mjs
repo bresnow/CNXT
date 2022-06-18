@@ -34,6 +34,7 @@ async function keyGen() {
 
 let pkg = JSON.parse(await read('package.json'));
 let args = process.argv.slice(3);
+console.log(chalk.yellow(` ${args}`));
 let name = pkg.name,
   version = pkg.version;
 for (let i = 0; i < args.length; i++) {
