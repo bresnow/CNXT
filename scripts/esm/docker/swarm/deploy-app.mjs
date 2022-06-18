@@ -26,7 +26,10 @@ async function keyGen() {
   console.log(chalk.yellow(`Generated new keypair`));
   console.log(chalk.cyanBright(JSON.stringify(keypair)));
   console.log(chalk.green('Store for safe keeping'));
-  $.prefix += `export PUB=${keypair.pub}; export PRIV=${keypair.priv}; export EPUB=${keypair.epub}; export EPRIV=${keypair.epriv};`;
+  await $`export PUB=${keypair.pub}`;
+  await $`export PRIV=${keypair.priv}`;
+  await $`export EPUB=${keypair.epub}`;
+  await $`export EPRIV=${keypair.epriv}`;
 }
 
 let pkg = JSON.parse(await read('package.json'));
@@ -44,7 +47,10 @@ for (let i = 0; i < args.length; i++) {
         try {
           let authed = await auth(keypair);
           console.log(chalk.green(authed));
-          $.prefix += `export PUB=${keypair.pub}; export PRIV=${keypair.priv}; export EPUB=${keypair.epub}; export EPRIV=${keypair.epriv};`;
+          await $`export PUB=${keypair.pub}`;
+          await $`export PRIV=${keypair.priv}`;
+          await $`export EPUB=${keypair.epub}`;
+          await $`export EPRIV=${keypair.epriv}`;
         } catch (error) {
           console.log(chalk.redBright(error));
           keypair = await keyGen();
@@ -52,21 +58,17 @@ for (let i = 0; i < args.length; i++) {
       }
     }
     if (key === ('domain' || 'd')) {
-      $.prefix += `export DOMAIN=${value};`;
+      await $`export DOMAIN=${value};`;
     }
     if (key === ('port' || 'p')) {
-      $.prefix += `export CLIENT_PORT=${value};`;
+      await $`export CLIENT_PORT=${value};`;
     }
     if (key === ('relay-peer' || 'r')) {
-      $.prefix += `export PEER_DOMAIN=${value};`;
+      await $`export PEER_DOMAIN=${value};`;
     }
   }
 }
 
-try {
-  await $`docker stack deploy -c swarm-stacks/remix-gun.yml rg_app-${args[-1]}`;
-} catch (error) {
-  console.log(chalk.redBright(error));
-}
+await $`docker stack deploy -c swarm-stacks/remix-gun.yml rg_app-${args[-1]}`;
 
 // }
