@@ -6,14 +6,12 @@ jobs:
   build_latest:
     runs-on: ubuntu-latest
     steps:
-      - name: Node Setup
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 17
-      - name: Build and Push Version & Latest
-      - uses: actions/checkout@v3
-        run: yarn
-          npx zx scripts/esm/docker/build-push-dh.mjs -L
-          npx zx scripts/esm/docker/build-push-dh.mjs -L -G
-          npx zx scripts/esm/docker/build-push-dh.mjs
-          npx zx scripts/esm/docker/build-push-dh.mjs -G
+      - run: npm install
+      - run: npx zx scripts/esm/docker/build-push-dh.mjs -L
+      - run: npx zx scripts/esm/docker/build-push-dh.mjs -L -G
+      - run: npx zx scripts/esm/docker/build-push-dh.mjs
+      - run: npx zx scripts/esm/docker/build-push-dh.mjs -G
