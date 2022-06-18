@@ -1,4 +1,4 @@
-name: Update App Services
+name: Update Demo Services
 on:
   push:
     branches:
@@ -10,17 +10,36 @@ jobs:
   build_push_image:
     uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
   update_apps:
+    strategy:
+      matrix:
+        service-name: [demo, app, cnxt]
+        include:
+          - service-name: demo
+            domain: remix-gun.fltngmmth.com
+            stack-name: remix-gun
+          - service-name: cnxt
+            domain: dev.cnxt.app
+            stack-name: cnxt-app
+          - service-name: app
+            domain: peer.fltngmmth.com
+            stack-name: remix-peer
     needs: [yarn_build, build_push_image]
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Update Remix.Gun Demo
+      - name: Export Environment and Deploy Updates
         run: |
           yarn
-          npx zx scripts/esm/docker/swarm/deploy-app.mjs
-
+          export VERSION="$(npx zx scripts/esm/pkg-utils.mjs -v)"
+          export SERVICE_NAME=${{ matrix.service-name }}
+          export DOMAIN=${{ matrix.domain }}
+          export PUB=${{ secrets.PUB }}
+          export PRIV=${{ secrets.PRIV }}
+          export EPUB=${{ secrets.EPUB }}
+          export EPRIV=${{ secrets.EPRIV }}
+          docker stack deploy -c swarm-stacks/demo.yml ${{ matrix.stack-name }}
   cleanup:
     needs: update_apps
     uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main

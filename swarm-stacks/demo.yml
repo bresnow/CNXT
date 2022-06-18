@@ -12,15 +12,15 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.${SERVICE_NAME:-app}-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.${SERVICE_NAME:-app}-http.entrypoints=http
-        - traefik.http.routers.${SERVICE_NAME:-app}-http.middlewares=https-redirect
-        - traefik.http.routers.${SERVICE_NAME:-app}-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.${SERVICE_NAME:-app}-https.entrypoints=https
-        - traefik.http.routers.${SERVICE_NAME:-app}.service=${SERVICE_NAME:-app}
-        - traefik.http.routers.${SERVICE_NAME:-app}-https.tls=true
-        - traefik.http.routers.${SERVICE_NAME:-app}-https.tls.certresolver=le
-        - traefik.http.services.${SERVICE_NAME:-app}.loadbalancer.server.port=${CLIENT_PORT:-3333}
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-http.entrypoints=http
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-http.middlewares=https-redirect
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.entrypoints=https
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}.service=${SERVICE_NAME:?Service Name Not Set}
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.tls=true
+        - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.tls.certresolver=le
+        - traefik.http.services.${SERVICE_NAME:?Service Name Not Set}.loadbalancer.server.port=${CLIENT_PORT:-3333}
     environment:
       - PUB=${PUB:-xpMInBAQZexkhPUirdleQiibMkF1K7xE_i_xvNZOZLs.u6lvp1AmfFfsH6rVbJZARFs5ZDQxfugnneT7IdcHjtg}
       - PRIV=${PRIV:-_SCAHG-_iji64aPio38QDgjP4Sg8819wYOunpfxet8A}
