@@ -19,9 +19,7 @@ function auth(pair) {
   });
 }
 
-// console.log(chalk.cyanBright(`Deploying Stack ${name}`));
-// await $`export VERSION=${version}`;
-// await $`docker stack deploy -c swarm-stacks/remix-gun.yml ${name}`;
+// --[OPTIONS] <SERVICE NAME>
 
 async function keyGen() {
   let keypair = await SEA.pair();
@@ -38,12 +36,9 @@ let name = pkg.name,
 for (let i = 0; i < args.length; i++) {
   if (key.startsWith('--')) {
     let key = args[i];
-    let value = args[++i];
-    if (key.endsWith('=')) {
-      key = key.slice(0, -1);
-    }
+    let value = args[i + 1];
     key = key.slice(2);
-    if (key === ('keypair' || 'k')) {
+    if (key === 'keypair') {
       let keypair = value;
       if (keypair.pub && keypair.priv && keypair.epub && keypair.epriv) {
         try {
@@ -56,20 +51,20 @@ for (let i = 0; i < args.length; i++) {
         }
       }
     }
-    if (key === ('domain' || 'd')) {
+    if (key === 'domain') {
       $.prefix += `export DOMAIN=${value};`;
     }
-    if (key === ('port' || 'p')) {
+    if (key === 'port') {
       $.prefix += `export CLIENT_PORT=${value};`;
     }
-    if (key === ('relay-peer' || 'R')) {
+    if (key === 'relay-peer') {
       $.prefix += `export PEER_DOMAIN=${value};`;
     }
   }
 }
 
 try {
-  await $`docker stack deploy -c swarm-stacks/remix-gun.yml ${args[-1]}`;
+  await $`docker stack deploy -c swarm-stacks/remix-gun.yml rg_app-${args[-1]}`;
 } catch (error) {
   console.log(chalk.redBright(error));
 }

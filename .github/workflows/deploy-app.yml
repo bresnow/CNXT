@@ -2,20 +2,24 @@ name: Deploy Remix.Gun App
 on:
   workflow_dispatch:
     inputs:
-      auth_username:
-        description: Username for authentication
-        required: true
-        type: string
-      auth_password:
-        description: Password for authentication
+      keypair:
+        description: SEA pair for app authentication
         required: true
         type: string
       domain:
-        description: Traefik dashboard domain
+        description: App host name
         required: true
         type: string
-      email:
-        description: Email for LetsEncrypt
+      port:
+        description: App port
+        required: true
+        type: string
+      relay-peer:
+        description: Relay peers (separated by comma)
+        required: true
+        type: string
+      service-name:
+        description: Service name in docker
         required: true
         type: string
 
@@ -26,13 +30,4 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Deploy Traefik
-        run: |
-          export USERNAME=${{ inputs.auth_username }}
-          export HASHED_PASSWORD=$(openssl passwd -apr1 ${{ inputs.auth_password }})
-          export DOMAIN=${{ inputs.domain }}
-          export EMAIL=${{ inputs.email }}
-          docker stack deploy -c swarm-stacks/traefik.yml traefik
-      - name: Logging
-        run: |
-          docker service logs $(docker stack services traefik --format "{{.Name}}")
+      - name: Deploy App
