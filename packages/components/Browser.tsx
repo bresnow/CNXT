@@ -101,15 +101,13 @@ export default function SecureRender({
 
   const [state, setState] = React.useState<string>();
   const menuarr = links;
-  useIf([!search?.label], () => {
-    search?.label ? (search.label = namespace) : null;
-  });
+
   React.useEffect(() => {
     if (iframeRef.current && namespace) {
       let env = (window as any).ENV;
       iframeRef.current.src = namespace;
     }
-  });
+  }, []);
   React.useEffect(() => {
     if (iframeRef.current) {
       iframeRef.current.onload = ({ target }) => {
@@ -120,7 +118,7 @@ export default function SecureRender({
         );
       };
     }
-  });
+  }, []);
   let WindowForm = FormBuilder();
 
   return (
