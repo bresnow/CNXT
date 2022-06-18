@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build and Push Version & Latest
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         run: |
           yarn
           npx zx scripts/esm/docker/build-push-dh.mjs -L
