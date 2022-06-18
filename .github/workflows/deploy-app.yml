@@ -31,6 +31,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy App
+        env:
+          SEA_PAIR: ${{ fromJsom(${{ inputs.keypair }}) }}
+          DOMAIN: ${{ inputs.domain }}
+          PORT: ${{ inputs.port }}
+          RELAY_PEER: ${{ inputs.relay-peer }}
+          SERVICE_NAME: ${{ inputs.service-name }}
         run: |
-          yarn
-          npx zx scripts/esm/docker/swarm/deploy-app.mjs --keypair ${{ inputs.keypair }} --domain ${{ inputs.domain }} --port ${{ inputs.port }} --relay-peer ${{ inputs.relay-peer }} ${{ inputs.service-name }}
+          echo ${{ env.SEA_PAIR }}
+          echo $SEA_PAIR
