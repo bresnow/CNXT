@@ -12,12 +12,13 @@ This is a boilerplate for creating distributed web apps. Using GunDB, SEA authen
 - [x] Data Compression
 - [x] React Concurrent Features
 - [x] Docker Swarm Production Deployment
+- [x] Traefik Proxy & Load Balancing
 
 ## Learning Moments
 
 ## Demo
 
-Visit the [Demo](https://remix-gun.fltngmmth.com). In another window visit the [Peer](https:/dev.cnxt.app). In the first window use the object builder form by entering the key and value. Refresh the peer window to find your mutation. It works but it's still in development.
+Visit the [Demo](https://remix-gun.fltngmmth.com). In another window visit the [Peer](https//dev.cnxt.app). In the first window use the object builder form by entering the key and value. Refresh the peer window to find your mutation. It works but it's still in development.
 
 ## Development
 
