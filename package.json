@@ -5,6 +5,10 @@
   "author": "Bresnow",
   "license": "MIT",
   "module": "es2022",
+  "resolutions": {
+    "react": "18.0.0-rc.0",
+    "react-dom": "18.0.0-rc.0"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
     "build:css": "unocss \"packages/**/*.tsx\" --out-file \"packages/app/uno.css\"",
