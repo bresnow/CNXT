@@ -34,8 +34,8 @@ let args = process.argv.slice(3);
 let name = pkg.name,
   version = pkg.version;
 for (let i = 0; i < args.length; i++) {
+  let key = args[i];
   if (key.indexOf('-') <= 1) {
-    let key = args[i];
     let value = args[i + 1];
     key = key.slice(2);
     if (key === ('keypair' || 'k')) {
