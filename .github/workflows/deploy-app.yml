@@ -24,7 +24,7 @@ on:
         type: string
 
 jobs:
-  traefik_deploy:
+  deploy:
     runs-on:
       - self-hosted
       - main-server
