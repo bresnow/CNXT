@@ -17,7 +17,7 @@ This is a boilerplate for creating distributed web apps. Using GunDB, SEA authen
 
 ![Traefik Proxy & Load Balancing](public/github/traefik.png 'Traefik')
 
-Self-hosted deplyment is a breeze. There are [swarm stacks]('./swarm-stacks) for the app and Traefik. Middleware redirects to https and uses a Lets Encrypt tls certificate resolver. Authenticated UI dashboard is also available. There are github worklow dispatchers for traefik and the app so you can spin up a new production instance from the github repo. See [Self-Hosted Github Runners Documentation]('https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) .
+Self-hosted deplyment is a breeze. There are [swarm stacks]('swarm-stacks) for the app and Traefik. Middleware redirects to https and uses a Lets Encrypt tls certificate resolver. Authenticated UI dashboard is also available. There are github worklow dispatchers for traefik and the app so you can spin up a new production instance from the github repo. See [Self-Hosted Github Runners Documentation]('https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) .
 
 ![Traefik Service Manager](public/github/traefik.png 'Traefik1')
 
