@@ -1,10 +1,10 @@
 version: "3.3"
 
 services:
-  app:
+  cnxt:
     image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
     deploy:
-      replicas: 2
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
@@ -12,14 +12,14 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.app-http.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
-        - traefik.http.routers.app-http.entrypoints=http
-        - traefik.http.routers.app-http.middlewares=https-redirect
-        - traefik.http.routers.app-https.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
-        - traefik.http.routers.app-https.entrypoints=https
-        - traefik.http.routers.app-https.tls=true
-        - traefik.http.routers.app-https.tls.certresolver=le
-        - traefik.http.services.app.loadbalancer.server.port=${CLIENT_PORT:-3369}
+        - traefik.http.routers.cnxt-http.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
+        - traefik.http.routers.cnxt-http.entrypoints=http
+        - traefik.http.routers.cnxt-http.middlewares=https-redirect
+        - traefik.http.routers.cnxt-https.rule=Host(`${DOMAIN:-dev.cnxt.app}`)
+        - traefik.http.routers.cnxt-https.entrypoints=https
+        - traefik.http.routers.cnxt-https.tls=true
+        - traefik.http.routers.cnxt-https.tls.certresolver=le
+        - traefik.http.services.cnxt.loadbalancer.server.port=${CLIENT_PORT:-3369}
     environment:
       - PUB=${PUB:-xpMInBAQZexkhPUirdleQiibMkF1K7xE_i_xvNZOZLs.u6lvp1AmfFfsH6rVbJZARFs5ZDQxfugnneT7IdcHjtg}
       - PRIV=${PRIV:-_SCAHG-_iji64aPio38QDgjP4Sg8819wYOunpfxet8A}
