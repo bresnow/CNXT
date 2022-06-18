@@ -33,4 +33,4 @@ jobs:
       - name: Deploy App
         run: |
           yarn
-          npx zx scripts/esm/docker/deploy-app.mjs --keypair ${{ inputs.keypair }} --domain ${{ inputs.domain }} --port ${{ inputs.port }} --relay-peer ${{ inputs.relay-peer }} ${{ inputs.service-name }}
+          npx zx scripts/esm/docker/swarm/deploy-app.mjs --keypair ${{ inputs.keypair }} --domain ${{ inputs.domain }} --port ${{ inputs.port }} --relay-peer ${{ inputs.relay-peer }} ${{ inputs.service-name }}
