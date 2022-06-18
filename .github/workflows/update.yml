@@ -16,10 +16,10 @@ jobs:
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Update Swarm Stack
+      - name: Update Remix.Gun Demo
         run: |
           yarn
-          npx zx scripts/esm/docker/deploy-stack.mjs
+          npx zx scripts/esm/docker/swarm/deploy-app.mjs
 
   cleanup:
     needs: update_apps

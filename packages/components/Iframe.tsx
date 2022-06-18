@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 import objectAssign from 'object-assign';
 
 export interface IIframe {
-  url: string;
+  url?: string;
   src?: string;
   allowFullScreen?: boolean;
   position?:

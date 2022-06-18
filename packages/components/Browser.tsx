@@ -72,7 +72,7 @@ const links = [
 
 export type SecureRenderProps = {
   namespace?: string;
-  refrence: React.MutableRefObject<HTMLIFrameElement | null>;
+  selector: React.MutableRefObject<HTMLIFrameElement | null>;
   srcdoc?: string;
   allow?: string;
   onLoad?: (e: Event) => any;
@@ -84,7 +84,7 @@ export type SecureRenderProps = {
 };
 export default function SecureRender({
   namespace,
-  refrence,
+  selector,
   onLoad,
   onRefresh,
   onUnlock,
@@ -96,7 +96,7 @@ export default function SecureRender({
 }: SecureRenderProps) {
   const [loading, setLoading] = React.useState(true);
   const iframeRef = React.useRef<HTMLIFrameElement | null>(
-    refrence ? refrence.current : null
+    selector ? selector.current : null
   );
 
   const [state, setState] = React.useState<string>();
@@ -212,7 +212,7 @@ export default function SecureRender({
         </div>
         <div className='w-full h-full relative'>
           <Iframe
-            refrence={refrence}
+            refrence={selector}
             url={namespace || ''}
             className={`w-full  h-full transition-opacity duration-200 ${
               loading ? 'opacity-0' : 'opacity-100'

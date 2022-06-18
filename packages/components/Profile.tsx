@@ -1,4 +1,10 @@
-export default function Profile() {
+export default function Profile({
+  username,
+  description,
+}: {
+  username: string;
+  description: string;
+}) {
   return (
     <div
       className='font-sans antialiased text-gray-900 leading-normal tracking-wider bg-cover'
@@ -15,11 +21,11 @@ export default function Profile() {
             <div
               className='block lg:hidden rounded-full shadow-xl mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
               style={{
-                backgroundImage: 'url(https://source.unsplash.com/MP0IUfwrn0A)',
+                backgroundImage: `url(https://avatars.dicebear.com/api/identicon/${username}.svg)`,
               }}
             ></div>
 
-            <h1 className='text-3xl font-bold pt-8 lg:pt-0'>Your Name</h1>
+            <h1 className='text-3xl font-bold pt-8 lg:pt-0'>{username}</h1>
             <div className='mx-auto lg:mx-0 w-4/5 pt-3 border-b-2 border-green-500 opacity-25'></div>
             <p className='pt-4 text-base font-bold flex items-center justify-center lg:justify-start'>
               <svg
@@ -29,7 +35,7 @@ export default function Profile() {
               >
                 <path d='M9 12H1v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6h-8v2H9v-2zm0-1H0V5c0-1.1.9-2 2-2h4V2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1h4a2 2 0 0 1 2 2v6h-9V9H9v2zm3-8V2H8v1h4z' />
               </svg>{' '}
-              What you do
+              {description}
             </p>
             <p className='pt-2 text-gray-600 text-xs lg:text-sm flex items-center justify-center lg:justify-start'>
               <svg

@@ -19,13 +19,17 @@ import CNXTLogo from '~/components/svg/logos/CNXT';
 import { Navigation } from '~/components/Navigator';
 import { SuspendedTest } from './$namespace/edit';
 
-export function Fallback({ defered }: { defered: DeferedData }) {
+export function Fallback({
+  deferred,
+}: {
+  deferred: { response(): any; cached: Record<string, any> | undefined };
+}) {
   return (
     <div className='grid grid-cols-1 gap-4 p-4'>
       <div className='col-span-1'>
         <h5>Cached Data From Radisk/ IndexedDB</h5>
-        {defered.cached &&
-          Object.entries(defered.cached).map((val) => {
+        {deferred.cached &&
+          Object.entries(deferred.cached).map((val) => {
             let [key, value] = val;
             if (key === '_') {
               return;
@@ -72,8 +76,8 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 };
 
 export default function NameSpaceRoute() {
-  let namespace = useParams().namespace as string;
-  let defered = useFetcherAsync(`/api/gun/v1/g?`, {
+  let { namespace } = useParams();
+  let deferred = useFetcherAsync(`/api/gun/v1/g?`, {
     params: { path: namespace },
   });
 
@@ -86,8 +90,8 @@ export default function NameSpaceRoute() {
   };
   return (
     <Navigation search={searchProps} logo={<CNXTLogo />}>
-      <Suspense fallback={<Fallback defered={defered} />}>
-        <SuspendedTest load={defered.response} />
+      <Suspense fallback={<Fallback deferred={deferred} />}>
+        <SuspendedTest load={deferred.response} />
       </Suspense>
       <Outlet />
     </Navigation>

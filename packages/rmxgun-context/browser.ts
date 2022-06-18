@@ -3,6 +3,18 @@ import objectAssign from 'object-assign';
 import axios, { RequestHeaders } from 'redaxios';
 import { Submit } from './context';
 import { includes } from './useFetcherAsync';
+import 'gun/lib/path';
+import 'gun/sea';
+import 'gun/lib/webrtc';
+import 'gun/lib/radix';
+import 'gun/lib/radisk';
+import 'gun/lib/store';
+import 'gun/lib/rindexed';
+import 'gun/lib/then';
+import 'gun/lib/load';
+import 'gun/lib/open';
+import 'gun/lib/not';
+import 'gun/lib/axe';
 export function createBrowserLoader() {
   return {
     async load(routePath: string, options?: Options) {

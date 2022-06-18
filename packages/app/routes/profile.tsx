@@ -38,10 +38,10 @@ export default function ProfileRoute() {
 
   return (
     <>
-      <Profile />
-      {/* <Suspense fallback="Loading Profile....">
-        <BlogNoSideBar getItems={postsLoader.load as any} />
-      </Suspense> */}
+      {/* <Profile /> */}
+      <Suspense fallback='Loading Profile....'>
+        <BlogNoSideBar getItems={postsLoader.response as any} />
+      </Suspense>
     </>
   );
 }
