@@ -1,0 +1,41 @@
+name: Deploy Traefik Service
+on:
+  workflow_dispatch:
+    inputs:
+      auth_username:
+        description: Username for authentication
+        required: true
+        type: string
+      auth_password:
+        description: Password for authentication
+        required: true
+        type: string
+      domain:
+        description: Traefik dashboard domain
+        required: true
+        type: string
+      email:
+        description: Email for LetsEncrypt
+        required: true
+        type: string
+
+jobs:
+  traefik_deploy:
+    runs-on:
+      - self-hosted
+      - main-server
+    steps:
+      - uses: actions/checkout@v3
+      - name: Shell Prefix
+        run: |
+          export USERNAME=${{ inputs.auth_username }}
+          export HASHED_PASSWORD=$(openssl passwd -apr1 ${{ inputs.auth_password }})
+          export DOMAIN=${{ inputs.domain }}
+          export EMAIL=${{ inputs.email}}
+      - uses: actions/checkout@v3
+      - name: Deploy Traefik Service
+        run: |
+          docker stack deploy -c swarm-stacks/traefik.yml traefik
+      - name: Logging
+        run: |
+          docker service logs $(docker stack services traefik --format "{{.Name}}")
