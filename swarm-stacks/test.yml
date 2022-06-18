@@ -1,119 +1,39 @@
 version: "3.3"
 
 services:
-  traefik:
-    image: traefik:v2.6
-    command:
-      - --providers.docker
-      - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-public`)
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.swarmmode
-      - --entrypoints.http.address=:80
-      - --entrypoints.https.address=:443
-      - --pilot.token=4f869d98-2658-48e6-9405-c97c9183d932
-      - --certificatesresolvers.http.acme.email=${EMAIL:-bresnow@me.com}
-      - --certificatesresolvers.http.acme.storage=/certificates/acme.json
-      - --certificatesresolvers.http.acme.tlschallenge=true
-      - --accesslog
-      - --log
-      - --api
-      - --api.dashboard
-      - --api.insecure
-    ports:
-      - 80:80
-      - 443:443
+  app:
+    image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
     deploy:
+      replicas: 2
       placement:
         constraints:
-          - node.labels.traefik-public.traefik-public-certificates == true
+          - node.role == manager
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.middlewares.admin-auth.basicauth.users=${BASIC_AUTH:-bresnow:$$2y$$05$$SaGrMs06FYtov8OQe8pcve6EEvhkSpd0rscFkDrZiHqgfnJPlCGJi}
-        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
-        - traefik.http.routers.traefik-public-http.rule=Host(`${TRAEFIK_HOST:-proxy.fltngmmth.com}`)
-        - traefik.http.routers.traefik-public-http.entrypoints=http
-        - traefik.http.routers.traefik-public-http.middlewares=https-redirect
-        - traefik.http.routers.traefik-public-https.rule=Host(`${TRAEFIK_HOST:-proxy.fltngmmth.com}`)
-        - traefik.http.routers.traefik-public-https.entrypoints=https
-        - traefik.http.routers.traefik-public-https.tls=true
-        - traefik.http.routers.traefik-public-https.service=api@internal
-        - traefik.http.routers.traefik-public-https.tls.certresolver=http
-        - traefik.http.services.traefik-public.loadbalancer.server.port=8080
-
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-certs:/certificates
-
-    networks:
-      - traefik-public
-
-  # FRONTEND
-
-  fltngmmth:
-    image: bresnow/remix-gun:latest
-    deploy:
-      replicas: 3
-      placement:
-        constraints:
-          - node.labels.traefik-public.traefik-public-certificates == true
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmth-http.entrypoints=http
-        - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
-        - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-        - traefik.http.routers.fltngmmth-https.entrypoints=https
-        - traefik.http.routers.fltngmmth-https.tls.certresolver=http
-        - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
+        - traefik.http.routers.app-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.app-http.entrypoints=http
+        - traefik.http.routers.app-http.middlewares=https-redirect
+        - traefik.http.routers.app-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
+        - traefik.http.routers.app-https.entrypoints=https
+        - traefik.http.routers.app-https.tls=true
+        - traefik.http.routers.app-https.tls.certresolver=le
+        - traefik.http.services.app.loadbalancer.server.port=${CLIENT_PORT:-3333}
     environment:
-      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
-      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
-      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
-      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
+      - PUB=${PUB:-xpMInBAQZexkhPUirdleQiibMkF1K7xE_i_xvNZOZLs.u6lvp1AmfFfsH6rVbJZARFs5ZDQxfugnneT7IdcHjtg}
+      - PRIV=${PRIV:-_SCAHG-_iji64aPio38QDgjP4Sg8819wYOunpfxet8A}
+      - EPUB=${EPUB:-CY0To7Ok2IqBY02sN4BkkSctqoc0mzw-Wog-gpNMvHk.2cSsHNjoF0SwXIYaROZdJhX7lkpUWX4ynfwvAdGiBO4}
+      - EPRIV=${EPRIV:-LyGECl_2gBdk_BMndlKgqJieWnkWb0bXMbo4QvylugE}
       - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
       - CLIENT_PORT=${CLIENT_PORT:-3333}
       - DOMAIN=${DOMAIN:-remix-gun.fltngmmth.com}
     networks:
       - traefik-public
-
-      #PEER DB
-  peer:
-    image: bresnow/remix-gun:latest
-    deploy:
-      replicas: 3
-      placement:
-        constraints:
-          - node.labels.traefik-public.traefik-public-certificates == true
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.peer-http.rule=Host(`${DOMAIN1:-peer.fltngmmth.com}`)
-        - traefik.http.routers.peer-http.entrypoints=http
-        - traefik.http.routers.peer-http.middlewares=https-redirect
-        - traefik.http.routers.peer-https.rule=Host(`${DOMAIN1:-peer.fltngmmth.com}`)
-        - traefik.http.routers.peer-https.entrypoints=https
-        - traefik.http.routers.peer-https.tls.certresolver=http
-        - traefik.http.services.peer.loadbalancer.server.port=${CLIENT_PORT1:-3334}
-    environment:
-      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
-      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
-      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
-      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
-      - PEER_DOMAIN=${PEER_DOMAIN1:-remix-gun.fltngmmth.com}
-      - CLIENT_PORT=${CLIENT_PORT1:-3333}
-      - DOMAIN=${DOMAIN1:-peer.fltngmmth.com}
-    networks:
-      - traefik-public
-
+    volumes:
+      - radix-data:/app/radata
 volumes:
-  traefik-certs:
-  # peer1:
+  radix-data:
 
 networks:
   traefik-public:

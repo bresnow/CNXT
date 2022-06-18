@@ -1,67 +1,39 @@
 version: "3.3"
 
 services:
-
-  fltngmmth:
+  app:
     image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
     deploy:
       replicas: 2
       placement:
         constraints:
-          - node.labels.traefik-public.traefik-public-certificates == true
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.constraint-label=traefik-public
-      - traefik.http.routers.fltngmmth-http.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-      - traefik.http.routers.fltngmmth-http.entrypoints=http
-      - traefik.http.routers.fltngmmth-http.middlewares=https-redirect
-      - traefik.http.routers.fltngmmth-https.rule=Host(`${DOMAIN:-remix-gun.fltngmmth.com}`)
-      - traefik.http.routers.fltngmmth-https.entrypoints=https
-      - traefik.http.routers.fltngmmth-https.tls.certresolver=http
-      - traefik.http.services.fltngmmth.loadbalancer.server.port=${CLIENT_PORT:-3333}
+          - node.role == manager
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.app-http.rule=Host(`${DOMAIN:?Domain not set}`)
+        - traefik.http.routers.app-http.entrypoints=http
+        - traefik.http.routers.app-http.middlewares=https-redirect
+        - traefik.http.routers.app-https.rule=Host(`${DOMAIN:?Domain not set}`)
+        - traefik.http.routers.app-https.entrypoints=https
+        - traefik.http.routers.app-https.tls=true
+        - traefik.http.routers.app-https.tls.certresolver=le
+        - traefik.http.services.app.loadbalancer.server.port=${CLIENT_PORT:?Port not set}
     environment:
-      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
-      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
-      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
-      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
-      - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
-      - CLIENT_PORT=${CLIENT_PORT:-3333}
-      - DOMAIN=${DOMAIN:-remix-gun.fltngmmth.com}
+      - PUB=${PUB:?SEA Keypair not set}
+      - PRIV=${PRIV:?SEA Keypair not set}
+      - EPUB=${EPUB:?SEA Keypair not set}
+      - EPRIV=${EPRIV:?SEA Keypair not set}
+      - PEER_DOMAIN=${PEER_DOMAIN:?Peer Domain not set}
+      - CLIENT_PORT=${CLIENT_PORT:?Port not set}
+      - DOMAIN=${DOMAIN:?Domain not set}
     networks:
       - traefik-public
-
-  cnxt:
-    image: ${IMAGE:-bresnow/remix-gun}:${VERSION:-latest}
-    deploy:
-      replicas: 2
-      placement:
-        constraints:
-          - node.labels.traefik-public.traefik-public-certificates == true
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.constraint-label=traefik-public
-      - traefik.http.routers.cnxt-http.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
-      - traefik.http.routers.cnxt-http.entrypoints=http
-      - traefik.http.routers.cnxt-http.middlewares=https-redirect
-      - traefik.http.routers.cnxt-https.rule=Host(`${DOMAIN_1:-dev.cnxt.app}`)
-      - traefik.http.routers.cnxt-https.entrypoints=https
-      - traefik.http.routers.cnxt-https.tls.certresolver=http
-      - traefik.http.services.cnxt.loadbalancer.server.port=${CLIENT_PORT_1:-3334}
-    environment:
-      - PUB=${PUB:-RxwG_pFSCgvUANEyVd_508NO0V4ON3nQib8Jj4aRALY.8th1EYdCsEuxW_yFH_ZqeYeoo5U2PBjzwQ3GIkhegx0}
-      - PRIV=${PRIV:-moU65PRFuYSd5Gwp5maG0UFyB_Ik0VCL1sNOSakfVjw}
-      - EPUB=${EPUB:-oE5SkG46Id-Jcmit5XhOEOqZpzpI49U0Vl_gYsfF2Yc.POuYUNjLz1ZvxfAI1mALAvD43GqH3tH3arTwumof3HI}
-      - EPRIV=${EPRIV:-h-uxLrcQvC7gnBBHYUsjWtpZdT84VXGlhw-aftHaI6k}
-      - PEER_DOMAIN=${PEER_DOMAIN_1:-rmx-gun.fltngmmth.com}
-      - CLIENT_PORT=${CLIENT_PORT_1:-3334}
-      - DOMAIN=${DOMAIN_1:-dev.cnxt.app}
-    networks:
-      - traefik-public
-
+    volumes:
+      - radix-data:/app/radata
 volumes:
-  traefik:
+  radix-data:
 
 networks:
   traefik-public:
