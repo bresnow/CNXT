@@ -21,23 +21,21 @@ import FMLogo from '~/components/svg/logos/FltngMmth';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
 
-const noop = () => {};
 type ErrObj = {
   _key?: string | undefined;
   _value?: string | undefined;
   _form?: string | undefined;
 };
-type LoadError = {
-  error: ErrObj;
-};
+
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, ENV } = RemixGunContext(Gun, request);
   let user = gun.user();
   user.auth(ENV.APP_KEY_PAIR);
   let data;
+  console.log(request.url);
   try {
-    if (request.url.includes('dev.cxnt.app')) {
+    if (ENV.DOMAIN === 'dev.cnxt.app') {
       data = await user.get('pages').get('cnxt').then();
     } else {
       data = await user.get('pages').get('index').then();
@@ -50,15 +48,11 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 function WelcomeCard() {
   let data = useLoaderData();
   let { text, page_title, src } = data;
-  console.log(data);
-  let img = { avatar: src };
+  let img = { src, alt: 'RemixGun' };
   return (
     <div
       className='w-full mx-auto rounded-xl mt-5 p-5  relative'
-      style={{
-        minHeight: '320px',
-        minWidth: '420px',
-      }}
+      style={{ minHeight: '320px', minWidth: '420px' }}
     >
       <Profile name={page_title} description={text} image={src} />
     </div>
@@ -67,15 +61,12 @@ function WelcomeCard() {
 
 export default function Index() {
   const info = FormBuilder();
-
   return (
     <info.Form
       className='grid grid-cols-1 bg-slate-900 gap-3 px-10'
       method={'post'}
     >
-      <Navigation
-        logo={window.location.host.includes('cnxt') ? <CNXTLogo /> : <FMLogo />}
-      >
+      <Navigation logo={<FMLogo />}>
         <WelcomeCard />
       </Navigation>
     </info.Form>
