@@ -34,7 +34,6 @@ jobs:
       - name: Export Environment and Deploy Updates
         run: |
           yarn
-          export VERSION="$(npx zx scripts/esm/pkg-utils.mjs -v)"
           export SERVICE_NAME=${{ matrix.service-name }}
           export DOMAIN=${{ matrix.domain }}
           export PUB=${{ secrets.PUB }}
