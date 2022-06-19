@@ -37,7 +37,11 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   user.auth(ENV.APP_KEY_PAIR);
   let data;
   try {
-    data = await user.get('pages').get('index').then();
+    if (request.url.includes('dev.cxnt.app')) {
+      data = await user.get('pages').get('cnxt').then();
+    } else {
+      data = await user.get('pages').get('index').then();
+    }
   } catch (error) {
     data = { error };
   }
@@ -47,7 +51,7 @@ function WelcomeCard() {
   let data = useLoaderData();
   let { text, page_title, src } = data;
   console.log(data);
-  let img = { src, alt: 'RemixGun' };
+  let img = { avatar: src };
   return (
     <div
       className='w-full mx-auto rounded-xl mt-5 p-5  relative'
@@ -56,27 +60,22 @@ function WelcomeCard() {
         minWidth: '420px',
       }}
     >
-      <SectionTitle
-        heading={page_title}
-        description={text}
-        align={'center'}
-        color={'primary'}
-        showDescription={true}
-        image={img}
-      />
-      <Profile />
+      <Profile name={page_title} description={text} image={src} />
     </div>
   );
 }
 
 export default function Index() {
   const info = FormBuilder();
+
   return (
     <info.Form
       className='grid grid-cols-1 bg-slate-900 gap-3 px-10'
       method={'post'}
     >
-      <Navigation logo={<FMLogo />}>
+      <Navigation
+        logo={window.location.host.includes('cnxt') ? <CNXTLogo /> : <FMLogo />}
+      >
         <WelcomeCard />
       </Navigation>
     </info.Form>

@@ -9,6 +9,8 @@ import {
   useCatch,
   Outlet,
   useParams,
+  useLocation,
+  Form,
 } from 'remix';
 import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx } from 'types';
@@ -18,7 +20,10 @@ import { InputTextProps } from '~/components/InputText';
 import CNXTLogo from '~/components/svg/logos/CNXT';
 import { Navigation } from '~/components/Navigator';
 import { SuspendedTest } from './$namespace/edit';
-
+import Profile from '~/components/Profile';
+import { ContentEditable } from '~/components/ContentEditable';
+import React from 'react';
+import { Cedit, CeditProps, Maybe } from 'cedit';
 export function Fallback({
   deferred,
 }: {
@@ -67,7 +72,6 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let data;
   try {
     let _data = await gun.get(namespace).then();
-
     data = { namespace, ..._data };
   } catch (error) {
     data = { error };
@@ -77,6 +81,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export default function NameSpaceRoute() {
   let { namespace } = useParams();
+  let { key } = useLocation();
   let deferred = useFetcherAsync(`/api/gun/v1/g?`, {
     params: { path: namespace },
   });
@@ -88,6 +93,7 @@ export default function NameSpaceRoute() {
     className:
       'w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex',
   };
+  const [value, setValue] = React.useState('');
   return (
     <Navigation search={searchProps} logo={<CNXTLogo />}>
       <Suspense fallback={<Fallback deferred={deferred} />}>
@@ -132,6 +138,123 @@ export function ErrorBoundary({ error }: { error: Error }) {
         spanColor='#fff'
         description={`error`}
       />
+    </div>
+  );
+}
+
+export function BrowserStoreExample({
+  bgImg,
+  header,
+  content,
+  headingName,
+  textAreaName,
+  onImgUpload,
+}: {
+  bgImg?: string;
+  header: string;
+  content: string;
+  headingName: string;
+  textAreaName: string;
+  onImgUpload: (e: any) => void;
+}) {
+  let [editUi, setEditUi] = React.useState(false);
+  function FileUploader() {
+    return (
+      <input
+        type='file'
+        className='block w-full text-sm text-slate-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-full file:border-0
+      file:text-sm file:font-semibold
+      file:bg-violet-50 file:text-violet-700
+      hover:file:bg-violet-100
+    '
+        onChange={(e) => onImgUpload(e)}
+      />
+    );
+  }
+  return (
+    <Form method='post'>
+      <div
+        className='w-full mx-auto rounded-xl my-5  bg-gray-900 shadow-xl text-gray-300 relative'
+        style={{ maxWidth: '600px' }}
+      >
+        <div
+          className={`w-full h-40 rounded-xl bg-center bg-cover relative `}
+          style={{ backgroundImage: `url(${bgImg})` }}
+        >
+          <div className='absolute left-1/2 -translate-x-1/2 bottom-2  w-5/6 bg-slate-800 rounded-md flex items-center bg-opacity-30 backdrop-blur-md'>
+            <div className='w-1/2 p-3'>
+              <input
+                className='font-black text-blue-600  font-heading uppercase  focus:outline-none fo bg-transparent text-3xl   flex flex-col flex-wrap leading-none'
+                autoComplete='off'
+                draggable={false}
+                placeholder={header}
+                defaultValue={header}
+                name={headingName}
+                onClick={() => setEditUi(true)}
+              />
+              <div className=''></div>
+            </div>
+            <div className='w-1/2 p-3'>
+              <h3 className='font-semibold'></h3>
+            </div>
+          </div>
+        </div>
+        <h3 className='font-semibold text-lg px-3 mt-2'>
+          {editUi ? <FileUploader /> : null}
+        </h3>
+        <div className='flex items-center px-3 mt-2'>
+          <textarea
+            name={textAreaName}
+            className={` ml-3 w-full  focus:outline-none bg-transparent  text-zinc-400`}
+            rows={10}
+            placeholder={content}
+          />
+        </div>
+        <div className='flex mt-2'>
+          <SubmitButton
+            name={'submit'}
+            label={'Submit'}
+            value={'create'}
+            onSubmit={() => setEditUi(false)}
+          />
+        </div>
+      </div>
+    </Form>
+  );
+}
+
+export function SubmitButton({
+  name,
+  label,
+  onSubmit,
+  value,
+  color,
+}: {
+  label: string;
+  name?: string;
+  value?: string;
+  onSubmit?: (x: any) => void;
+  color?: string;
+}) {
+  return (
+    <div className='p-3 w-1/2'>
+      <button
+        type='submit'
+        name={name ? name : 'submit'}
+        onClick={onSubmit}
+        aria-label={label}
+        value={value}
+        className={`block w-full text-sm text-slate-500
+      mr-4 py-2 px-4
+      rounded-full border-0
+       font-semibold
+      bg-${color ?? 'indigo'}-50 hover:text-${color ?? 'indigo'}-700
+      hover:bg-${color ?? 'indigo'}-100`}
+      >
+        <span className='w-full'>Submit</span>
+      </button>
     </div>
   );
 }

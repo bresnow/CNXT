@@ -5,7 +5,7 @@ import jsesc from 'jsesc';
 import Gun from 'gun';
 import { ClientContext, useDataLoader } from './context';
 import { useIf, useSafeCallback } from 'bresnow_utility-react-hooks';
-import { useGunStatic } from '~/lib/gun/hooks';
+import { useGunStatic } from '~/remix-gun-utility/gun/hooks';
 import React from 'react';
 import { Options } from './browser';
 export { DataloaderProvider } from './context';
@@ -28,6 +28,7 @@ export interface DeferedData {
 export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
+  console.log('key', key, search);
   let deferred = useMemo(() => {
     invariant(dataloader, 'Context Provider is undefined for useGunFetcher');
     let _deferred = { resolved: false } as {

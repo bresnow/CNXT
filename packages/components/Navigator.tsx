@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMatches, useLocation, Link } from 'remix';
-import { MenuLinks } from '~/root';
+import { MenuLinks } from '@/root';
 import InputText, { InputTextProps } from './InputText';
 
 const ACTION_TYPE = {
@@ -128,11 +128,11 @@ export function Navigation({
               className='absolute w-5 h-5 bg-cnxt_black-right-4 bottom-1/2 rounded-bl-3xl'
             ></div>
           </div>
-          {search && (
+          {/* {search && (
             <div className='w-1/2 ml-8 hidden md:flex group-hover transition-all duration-350 bg-primary-80 hover:bg-primary-70 rounded-md flex-wrap  focus:shadow-md ring-1 ring-sky-500'>
               <InputText {...search} />
             </div>
-          )}
+          )} */}
         </div>
 
         <main

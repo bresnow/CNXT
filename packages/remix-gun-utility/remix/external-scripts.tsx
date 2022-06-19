@@ -1,4 +1,6 @@
 import { useMatches } from '@remix-run/react';
+import jsesc from 'jsesc';
+import { useId } from 'react';
 /**
  *https://github.com/sergiodxa/remix-utils/blob/main/src/react/external-scripts.tsx
  */
@@ -22,13 +24,15 @@ type ScriptDescriptor = {
   noModule?: boolean;
   nonce?: string;
   referrerPolicy?: ReferrerPolicy;
-  src: string;
+  src?: string;
   type?: string;
+  innerHtml?: string;
 };
 
 export type ExternalScriptsFunction = () => ScriptDescriptor[];
 
 export function ExternalScripts() {
+  let id = useId();
   let matches = useMatches();
   let scripts = matches.flatMap((match) => {
     let scripts = match.handle?.scripts as ExternalScriptsFunction | undefined;
@@ -43,7 +47,7 @@ export function ExternalScripts() {
         let as = !props.noModule ? 'script' : undefined;
         return (
           <link
-            key={props.src}
+            key={id + props.src}
             rel={rel}
             href={props.src}
             as={as}
@@ -55,7 +59,8 @@ export function ExternalScripts() {
       })}
 
       {scripts.map((props) => {
-        return <script {...props} key={props.src} />;
+        let markup = props.innerHtml || undefined;
+        return <script {...props} key={id + props.src} />;
       })}
     </>
   );

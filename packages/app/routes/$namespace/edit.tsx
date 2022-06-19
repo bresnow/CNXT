@@ -12,7 +12,7 @@ import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { useIf } from 'bresnow_utility-react-hooks';
 import { LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
-import { useGunStatic } from '~/lib/gun/hooks';
+import { useGunStatic } from '~/remix-gun-utility/gun/hooks';
 import FormBuilder from '~/components/FormBuilder';
 import invariant from '@remix-run/react/invariant';
 import React from 'react';

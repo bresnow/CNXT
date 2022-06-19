@@ -6,7 +6,7 @@ import jsesc from 'jsesc';
 import { useIf } from 'bresnow_utility-react-hooks';
 import SecureRender, { SecureRenderProps } from '~/components/Browser';
 import { LoadCtx } from 'types';
-import { useGunStatic } from '~/lib/gun/hooks';
+import { useGunStatic } from '~/remix-gun-utility/gun/hooks';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import Iframe from '~/components/Iframe';
 

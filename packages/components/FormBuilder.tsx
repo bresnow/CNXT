@@ -1,6 +1,5 @@
 import React, { FormEventHandler } from 'react';
 import { Form, useLocation } from 'remix';
-import { log } from '~/lib/console-utils';
 import InputText, { InputTextProps } from './InputText';
 function isHtmlElement(object: any) {
   return object != null && typeof object.tagName === 'string';
@@ -65,7 +64,7 @@ const FormBuilder = () => {
       replace,
       onSubmit,
     }: {
-      children: React.PropsWithChildren<T>;
+      children: React.ReactNode;
       ariaDescribed?: string;
       method?: 'get' | 'post';
       action?: string;
@@ -78,41 +77,20 @@ const FormBuilder = () => {
       let { pathname } = useLocation();
       return (
         <>
-          {encType === 'multipart/form-data' ? (
-            <form
-              encType={encType}
-              method={method ?? 'post'}
-              action={action ?? pathname}
-              aria-describedby={ariaDescribed}
-              onSubmit={({ target }) => {
-                if (target instanceof HTMLFormElement) {
-                  const formData = new FormData(target);
-                  console.log(formData, 'Form');
-                }
-              }}
-              className={
-                className ??
-                'flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto'
-              }
-            >
-              {children}
-            </form>
-          ) : (
-            <Form
-              method={method ?? 'post'}
-              action={action}
-              aria-describedby={ariaDescribed}
-              reloadDocument={reloadDocument}
-              replace={replace}
-              onSubmit={onSubmit}
-              className={
-                className ??
-                'flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto'
-              }
-            >
-              {children}
-            </Form>
-          )}
+          <Form
+            method={method ?? 'post'}
+            action={action}
+            aria-describedby={ariaDescribed}
+            reloadDocument={reloadDocument}
+            replace={replace}
+            onSubmit={onSubmit}
+            className={
+              className ??
+              'flex flex-col  w-3/4 md:w-2/3 max-w-xl space-y-3 justify-center mx-auto'
+            }
+          >
+            {children}
+          </Form>
         </>
       );
     },

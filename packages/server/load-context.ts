@@ -1,7 +1,7 @@
 import type { RmxGunCtx } from 'types';
 import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from 'gun/types';
 import { destroySession, getSession } from '../app/session.server';
-import { errorCheck } from '../lib/utils/helpers';
+import { errorCheck } from '../remix-gun-utility/remix/helpers';
 import { redirect } from 'remix';
 import { Params } from 'react-router';
 import { getDomain } from '.';

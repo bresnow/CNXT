@@ -1,7 +1,7 @@
 {
   "name": "remix-gun",
   "description": "Weaponize your Remix app with GunDB. UnoCSS styles.",
-  "version": "0.3.695",
+  "version": "0.3.66",
   "author": "Bresnow",
   "license": "MIT",
   "module": "es2022",
@@ -25,6 +25,7 @@
     "@remix-run/react": "0.0.0-experimental-4e814511",
     "@remix-run/server-runtime": "0.0.0-experimental-4e814511",
     "bresnow_utility-react-hooks": "0.2.9",
+    "cedit": "^1.1.0",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "dockerode": "^3.3.1",
