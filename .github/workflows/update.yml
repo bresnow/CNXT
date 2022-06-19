@@ -32,14 +32,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Export Environment and Deploy Updates
+        env:
+          SERVICE_NAME: ${{ matrix.service-name }}
+          DOMAIN: ${{ matrix.domain }}
+          PUB: ${{ secrets.PUB }}
+          PRIV: ${{ secrets.PRIV }}
+          EPUB: ${{ secrets.EPUB }}
+          EPRIV: ${{ secrets.EPRIV }}
         run: |
           yarn
-          export SERVICE_NAME=${{ matrix.service-name }}
-          export DOMAIN=${{ matrix.domain }}
-          export PUB=${{ secrets.PUB }}
-          export PRIV=${{ secrets.PRIV }}
-          export EPUB=${{ secrets.EPUB }}
-          export EPRIV=${{ secrets.EPRIV }}
           docker stack deploy -c swarm-stacks/demo.yml ${{ matrix.stack-name }}
   cleanup:
     needs: update_apps
