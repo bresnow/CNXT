@@ -8,6 +8,7 @@ import {
   useActionData,
   useCatch,
   useLocation,
+  Link,
 } from 'remix';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { useIf } from 'bresnow_utility-react-hooks';
@@ -22,6 +23,8 @@ import FMLogo from '~/components/svg/logos/FltngMmth';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
 import objectAssign from 'object-assign';
+import { Fallback } from './$namespace';
+import { SuspendedTest } from './$namespace/edit';
 
 type ErrObj = {
   _key?: string | undefined;
@@ -47,42 +50,42 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   }
   return json(data);
 };
-function WelcomeCard() {
-  let data = useLoaderData();
-  console.log(data, 'Welcome');
-  let { text, page_title, profile } = data;
+
+export default function Index() {
+  let { host, text, page_title, profile } = useLoaderData();
+  const info = FormBuilder();
+  let { response, cached } = useFetcherAsync('/');
   return (
     <div
       className='w-full mx-auto rounded-xl mt-5 p-5  relative'
       style={{ minHeight: '320px', minWidth: '420px' }}
     >
+      <Navigation
+        logo={host === 'dev.cnxt.app' ? <CNXTLogo to='/' /> : <FMLogo />}
+      />
       <Profile
         title={page_title}
         description={text}
         profilePic={profile}
         backgroundImage={'/images/gradient.jpg'}
-        button={{ label: 'Profile', color: 'red', to: '/builder' }}
+        button={[
+          { label: 'Profile', color: 'red', to: '/builder' },
+          { label: 'Profile', color: 'white', to: '/builder' },
+        ]}
       />
+      <Suspense fallback={<Fallback deferred={{ cached }} />}>
+        <AppWindow response={response} />
+      </Suspense>
     </div>
   );
 }
 
-export default function Index() {
-  let { host } = useLoaderData();
-  const info = FormBuilder();
-
-  return (
-    <div>
-      <Navigation logo={host === 'dev.cnxt.app' ? <CNXTLogo /> : <FMLogo />} />
-      <WelcomeCard />
-    </div>
-  );
-}
-export function AppWindow() {
+export function AppWindow({ response }: { response: () => any }) {
+  let data = response();
   return (
     <div className='p-8 w-full h-full flex items-center justify-center rounded-lg'>
       <div className='shadow-lg w-full flex items-start justify-start flex-col  rounded-lg'>
-        <div className='w-full mx-auto rounded-lg'></div>
+        {data}
       </div>
     </div>
   );

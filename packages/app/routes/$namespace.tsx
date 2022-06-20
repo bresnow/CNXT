@@ -27,7 +27,7 @@ import { Cedit, CeditProps, Maybe } from 'cedit';
 export function Fallback({
   deferred,
 }: {
-  deferred: { response(): any; cached: Record<string, any> | undefined };
+  deferred: { response?: () => any; cached: Record<string, any> | undefined };
 }) {
   return (
     <div className='grid grid-cols-1 gap-4 p-4'>
@@ -38,6 +38,9 @@ export function Fallback({
             let [key, value] = val;
             if (key === '_') {
               return;
+            }
+            if (typeof value === 'object') {
+              value = JSON.stringify(value);
             }
             return (
               <div

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { Link } from 'remix';
-
-export default function FMLogo(props: SVGProps<SVGSVGElement>) {
+export interface FltngMmthProps extends SVGProps<SVGSVGElement> {
+  to?: string;
+}
+export default function FMLogo(props: FltngMmthProps) {
   return (
-    <Link className='py-3' to={'/'}>
+    <Link className='py-3' to={props.to ?? '/'}>
       <svg
         height='60px'
         viewBox='0 0 1066 466'

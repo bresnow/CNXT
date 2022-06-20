@@ -1,7 +1,6 @@
 import LZString from 'lz-string';
 import objectAssign from 'object-assign';
 import axios, { RequestHeaders } from 'redaxios';
-import { Submit } from './context';
 import { includes } from './useFetcherAsync';
 import 'gun/lib/path';
 import 'gun/sea';
@@ -15,15 +14,26 @@ import 'gun/lib/load';
 import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
+import jsesc from 'jsesc';
+import { IGunChain, IGunInstance } from 'gun/types';
+
+async function pullGunCache(cache: IGunInstance<any>, internalId: string) {
+  return await new Promise((res, rej) =>
+    cache.get(internalId).open((data) => {
+      data ? res(data) : rej(data);
+    })
+  );
+}
 export function createBrowserLoader() {
   return {
-    async load(routePath: string, options?: Options) {
+    async load(routePath: string, internalId?: string, options?: Options) {
       let Gun = (window as Window).Gun;
       let { host, protocol } = window.location;
-      const cacheRef = Gun({
+      const peeredCache = Gun({
         peers: [`${protocol + host + '/gun'}`],
         localStorage: false,
       });
+      let localCache = new Gun({ localStorage: false });
       if (options && options.params) {
         if (!routePath.endsWith('/')) {
           routePath += '/';
@@ -37,14 +47,25 @@ export function createBrowserLoader() {
       }
       let { data } = await axios.request(routePath, options);
       let cache;
-      if (includes(options?.params, 'path')) {
-        let { path } = options?.params as any;
-        cacheRef.path(path).put(data.data);
-        cache = await new Promise((res, rej) =>
-          cacheRef.path((path as string).replace('/', '.')).open((data) => {
-            data ? res(data) : rej(data);
-          })
-        );
+      if (internalId && data && data.startsWith('<!DOCTYPE')) {
+        let slice = JSON.stringify(data).indexOf('window.__remixC');
+        if (slice !== -1) {
+          let str = JSON.stringify(data).substr(slice);
+          slice = str.indexOf(';</script>');
+          let _wRC = str.substr(0, slice);
+          let json = jsesc(_wRC.split(' = ')[1].trim(), {
+            json: true,
+          });
+          console.log(json);
+          localCache.get(internalId).put(JSON.parse(json));
+          data = await pullGunCache(peeredCache, internalId);
+          data = new Response(JSON.stringify(data), { status: 200 });
+          cache = data;
+        }
+      }
+      if (internalId) {
+        peeredCache.get(internalId).put(JSON.parse(JSON.stringify(data)));
+        cache = await pullGunCache(peeredCache, internalId);
       }
       return { data, cache: cache && (cache as Record<string, any>) };
     },

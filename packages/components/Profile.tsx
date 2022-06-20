@@ -42,18 +42,18 @@ export default function Profile({
       | 'pink'
       | 'indigo';
     to: string;
-  };
+  }[];
   onImageUpload?: (e: Event) => void;
   keypair?: ISEAPair;
 }) {
   return (
     <div
-      className='font-sans antialiased text-gray-900 leading-normal tracking-wider bg-cover'
-      style={{
-        backgroundImage: `url(${
-          backgroundImage ?? 'https://source.unsplash.com/1L71sPT5XKc'
-        })`,
-      }}
+      className='font-sans antialiased bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-900 leading-normal tracking-wider bg-cover'
+      // style={{
+      //   backgroundImage: `url(${
+      //     backgroundImage ?? 'https://source.unsplash.com/1L71sPT5XKc'
+      //   })`,
+      // }}
     >
       <div className='max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0'>
         <div
@@ -76,20 +76,14 @@ export default function Profile({
                 {description}
               </p>
               <div className='flex space-x-4'>
-                <Link
-                  to={button.to}
-                  className={`${
-                    colors[button.color]
-                  } w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all`}
-                >
-                  {button.label}
-                </Link>
-                <a
-                  href='collections.html'
-                  className='text-accent shadow-white-volume hover:bg-accent-dark hover:shadow-accent-volume w-36 rounded-full bg-white py-3 px-8 text-center font-semibold transition-all hover:text-white'
-                >
-                  Explore
-                </a>
+                {button.map(({ to, label, color }) => (
+                  <Link
+                    to={to}
+                    className={`${colors[color]} w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all shadow-white-volume`}
+                  >
+                    {label}
+                  </Link>
+                ))}
               </div>
             </div>
             <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'>

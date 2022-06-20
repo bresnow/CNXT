@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useId } from 'react';
 import { useLocation } from 'remix';
 import invariant from '@remix-run/react/invariant';
 import jsesc from 'jsesc';
@@ -28,9 +28,10 @@ export interface DeferedData {
 export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
+  let id = useId();
   console.log('key', key, search);
   let deferred = useMemo(() => {
-    invariant(dataloader, 'Context Provider is undefined for useGunFetcher');
+    invariant(dataloader, 'Context Provider is undefined for useFetcherAsync');
     let _deferred = { resolved: false } as {
       resolved: boolean;
       cache?: Record<string, any>;
@@ -39,7 +40,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
       promise: Promise<void>;
     };
     _deferred.promise = dataloader
-      .load(routePath, options)
+      .load(routePath, id, options)
       .then(({ data, cache }) => ({ data, cache }))
       .then((value) => {
         _deferred.value = value.data;
@@ -51,7 +52,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
         _deferred.resolved = true;
       });
     return _deferred;
-  }, [routePath, key]);
+  }, [routePath, key, options]);
 
   return {
     response() {
