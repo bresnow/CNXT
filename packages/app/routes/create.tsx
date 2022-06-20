@@ -61,7 +61,7 @@ export const BlogCard = () => {
           <section className='relative py-24'>
             <picture className='pointer-events-none absolute inset-0 -z-10 dark:hidden'>
               <img
-                src='img/gradient_light.jpg'
+                src='/images/gradient1.webp'
                 alt='gradient'
                 className='h-full w-full'
               />

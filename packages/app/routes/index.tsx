@@ -40,12 +40,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   user.auth(ENV.APP_KEY_PAIR);
   let data;
   try {
-    if (ENV.DOMAIN === 'dev.cnxt.app') {
-      data = await user.get('pages').get('cnxt').then();
-      objectAssign(data, { host: 'dev.cnxt.app' });
-    } else {
-      data = await user.get('pages').get('index').then();
-    }
+    data = await user.get('pages').get('cnxt').then();
   } catch (error) {
     data = { error };
   }
@@ -58,9 +53,7 @@ export default function Index() {
 
   return (
     <>
-      <Navigation
-        logo={host === 'dev.cnxt.app' ? <CNXTLogo to='/' /> : <FMLogo />}
-      />
+      <Navigation logo={<CNXTLogo to='/' />} />
       <Profile
         title={page_title}
         description={text}

@@ -66,7 +66,7 @@ export default function Profile({
 }) {
   return (
     <div className='mt-10 font-sans antialiased bg-gradient-to-tr from-purple-600  via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
-      <div className='p-5 font-sans antialiased bg-gradient-to-b from-orange-500 via-teal-400 to-purple-500 text-gray-900 leading-normal tracking-wider bg-cover'>
+      <div className='p-5 font-sans antialiased bg-gradient-to-b from-red-500 via-blue-400 to-purple-500 text-gray-900 leading-normal tracking-wider bg-cover'>
         {' '}
         <div className='p-5 font-sans antialiased bg-gradient-to-tr from-slate-900 via-transparent to-pink-500 text-gray-900 leading-normal tracking-wider bg-cover'>
           <div className='max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0'>
@@ -76,7 +76,7 @@ export default function Profile({
             >
               <div className='p-4 md:p-12 text-center lg:text-left'>
                 <div
-                  className='block lg:hidden rounded-full shadow-xl mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
+                  className='block lg:hidden rounded-lg  mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
                   style={{
                     backgroundImage: `url(${profilePic})`,
                   }}
@@ -87,7 +87,46 @@ export default function Profile({
                     {title}
                   </h1>
                   <p className='dark:text-jacarta-200 mb-8 text-center text-lg md:text-left'>
-                    {description}
+                    {description.split(' ' || '\n').map((curr) => {
+                      if (curr.startsWith('@')) {
+                        return (
+                          <span className='text-blue-500'>{curr + ' '}</span>
+                        );
+                      }
+                      if (curr.startsWith('$')) {
+                        return (
+                          <>
+                            <code
+                              className={`bg-gray-200 hover:bg-gray-300 hover:shadow-gray-400 hover:shadow-md transition-all px-2 py-.5 rounded-md`}
+                            >
+                              <Link
+                                to={`/${curr.replace(`$`, '')}`}
+                                className='text-green-600 font-bold '
+                              >
+                                {curr.replace(`$`, '$://')}
+                              </Link>
+                            </code>{' '}
+                          </>
+                        );
+                      }
+                      if (curr.startsWith('#')) {
+                        return (
+                          <>
+                            <code
+                              className={`bg-gray-200 hover:bg-gray-300 hover:shadow-gray-400 hover:shadow-md transition-all px-2 py-.5 rounded-md`}
+                            >
+                              <Link
+                                to={`/${curr.replace(`#`, '')}`}
+                                className='text-red-600 font-bold '
+                              >
+                                {curr.replace(`#`, '#://')}
+                              </Link>
+                            </code>{' '}
+                          </>
+                        );
+                      }
+                      return curr + ' ';
+                    })}
                   </p>
                   <div className='flex space-x-4'>
                     {button.map(({ to, label, color }) => (
@@ -109,7 +148,7 @@ export default function Profile({
             <div className='w-full lg:w-2/5 pl-4'>
               <img
                 src={profilePic}
-                className='rounded-none lg:rounded-lg shadow-2xl hidden lg:block'
+                className='rounded-none lg:rounded-lg hidden lg:block'
               />
             </div>
           </div>

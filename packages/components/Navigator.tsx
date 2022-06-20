@@ -60,7 +60,7 @@ export function Navigation({
     ...search,
   } || { ...search };
   return (
-    <header className='fixed top-0 z-20 w-full backdrop-blur bg-slate-400 bg-opacity-50 transition-colors'>
+    <header className='fixed top-0 z-20 w-full backdrop-blur bg-slate-400 bg-opacity-20 transition-colors'>
       <div className='flex items-center px-6 py-6 xl:px-24'>
         {/* <!-- Logo --> */}
         {logo}

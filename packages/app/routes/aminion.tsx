@@ -32,9 +32,7 @@ export default function AminionDemo() {
 
   return (
     <>
-      <Navigation
-        logo={host === 'dev.cnxt.app' ? <CNXTLogo to='/' /> : <FMLogo />}
-      />
+      <Navigation logo={<CNXTLogo to='/' />} />
       <Suspense
         fallback={
           <Iframe

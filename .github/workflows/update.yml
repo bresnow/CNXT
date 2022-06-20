@@ -3,7 +3,7 @@ name: Update Demo Services
 on:
   push:
     branches:
-      - main
+      - cnxt
 
 jobs:
   yarn_build:
@@ -14,17 +14,11 @@ jobs:
     ## Matrix strategy essentially running a forEach method
     strategy:
       matrix:
-        service-name: [demo, app, cnxt]
+        service-name: [cnxt]
         include:
-          - service-name: demo
-            domain: remix-gun.fltngmmth.com
-            stack-name: remix-gun
           - service-name: cnxt
             domain: dev.cnxt.app
             stack-name: cnxt-app
-          - service-name: app
-            domain: peer.fltngmmth.com
-            stack-name: remix-peer
     needs: [yarn_build, push_image]
     runs-on:
       - self-hosted

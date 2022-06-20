@@ -1,7 +1,7 @@
 {
-  "name": "remix-gun",
+  "name": "cnxt",
   "description": "Weaponize your Remix app with GunDB. UnoCSS styles.",
-  "version": "0.3.68",
+  "version": "0.2.1",
   "author": "Bresnow",
   "license": "MIT",
   "module": "es2022",
@@ -15,7 +15,6 @@
     "dev": "npx zx scripts/esm/dev.mjs",
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,mjs,js,jsx,ts,tsx}'",
-    "prettier:rad": "prettier --write 'radata/!'",
     "purge": "rm -rf radata *.tmp",
     "push": " npx zx scripts/esm/git/push.mjs",
     "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
