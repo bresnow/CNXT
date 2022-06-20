@@ -10,9 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build and Push As Latest
+        env:
+          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
           yarn
           npx zx scripts/esm/docker/build-push-dh.mjs -L
-          npx zx scripts/esm/docker/build-push-dh.mjs -L -G
+          npx zx scripts/esm/docker/build-push-dh.mjs -L -G $GH_TOKEN
           npx zx scripts/esm/docker/build-push-dh.mjs
-          npx zx scripts/esm/docker/build-push-dh.mjs -G
+          npx zx scripts/esm/docker/build-push-dh.mjs -G $GH_TOKEN

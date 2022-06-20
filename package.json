@@ -1,8 +1,8 @@
 {
   "name": "cnxt",
-  "description": "Weaponize your Remix app with GunDB. UnoCSS styles.",
+  "description": "Dynamic namespaces for dynamic content. #://HashtagProtocol",
   "version": "0.2.1",
-  "author": "Bresnow",
+  "author": "bresnow",
   "license": "MIT",
   "module": "es2022",
   "resolutions": {

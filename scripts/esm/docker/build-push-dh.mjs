@@ -4,12 +4,22 @@ import { read } from 'fsxx';
 
 async function buildPush() {
   let args = process.argv.slice(3);
-  let version, git;
+  let version, git, $ghAT;
   if (args.length > 0) {
     for (let i = 0; i < args.length; i++) {
       let arg = args[i];
       if (arg === ('--ghcr' || '-G')) {
         git = true;
+        $ghAT = args[i + 1];
+        if (typeof $ghAT === 'string' && git === true) {
+          try {
+            await $`echo ${$ghAT}`.pipe(
+              `docker login ghcr.io -u $USERNAME --password-stdin`
+            );
+          } catch (error) {
+            throw new Error(error);
+          }
+        }
       }
       if (arg === ('--latest' || '-L')) {
         version = false;
