@@ -31,12 +31,12 @@ export const data = {
     },
     index: {
       page_title: 'Remix.GUN | Boilerplate Demo',
-      src: '/github/rmix-gun.png',
+      profile: '/github/rmix-gun.png',
       text: `Peer-to-peer full stack boilerplate using Remix.Run and GunDB.`,
     },
     cnxt: {
       page_title: 'CNXT Dynamic Namespaces',
-      src: '/images/splash.png',
+      profile: '/images/illustrations/metal2.png',
       text: `Cryptographically hash tagged namespaces for dynamic content. Peer to peer content management and service discovery.`,
     },
     builder: {

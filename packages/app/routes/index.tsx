@@ -7,6 +7,7 @@ import {
   useLoaderData,
   useActionData,
   useCatch,
+  useLocation,
 } from 'remix';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { useIf } from 'bresnow_utility-react-hooks';
@@ -20,6 +21,7 @@ import FormBuilder from '~/components/FormBuilder';
 import FMLogo from '~/components/svg/logos/FltngMmth';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
+import objectAssign from 'object-assign';
 
 type ErrObj = {
   _key?: string | undefined;
@@ -33,10 +35,10 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let user = gun.user();
   user.auth(ENV.APP_KEY_PAIR);
   let data;
-  console.log(request.url);
   try {
     if (ENV.DOMAIN === 'dev.cnxt.app') {
       data = await user.get('pages').get('cnxt').then();
+      objectAssign(data, { host: 'dev.cnxt.app' });
     } else {
       data = await user.get('pages').get('index').then();
     }
@@ -47,29 +49,33 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 };
 function WelcomeCard() {
   let data = useLoaderData();
-  let { text, page_title, src } = data;
-  let img = { src, alt: 'RemixGun' };
+  console.log(data, 'Welcome');
+  let { text, page_title, profile } = data;
   return (
     <div
       className='w-full mx-auto rounded-xl mt-5 p-5  relative'
       style={{ minHeight: '320px', minWidth: '420px' }}
     >
-      <Profile name={page_title} description={text} image={src} />
+      <Profile
+        title={page_title}
+        description={text}
+        profilePic={profile}
+        backgroundImage={'/images/gradient.jpg'}
+        button={{ label: 'Profile', color: 'red', to: '/builder' }}
+      />
     </div>
   );
 }
 
 export default function Index() {
+  let { host } = useLoaderData();
   const info = FormBuilder();
+
   return (
-    <info.Form
-      className='grid grid-cols-1 bg-slate-900 gap-3 px-10'
-      method={'post'}
-    >
-      <Navigation logo={<FMLogo />}>
-        <WelcomeCard />
-      </Navigation>
-    </info.Form>
+    <div>
+      <Navigation logo={host === 'dev.cnxt.app' ? <CNXTLogo /> : <FMLogo />} />
+      <WelcomeCard />
+    </div>
   );
 }
 export function AppWindow() {

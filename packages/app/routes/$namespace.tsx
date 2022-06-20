@@ -95,12 +95,13 @@ export default function NameSpaceRoute() {
   };
   const [value, setValue] = React.useState('');
   return (
-    <Navigation search={searchProps} logo={<CNXTLogo />}>
+    <>
+      <Navigation search={searchProps} logo={<CNXTLogo />} />
       <Suspense fallback={<Fallback deferred={deferred} />}>
         <SuspendedTest load={deferred.response} />
       </Suspense>
       <Outlet />
-    </Navigation>
+    </>
   );
 }
 

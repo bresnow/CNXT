@@ -82,6 +82,7 @@ export type MenuLinks = {
   link: string;
   label: string;
   icon?: string;
+  subMenu?: MenuLinks;
 }[];
 export let handle: { links: MenuLinks; scripts: ExternalScriptsFunction } = {
   links: [
