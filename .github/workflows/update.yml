@@ -7,9 +7,9 @@ on:
 
 jobs:
   yarn_build:
-    uses: bresnow/remix.gun/.github/workflows/node-build.yml@main
+    uses: bresnow/remix.gun/.github/workflows/node-build.yml@cnxt
   push_image:
-    uses: bresnow/remix.gun/.github/workflows/build-latest.yml@main
+    uses: bresnow/remix.gun/.github/workflows/build-latest.yml@cnxt
   update_apps:
     ## Matrix strategy essentially running a forEach method
     strategy:
@@ -38,7 +38,7 @@ jobs:
           docker stack deploy -c swarm-stacks/demo.yml ${{ matrix.stack-name }}
   cleanup:
     needs: update_apps
-    uses: bresnow/remix.gun/.github/workflows/cleanup.yml@main
+    uses: bresnow/remix.gun/.github/workflows/cleanup.yml@cnxt
   logs:
     needs: update_apps
-    uses: bresnow/remix.gun/.github/workflows/log.yml@main
+    uses: bresnow/remix.gun/.github/workflows/log.yml@cnxt

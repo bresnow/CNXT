@@ -1,34 +1,11 @@
-# Remix.Gun Boilerplate
+# CNXT
 
-![Remix/Gun](public/github/rmix-gun.png 'Remix.Gun')
+### Commissioned MVP.
 
-This is a boilerplate for creating distributed web apps. Using GunDB, SEA authentication and React v18. Out of the box two or more boilerplate instances can share data via GUN's peer websocket feature.
+![DEV CNXT](public/images/Logo.svg 'CNXT')
 
-## Goals
+Use the HashTagProtocol to launch dynamic namespaces for dynamic content. Tag your instances. Attach and provide Services to encrypted namespaces and deploy AaaS [Anything as a Service].
 
-- [x] Remix.GUN Relay Server Adapter
-- [x] Authorization with Gun.Sea/ Gun User Api
-- [x] Data Encrytion
-- [x] useFetcherAsync with React Suspense
-- [x] Docker Swarm Production Deployment
-- [x] Traefik Proxy & Load Balancing
+## Latest Version
 
-## Treafik Reverse Proxy & Load Balancing In Docker Swarm
-
-![Traefik Proxy & Load Balancing](public/github/traefik.png 'Traefik')
-
-Self-hosted deployment is a breeze. There are [swarm stacks](swarm-stacks) for the app and Traefik. Middleware redirects to https and uses a Lets Encrypt tls certificate resolver. Authenticated UI dashboard is also available. There are github worklow dispatchers for traefik and the app so you can spin up a new production instance from the github repo. See [Self-Hosted Github Runners Documentation](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) .
-
-![Traefik Service Manager](public/github/traefik1.png 'Traefik1')
-
-## Demo
-
-Visit the [Demo](https://remix-gun.fltngmmth.com). In another window visit the [Peer](https//dev.cnxt.app). Frontend is still in development.
-
-## Development
-
-Start the Remix development asset server.
-
-```sh
-yarn dev
-```
+Visit the latest development updates at the [dev site](https://dev.cnxt.app). Frontend is still in development.
