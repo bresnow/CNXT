@@ -33,7 +33,7 @@ jobs:
           PRIV: ${{ secrets.PRIV }}
           EPUB: ${{ secrets.EPUB }}
           EPRIV: ${{ secrets.EPRIV }}
-          IMAGE: cnxt
+          IMAGE: bresnow/cnxt
         run: |
           yarn
           docker stack deploy -c swarm-stacks/demo.yml ${{ matrix.stack-name }}

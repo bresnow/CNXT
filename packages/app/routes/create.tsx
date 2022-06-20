@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Link, useLoaderData } from 'remix';
+import { Form, Link, useLoaderData, useActionData } from 'remix';
 import type { LoaderFunction } from 'remix';
 import Gun from 'gun';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
@@ -52,6 +52,12 @@ type BlogCard = {
 };
 
 export const BlogCard = () => {
+  let action = useActionData();
+  React.useEffect(() => {
+    if (action) {
+      console.log(action);
+    }
+  }, [action]);
   return (
     <div className='mt-10 font-sans antialiased bg-gradient-to-tr from-red-600  via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
       <div className='p-5 font-sans antialiased bg-gradient-to-l from-transparent via-white to-blue-500 text-gray-900 leading-normal tracking-wider bg-cover'>
@@ -95,17 +101,27 @@ export const BlogCard = () => {
                         <path d='M16 13l6.964 4.062-2.973.85 2.125 3.681-1.732 1-2.125-3.68-2.223 2.15L16 13zm-2-7h2v2h5a1 1 0 0 1 1 1v4h-2v-3H10v10h4v2H9a1 1 0 0 1-1-1v-5H6v-2h2V9a1 1 0 0 1 1-1h5V6zM4 14v2H2v-2h2zm0-4v2H2v-2h2zm0-4v2H2V6h2zm0-4v2H2V2h2zm4 0v2H6V2h2zm4 0v2h-2V2h2zm4 0v2h-2V2h2z' />
                       </svg>
                       <p className='dark:text-jacarta-300 mx-auto max-w-xs text-xs'>
-                        JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG, GLB, GLTF.
-                        Max size: 100 MB
+                        JPG, PNG, GIF, SVG, WEBP Max size: 100 MB
+                        {/* MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. */}
                       </p>
                     </div>
-                    <div className='absolute inset-4 cursor-pointer rounded opacity-0 group-hover:opacity-100'></div>
-                    <input
-                      type='file'
-                      accept='image/*,video/*,audio/*,webgl/*,.glb,.gltf'
-                      id='file-upload'
-                      className='absolute inset-0 z-20 cursor-pointer opacity-0'
-                    />
+                    <Form method={'post'} action={'/api/v1/gun/t'}>
+                      <div className='absolute inset-4 cursor-pointer rounded opacity-0 group-hover:opacity-100'></div>
+                      <input
+                        type='file'
+                        accept='image/*,video/*,audio/*,webgl/*,.glb,.gltf'
+                        id='file-upload'
+                        className='absolute inset-0 z-20 cursor-pointer opacity-0'
+                      />
+                      <button
+                        type={'submit'}
+                        name={'test'}
+                        id={'test-budden'}
+                        value={'butt-Mahm'}
+                      >
+                        {'TEST BUDDEN'}
+                      </button>
+                    </Form>
                   </div>
                 </div>
 
