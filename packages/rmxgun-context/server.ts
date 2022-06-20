@@ -14,7 +14,7 @@ export function createServerDataloader(
   context: LoadCtx
 ) {
   return {
-    async load(id: string, internalId?: string, options?: Options) {
+    async load(id: string, options?: Options) {
       let route: ServerRouteModule = build.routeModules['routes/' + id];
       if (!route) {
         throw new Error(`Route ${id} not found`);

@@ -8,11 +8,11 @@ export type ClientContext = {
   load: Load;
 };
 interface Load {
-  (route: string, internalId?: string, options?: Options): Promise<
-    Response & any
-  >;
+  (route: string, options?: Options): Promise<Response & any>;
 }
-
+export interface Submit {
+  (options: Options): Promise<Response & any>;
+}
 let context = createContext<ClientContext | undefined>(undefined);
 export let DataloaderProvider = ({
   children,

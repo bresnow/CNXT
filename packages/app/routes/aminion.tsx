@@ -19,57 +19,36 @@ export const loader: LoaderFunction = async ({ request, context }) => {
 export default function AminionDemo() {
   let data = useLoaderData();
   let iframeRef = React.useRef<HTMLIFrameElement>(null);
-  let { response, cached } = useFetcherAsync(`/api/gun/v1/g?`, {
-    params: { path: 'cnxt' },
-  });
+  let { response, cached } = useFetcherAsync(`/create`);
   // This hook is peered to the http gun server and a few other peers.
   // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
 
   return (
     <div className='h-screen flex overflow-hidden bg-gray-600'>
       <Suspense fallback={<p>{JSON.stringify(cached)}</p>}>
-        <AminionComponent load={response} />
+        <AminionComponent response={response} />
       </Suspense>
       {/* <SecureRender namespace={'/profile'} selector={iframeRef} /> */}
     </div>
   );
 }
 export function AminionComponent({
-  load,
+  response,
   route,
 }: {
-  load(): string;
+  response(): string;
   route?: string;
 }) {
-  let srcDoc = load();
-  let iframeRef = React.useRef<HTMLIFrameElement>(null);
-  // let aminionRef = React.useRef<SecureRenderProps>(null);
-  // let [gun] = useGunStatic(Gun);
-
-  React.useEffect(() => {
-    console.log('srcDoc', srcDoc);
-  }, [srcDoc, iframeRef]);
-  // This hook is peered to the http gun server and a few other peers.
-  // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
-
+  let data = response();
   return (
-    // <Iframe refrence={iframeRef} srcdocument={} />
-    <SecureRender
-      namespace={route}
-      srcdoc={JSON.stringify(srcDoc)}
-      selector={iframeRef}
-    />
+    <div className='p-8 w-full h-full flex items-center justify-center rounded-lg'>
+      <div className='shadow-lg w-full flex items-start justify-start flex-col  rounded-lg'>
+        <Iframe
+          srcdocument={data}
+          className={`w-full h-screen`}
+          sandbox={`allow-forms allow-same-origin allow-scripts allow-top-navigation`}
+        />
+      </div>
+    </div>
   );
 }
-// let [decrypted, decryptedSet] = React.useState<string | undefined>();
-// React.useEffect(() => {
-//   let env = (window as any).ENV;
-//   //@ts-ignore
-//   Gun.SEA.decrypt(data.body, env.APP_KEY_PAIR, (data) => {
-//     if (data) {
-//       setTimeout(() => {
-//         decryptedSet(data);
-//       }, 1500);
-//     }
-//   });
-// });

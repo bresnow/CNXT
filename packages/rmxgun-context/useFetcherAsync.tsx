@@ -1,11 +1,10 @@
-import { useMemo, useId } from 'react';
+import { useMemo } from 'react';
 import { useLocation } from 'remix';
 import invariant from '@remix-run/react/invariant';
 import jsesc from 'jsesc';
 import Gun from 'gun';
 import { ClientContext, useDataLoader } from './context';
 import { useIf, useSafeCallback } from 'bresnow_utility-react-hooks';
-import { useGunStatic } from '~/remix-gun-utility/gun/hooks';
 import React from 'react';
 import { Options } from './browser';
 export { DataloaderProvider } from './context';
@@ -28,10 +27,8 @@ export interface DeferedData {
 export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
-  let id = useId();
-  console.log('key', key, search);
   let deferred = useMemo(() => {
-    invariant(dataloader, 'Context Provider is undefined for useFetcherAsync');
+    invariant(dataloader, 'Context Provider is undefined for useGunFetcher');
     let _deferred = { resolved: false } as {
       resolved: boolean;
       cache?: Record<string, any>;
@@ -40,7 +37,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
       promise: Promise<void>;
     };
     _deferred.promise = dataloader
-      .load(routePath, id, options)
+      .load(routePath, options)
       .then(({ data, cache }) => ({ data, cache }))
       .then((value) => {
         _deferred.value = value.data;
@@ -52,7 +49,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
         _deferred.resolved = true;
       });
     return _deferred;
-  }, [routePath, key, options]);
+  }, [routePath, key]);
 
   return {
     response() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMatches, useLocation, NavLink, Link } from 'remix';
+import { useMatches, useLocation, NavLink, Link, Form } from 'remix';
 import { MenuLinks } from '@/root';
 import InputText, { InputTextProps } from './InputText';
 
@@ -66,12 +66,12 @@ export function Navigation({
         {logo}
 
         {/* <!-- Search --> */}
-        <form
+        <Form
+          method={'get'}
           action='search'
           className='relative ml-12 mr-8 hidden basis-3/12 lg:block xl:ml-[8%]'
         >
           <input
-            {...search}
             className='text-jacarta-700 placeholder-jacarta-500 focus:ring-accent border-jacarta-100 w-full rounded-2xl border py-[0.6875rem] px-4 pl-10 dark:border-transparent dark:bg-white/[.15] dark:text-white dark:placeholder-white'
             placeholder='Search'
           />
@@ -87,7 +87,7 @@ export function Navigation({
               <path d='M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0 1 11 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 0 1-1.969 5.617zm-2.006-.742A6.977 6.977 0 0 0 18 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 0 0 4.875-1.975l.15-.15z' />
             </svg>
           </span>
-        </form>
+        </Form>
 
         {/* <!-- Menu / Actions --> */}
         <div className=' invisible fixed inset-0 z-10 ml-auto items-center bg-white opacity-0 lg:visible lg:relative lg:inset-auto lg:flex lg:bg-transparent lg:opacity-100 dark:lg:bg-transparent'>
@@ -167,7 +167,6 @@ export function Navigation({
                 className='dropdown-toggle border-jacarta-100 hover:bg-accent focus:bg-accent group dark:hover:bg-accent ml-2 flex h-10 w-10 items-center justify-center rounded-full border bg-white transition-colors hover:border-transparent focus:border-transparent dark:border-transparent dark:bg-white/[.15]'
                 id='profileDropdown'
                 aria-expanded='false'
-                data-bclassNamegle='dropdown'
                 aria-label='profile'
               >
                 <svg

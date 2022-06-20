@@ -1,5 +1,6 @@
 import React, { ComponentType } from 'react';
 import objectAssign from 'object-assign';
+import jsesc from 'jsesc';
 
 export interface IIframe {
   url?: string;
@@ -104,7 +105,7 @@ const Iframe: ComponentType<IIframe> = ({
       overflow: overflow || null,
     },
     scrolling: scrolling || null,
-    srcDoc: srcdocument || null,
+    srcDoc: jsesc(srcdocument) || null,
     allowpaymentrequest: allowpaymentrequest || null,
     importance: importance || null,
     sandbox: sandbox || null,

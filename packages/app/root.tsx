@@ -106,16 +106,10 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='bg-slate-500'>
         <Outlet />
 
         <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${jsesc(ENV)};`,
-          }}
-        />
-
         <Scripts />
         <ExternalScripts />
         {process.env.NODE_ENV === 'development' && <LiveReload />}
