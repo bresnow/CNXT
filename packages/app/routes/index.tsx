@@ -68,7 +68,7 @@ export default function Index() {
         backgroundImage={'/images/gradient.jpg'}
         button={[
           { label: 'Aminion', color: 'white', to: '/aminion' },
-          { label: 'Profile', color: 'blue', to: '/builder' },
+          { label: 'Namespace', color: 'blue', to: '/namespace' },
         ]}
         socials={[
           {

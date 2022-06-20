@@ -30,14 +30,14 @@ export const data = {
       },
     },
     index: {
-      page_title: 'Remix.GUN | Boilerplate Demo',
+      page_title: 'Remix.GUN Boilerplate Demo',
       profile: '/github/rmix-gun.png',
-      text: `Peer-to-peer full stack boilerplate using Remix.Run and GunDB.`,
+      text: `Peer-to-peer full stack boilerplate using Remix.Run and GunDB. I sandbox almost all of my development here to test in a production environment.`,
     },
     cnxt: {
       page_title: 'CNXT Dynamic Namespaces',
       profile: '/images/illustrations/metal2.png',
-      text: `Cryptographically hash tagged namespaces for dynamic content. Peer to peer content management and service discovery.`,
+      text: `Cryptographically hashed, dynamic namespaces for dynamic content. Peer to peer content management. Open source Paas.`,
     },
     builder: {
       page_title: 'Dynamic Namespace Builder Demo ',

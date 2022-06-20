@@ -19,13 +19,13 @@ import Display from '~/components/DisplayHeading';
 import { HashtagLarge } from '~/components/svg/Icons';
 import { InputTextProps } from '~/components/InputText';
 import CNXTLogo from '~/components/svg/logos/CNXT';
+import FMLogo from '~/components/svg/logos/FltngMmth';
 import { Navigation } from '~/components/Navigator';
 import { SuspendedTest } from './$namespace/edit';
 import Profile from '~/components/Profile';
 import { ContentEditable } from '~/components/ContentEditable';
 import React from 'react';
 import { Cedit, CeditProps, Maybe } from 'cedit';
-import FMLogo from '~/components/svg/logos/FltngMmth';
 export function Fallback({
   deferred,
 }: {
@@ -101,7 +101,7 @@ export default function NameSpaceRoute() {
       />
       <Profile
         title={namespace as string}
-        description={'jnd cj'}
+        description={'Namespace route.'}
         profilePic={'https://source.unsplash.com/1L71sPT5XKc'}
         button={[]}
         socials={[
