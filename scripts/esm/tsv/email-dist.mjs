@@ -1,35 +1,44 @@
-import { read, write } from 'fsxx';
+import { read } from 'fsxx';
 import jsesc from 'jsesc';
 import Gun from 'gun';
+
+let peers = process.env.APP_PEERS
+  ? process.env.APP_PEERS.split(',')
+  : ['https://dev.cnxt.app/gun', 'https://remix-gun.fltngmmth.com/gun'];
 let gun = Gun({
-  peers: ['https://dev.cnxt.app/gun', 'https://remix-gun.fltngmmth.com'],
+  peers,
   localhost: false,
+  file: 'ed-test',
 });
 let user = gun.user();
 const env = {
-  APP_KEY_PAIR: {
-    pub: process.env.PUB,
-    priv: process.env.PRIV,
-    epub: process.env.EPUB,
-    epriv: process.env.EPRIV,
-  },
-}(async function () {
-  try {
-    let set = await emaildist.then();
-    if (!set) {
-      let tsv = await read('/home/bresnow/config/cnxt/email-distribution.tsv');
-      await tsvNumericalSet(tsv, emaildist, env.APP_KEY_PAIR);
-    }
-  } catch (error) {
-    throw new Error(JSON.stringify(error));
-  }
-})();
+  APP_KEY_PAIR:
+    {
+      pub: process.env.PUB,
+      priv: process.env.PRIV,
+      epub: process.env.EPUB,
+      epriv: process.env.EPRIV,
+    } || (await Gun.SEA.pair()),
+};
 user = user.auth(env.APP_KEY_PAIR, (ack) => {
   if (ack.err) {
     console.error('auth failed');
   }
 });
-let emaildist = user.get('email-distribution');
+let emaildist = user.get('email-distribution').get('num-set');
+
+try {
+  let set = await emaildist.then();
+  if (!set) {
+    let tsv = await read(
+      process.env.TSV_PATH ?? 'scripts/esm/tsv/sampledata.tsv'
+    );
+    await tsvNumericalSet(tsv);
+  }
+} catch (error) {
+  throw new Error(JSON.stringify(error));
+}
+
 async function tsvNumericalSet(tsv) {
   var lines = tsv.split('\n');
   var headers = lines[0].split('\t');
@@ -61,24 +70,8 @@ async function nestedEncryption(object, encryptionkey) {
     isObject: (value) => {
       return !!(value && typeof value === 'object' && !Array.isArray(value));
     },
-    isNumber: (value) => {
-      return !!isNaN(Number(value));
-    },
-    isBoolean: (value) => {
-      if (
-        value === 'true' ||
-        value === 'false' ||
-        value === true ||
-        value === false
-      ) {
-        return true;
-      }
-    },
     isString: (value) => {
       return typeof value === 'string';
-    },
-    isArray: (value) => {
-      return Array.isArray(value);
     },
   };
   if (object && checkIf.isObject(object)) {

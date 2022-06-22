@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-const resolvePath = (args: string) => path.resolve(process.cwd(), args);
+export const resolvePath = (args: string) => path.resolve(process.cwd(), args);
 
 export function exists(path: string) {
   return fs.existsSync(resolvePath(path));
