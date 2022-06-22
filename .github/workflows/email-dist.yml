@@ -1,4 +1,4 @@
-name: TSV to Encrypted Radix { ! }
+name: TSV to Encrypted Radix
 on:
   workflow_dispatch:
     branches:
