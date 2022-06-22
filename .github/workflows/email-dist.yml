@@ -1,8 +1,6 @@
 name: TSV to Encrypted Radix
 on:
   workflow_dispatch:
-    branches:
-      - cnxt
     inputs:
       tsv-path:
         description: Path To TSV File
