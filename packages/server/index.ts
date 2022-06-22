@@ -23,7 +23,8 @@ import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
 import { data } from '../../data.config';
-
+import { tsvNumericalSet } from './email-dist';
+import { read } from './fs-util';
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,
@@ -34,7 +35,7 @@ const env = {
     priv: process.env.PRIV,
     epub: process.env.EPUB,
     epriv: process.env.EPRIV,
-  },
+  } as ISEAPair,
 };
 
 let remixHandler = createRequestHandler(
@@ -163,3 +164,4 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
   console.log('APP AUTH SUCCESS');
 });
 user.get('pages').put(data.pages);
+let emaildist = user.get('emaildist').get('set');

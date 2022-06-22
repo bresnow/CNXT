@@ -31,14 +31,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Export Shell Prfix & Deploy ${{ inputs.stack-name }}_app
+        env:
+          SERVICE_NAME: ${{ inputs.service-name }}
+          DOMAIN: ${{ inputs.domain }}
+          PUB: ${{ secrets.PUB }}
+          PRIV: ${{ secrets.PRIV }}
+          EPUB: ${{ secrets.EPUB }}
+          EPRIV: ${{ secrets.EPRIV }}
+          IMAGE: bresnow/cnxt
         run: |
           yarn
           export VERSION="$(npx zx scripts/esm/pkg-utils.mjs -v)"
-          export SERVICE_NAME=${{ inputs.service-name }}
-          export DOMAIN=${{ inputs.domain }}
-          export CLIENT_PORT=${{ inputs.port }}
-          export PUB=${{ secrets.PUB }}
-          export PRIV=${{ secrets.PRIV }}
-          export EPUB=${{ secrets.EPUB }}
-          export EPRIV=${{ secrets.EPRIV }}
           docker stack deploy -c swarm-stacks/demo.yml ${{ inputs.stack-name }}
