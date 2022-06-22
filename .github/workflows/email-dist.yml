@@ -8,15 +8,7 @@ on:
         type: string
       relay-peer:
         description: Relay peers (separated by comma)
-        required: true
-        type: string
-      service-name:
-        description: Service name for traefik
-        required: true
-        type: string
-      stack-name:
-        description: Stack name for swarm deploy
-        required: true
+        required: false
         type: string
 # App authentication only works iff SEA Keypair is destructured. Best to use repository secrets
 jobs:
