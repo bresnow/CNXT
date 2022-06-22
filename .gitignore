@@ -1,5 +1,8 @@
 node_modules
 **/node_modules
+packages/email_distribution/*.tsv
+packages/email_distribution/*.json
+packages/email_distribution/node_modules
 radata
 *.tmp
 .cache

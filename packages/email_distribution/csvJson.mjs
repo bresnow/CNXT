@@ -1,5 +1,6 @@
 import { read, write } from 'fsxx';
-let tsv = await read('./sampledata.tsv');
+import jsesc from 'jsesc';
+let tsv = await read('packages/email_distribution/sampledata.tsv');
 function tsvJSON(tsv) {
   var lines = tsv.split('\n');
 
@@ -12,14 +13,29 @@ function tsvJSON(tsv) {
     var currentline = lines[i].split('\t');
 
     for (var j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
+      if (currentline[j] && currentline[j].startsWith('"[')) {
+        currentline[j] = currentline[j].replace(/\'/g, '"');
+        currentline[j] = currentline[j]
+          .replace(/[\"\[\]\']/g, '')
+          .replace(/\"\{/g, '\\"\\{\\')
+          .replace(/\}\"/g, '\\}\\"\\')
+          .split("',");
+        let line = currentline[j];
+        for (let k = 0; k < line.length; k++) {
+          currentline[j] = line[k].split(', ');
+        }
+      }
+      obj[headers[j]] = jsesc(currentline[j]);
     }
 
     result.push(obj);
   }
 
-  return JSON.stringify(result);
+  return result;
 }
 let json = tsvJSON(tsv);
 
-// await write("data.json", json)
+// await write("packages/email_distribution/data.json", JSON.stringify(json))
+function parsejson(json) {
+  return JSON.parse(JSON.stringify(json));
+}
