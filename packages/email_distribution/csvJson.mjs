@@ -1,5 +1,14 @@
 import { read, write } from 'fsxx';
 import jsesc from 'jsesc';
+import Gun from 'gun';
+let keys = await Gun.SEA.pair();
+let gun = Gun({ localhost: false, file: 'email-dist' });
+let user = gun.user();
+user = user.auth(keys, (ack) => {
+  if (ack.err) {
+    console.error('auth failed');
+  }
+});
 let tsv = await read('packages/email_distribution/sampledata.tsv');
 function tsvJSON(tsv) {
   var lines = tsv.split('\n');
@@ -27,7 +36,7 @@ function tsvJSON(tsv) {
       }
       obj[headers[j]] = jsesc(currentline[j]);
     }
-
+    user.set(obj);
     result.push(obj);
   }
 
