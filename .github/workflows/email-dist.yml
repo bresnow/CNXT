@@ -1,18 +1,22 @@
-name: Deploy Remix.Gun App
+name: TSV to Encrypted Radix { ! }
 on:
   workflow_dispatch:
     inputs:
-      domain:
-        description: App host name
-        required: true
-        type: string
-      port:
-        description: App port
+      tsv-path:
+        description: Path To TSV File
         required: true
         type: string
       relay-peer:
         description: Relay peers (separated by comma)
-        required: false
+        required: true
+        type: string
+      service-name:
+        description: Service name for traefik
+        required: true
+        type: string
+      stack-name:
+        description: Stack name for swarm deploy
+        required: true
         type: string
 # App authentication only works iff SEA Keypair is destructured. Best to use repository secrets
 jobs:
@@ -24,14 +28,12 @@ jobs:
       - uses: actions/checkout@v3
       - name: Export Shell Prfix & Deploy ${{ inputs.stack-name }}_app
         env:
-          SERVICE_NAME: ${{ inputs.service-name }}
-          DOMAIN: ${{ inputs.domain }}
+          TSV_PATH: ${{ inputs.tsv-path }}
+          PEERS: ${{ inputs.relay-peer }}
           PUB: ${{ secrets.PUB }}
           PRIV: ${{ secrets.PRIV }}
           EPUB: ${{ secrets.EPUB }}
           EPRIV: ${{ secrets.EPRIV }}
-          IMAGE: bresnow/cnxt
         run: |
           yarn
-          export VERSION="$(npx zx scripts/esm/pkg-utils.mjs -v)"
-          docker stack deploy -c swarm-stacks/demo.yml ${{ inputs.stack-name }}
+          node scripts/esm/tsv/email-dist.mjs

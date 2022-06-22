@@ -2,27 +2,25 @@ import { read } from 'fsxx';
 import jsesc from 'jsesc';
 import Gun from 'gun';
 
-let peers = process.env.APP_PEERS
-  ? process.env.APP_PEERS.split(',')
+let peers = process.env.PEERS
+  ? process.env.PEERS.split(',')
   : ['https://dev.cnxt.app/gun', 'https://remix-gun.fltngmmth.com/gun'];
 let gun = Gun({
   peers,
   localhost: false,
-  file: 'ed-test',
 });
 let user = gun.user();
 const env = {
-  APP_KEY_PAIR:
-    {
-      pub: process.env.PUB,
-      priv: process.env.PRIV,
-      epub: process.env.EPUB,
-      epriv: process.env.EPRIV,
-    } || (await Gun.SEA.pair()),
+  APP_KEY_PAIR: {
+    pub: process.env.PUB,
+    priv: process.env.PRIV,
+    epub: process.env.EPUB,
+    epriv: process.env.EPRIV,
+  },
 };
 user = user.auth(env.APP_KEY_PAIR, (ack) => {
   if (ack.err) {
-    console.error('auth failed');
+    throw new Error(ack.err);
   }
 });
 let emaildist = user.get('email-distribution').get('num-set');
@@ -33,8 +31,12 @@ try {
     let tsv = await read(
       process.env.TSV_PATH ?? 'scripts/esm/tsv/sampledata.tsv'
     );
-    await tsvNumericalSet(tsv);
+    let done = await tsvNumericalSet(tsv);
+    if (done === 'Done') {
+      process.exit(0);
+    }
   }
+  console.error('Data already loaded');
 } catch (error) {
   throw new Error(JSON.stringify(error));
 }
@@ -63,6 +65,7 @@ async function tsvNumericalSet(tsv) {
     let encrypted = await nestedEncryption(obj, env.APP_KEY_PAIR.epriv);
     emaildist.set(encrypted);
   }
+  return 'Done';
 }
 
 async function nestedEncryption(object, encryptionkey) {
