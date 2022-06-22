@@ -20,13 +20,13 @@ on:
         type: string
 # App authentication only works iff SEA Keypair is destructured. Best to use repository secrets
 jobs:
-  deploy_app:
+  tsv_rad:
     runs-on:
       - self-hosted
       - main-server
     steps:
       - uses: actions/checkout@v3
-      - name: Export Shell Prfix & Deploy ${{ inputs.stack-name }}_app
+      - name: Run
         env:
           TSV_PATH: ${{ inputs.tsv-path }}
           PEERS: ${{ inputs.relay-peer }}
