@@ -1,11 +1,14 @@
 {
-  "name": "csvshit",
+  "name": "email-distribution",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
+  "module": "es2022",
   "license": "MIT",
   "dependencies": {
     "fsxx": "^0.1.0",
     "jsesc": "^3.0.2",
-    "object-assign": "^4.1.1"
+    "object-assign": "^4.1.1",
+    "typescript": "^4.7.4"
   }
 }
