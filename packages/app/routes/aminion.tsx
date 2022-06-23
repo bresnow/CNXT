@@ -6,7 +6,7 @@ import { _Window } from '../../../types/index';
 export default function AminionDemo() {
   return (
     <>
-      <Navigation logo={<CNXTLogo to='/' />} />
+      <Navigation logo={<CNXTLogo darkMode to='/' />} />
       <Outlet />
     </>
   );

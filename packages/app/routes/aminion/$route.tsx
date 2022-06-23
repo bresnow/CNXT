@@ -39,11 +39,11 @@ export default function AminionDemo() {
   // We are gonna put the demo prop on the node "test" making the node path "test/demo/markup/html/"
 
   function onLoad({ target }: Event) {
-    loadingSet(false);
     const log = console.log.bind(console);
     let window = (target as HTMLIFrameElement).contentWindow;
     let document = (target as HTMLIFrameElement).contentDocument;
     contextSet(window?.__remixContext);
+    loadingSet(false);
   }
   React.useEffect(() => {
     console.log('context', context);
@@ -78,8 +78,8 @@ export function Aminion({
         <Iframe
           url={route}
           reference={reference}
-          className={`w-full h-screen transition-opacity duration-200 ${
-            loading ? 'opacity-0' : 'opacity-100'
+          className={`w-full h-screen transition-all duration-500  ${
+            loading ? 'blur opacity-50' : ' opacity-100'
           }`}
           onLoad={onLoad}
           sandbox={

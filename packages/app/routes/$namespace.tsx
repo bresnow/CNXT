@@ -96,7 +96,7 @@ export default function NameSpaceRoute() {
   const [value, setValue] = React.useState('');
   return (
     <>
-      <Navigation logo={<CNXTLogo to='/' />} />
+      <Navigation logo={<CNXTLogo darkMode to='/' />} />
       <Profile
         title={namespace as string}
         description={'Namespace route.'}
