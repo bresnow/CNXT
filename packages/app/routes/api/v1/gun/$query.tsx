@@ -13,61 +13,55 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, ENV } = RemixGunContext(Gun, request);
   let url = new URL(request.url);
-  let data;
-  let session = await getSession();
   let path = url.searchParams.get('path');
   let auth = url.searchParams.get('auth') === ('true' || true) ? true : false;
   let compressed =
     url.searchParams.get('compressed') === ('true' || true) ? true : false;
-  let sessionKP = session.get('key_pair')
-    ? (JSON.parse(session.get('key_pair') as string) as ISEAPair)
-    : undefined;
-  if (auth && sessionKP) {
-    gun = gun.user().auth(sessionKP);
-  }
-  if (auth && !sessionKP) {
-    gun = gun.user().auth(ENV.APP_KEY_PAIR);
-  }
-  if (compressed && path) {
-    path = LZString.decompressFromEncodedURIComponent(path);
-  }
+  let user = gun.user().auth(ENV.APP_KEY_PAIR, (ack) => {
+    if ((ack as any).err) {
+      console.log('error');
+    }
+  });
+  // if (compressed && path) {
+  //   path = LZString.decompressFromEncodedURIComponent(path);
+  // }
   let queryHandler: QueryHandler = new Map([
     [
-      'undefined' || null,
-      () => {
-        throw new Error('No query type specified');
+      QueryType.GET,
+      async () => {
+        let data = await gun
+          .user()
+          .auth(ENV.APP_KEY_PAIR, (ack) => {
+            if ((ack as any).err) {
+              console.log('error');
+            }
+          })
+          .path((path as string).replace('/', '.'))
+          .then();
+        console.log(data);
+        return data;
       },
     ],
     [
-      QueryType.GET,
-      async () =>
-        (data = await gun.path((path as string).replace('/', '.')).then()),
-    ],
-    [
       QueryType.OPEN,
-      () =>
+      async () =>
         new Promise((res, _rej) =>
-          gun.path((path as string).replace('/', '.')).open((data) => {
-            res(data);
-          })
+          gun
+            .user()
+            .auth(ENV.APP_KEY_PAIR, (ack) => {
+              if ((ack as any).err) {
+                console.log('error');
+              }
+            })
+            .path((path as string).replace('/', '.'))
+            .open((data: any) => {
+              res(data);
+            })
         ),
     ],
   ]);
   let query = queryHandler.get(params.query as string),
     res = query && (await query());
-  console.log(res, 'res');
+  console.log(res);
   return json(res, { status: 200, headers: { 'FLTNGMMTH-DEV': 'true' } });
-};
-
-export let action: ActionFunction = async ({ params, request, context }) => {
-  let { RemixGunContext } = context as LoadCtx;
-  let { formData } = RemixGunContext(Gun, request);
-  let data;
-  try {
-    data = await formData();
-  } catch (error) {
-    data = error;
-  }
-  console.log(data, 'data_ACTION');
-  return json(data, { headers: { 'X-Test': 'test' } });
 };

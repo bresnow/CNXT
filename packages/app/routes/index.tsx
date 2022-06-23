@@ -53,7 +53,7 @@ export default function Index() {
 
   return (
     <>
-      <Navigation logo={<CNXTLogo darkMode={'true'} to='/' />} />
+      <Navigation logo={<CNXTLogo to='/' />} />
       <Profile
         title={page_title}
         description={text}

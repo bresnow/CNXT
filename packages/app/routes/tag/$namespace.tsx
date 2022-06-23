@@ -70,8 +70,9 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   return json(data);
 };
 function SuspendedProfileInfo({ getData }: { getData: () => any }) {
+  let log = console.log.bind(console);
   let data = getData();
-
+  log(data);
   return (
     <pre>
       <code>{JSON.stringify(data, null, 2)}</code>
@@ -83,7 +84,7 @@ export default function NameSpaceRoute() {
   let { namespace } = useParams();
   let { host } = useLoaderData();
   let deferred = useFetcherAsync(`/api/v1/gun/g?`, {
-    params: { path: `demo.tags.namespaces.${namespace}` },
+    params: { path: `${namespace}`, auth: 'true' },
   });
   const [value, setValue] = React.useState('');
   return (

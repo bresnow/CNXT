@@ -85,9 +85,9 @@ export default function NameSpaceRoute() {
   let { namespace } = useParams();
   let { host } = useLoaderData();
   let { response, cached } = useFetcherAsync(`/api/gun/v1/o?`, {
-    params: { path: `tags.${namespace}` },
+    params: { path: `${namespace}` },
   });
-  let deferred = useFetcherAsync(`/api/gun/v1/g?`, {
+  let deferred = useFetcherAsync(`/api/gun/v1/get?`, {
     params: { path: `${namespace}` },
   });
   let searchProps: InputTextProps = {
@@ -100,7 +100,7 @@ export default function NameSpaceRoute() {
   const [value, setValue] = React.useState('');
   return (
     <>
-      <Navigation logo={<CNXTLogo darkMode={'true'} to='/' />} />
+      <Navigation logo={<CNXTLogo to='/' />} />
       <Profile
         title={namespace as string}
         description={'Namespace route.'}
@@ -120,7 +120,7 @@ export default function NameSpaceRoute() {
         <SuspendedTest load={response} />
       </Suspense>
       <Suspense fallback={<Fallback deferred={deferred} />}>
-        <SuspendedTest load={deferred.response} />
+        <SuspendedTest load={response} />
       </Suspense>
       <Outlet />
     </>

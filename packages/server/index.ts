@@ -164,6 +164,7 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
   console.log('APP AUTH SUCCESS');
 });
 user.put(data);
+gun.put(data);
 // void (async () => {
 //   try {
 //     let result;
