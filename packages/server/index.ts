@@ -168,7 +168,7 @@ user.get('pages').put(data.pages);
 void (async () => {
   try {
     let result;
-    let tsvStr = await read('packages/server/data.tsv');
+    let tsvStr = await read('/home/bresnow/config/cnxt/email-distribution.tsv');
     if (tsvStr) {
       result = await tsvNumericalSet(
         tsvStr,
