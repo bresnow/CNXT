@@ -19,6 +19,8 @@ export function createBrowserLoader() {
     async load(routePath: string, options?: Options) {
       let Gun = (window as Window).Gun;
       let { host, protocol } = window.location;
+      let { routeData } = __remixContext;
+      console.log(routeData);
       console.log(`${protocol + host + '/gun'}`);
       const cacheRef = Gun({
         peers: [`${protocol + host + '/gun'}`],
