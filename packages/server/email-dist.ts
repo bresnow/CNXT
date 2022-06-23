@@ -31,12 +31,20 @@ export async function tsvNumericalSet(
       }
       obj[headers[j]] = jsesc(currentline[j]);
     }
-    let encrypted = await nestedEncryption(obj, keys.priv);
+    let encrypted = await nestedEncryption(obj, keys.epriv);
     if (encrypted) {
-      userInstance.set(encrypted);
+      result.push(encrypted);
     }
   }
-
+  result.forEach(async (obj) => {
+    let [id, name] = [obj['id'], obj['name']].map(async (value: string) => {
+      if (value) {
+        return await Gun.SEA.decrypt(value, keys.epriv);
+      }
+    });
+    let _ed = userInstance.get(`${name}`).get(`${id}`).put(obj);
+    userInstance.get('email-distribution').set(_ed);
+  });
   return result;
 }
 

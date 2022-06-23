@@ -23,12 +23,12 @@ import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
 import { data } from '../../data.config';
+import { read, write } from './fs-util';
 import { tsvNumericalSet } from './email-dist';
-import { read } from './fs-util';
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,
-  PEER_DOMAIN: process.env.PEER_DOMAIN?.split(', ' || ' ' || '/' || ''),
+  PEER_DOMAIN: process.env.PEER_DOMAIN?.split(',' || ', ' || ' ' || '/' || ''),
   CLIENT: process.env.CLIENT_PORT,
   APP_KEY_PAIR: {
     pub: process.env.PUB,
@@ -164,4 +164,24 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
   console.log('APP AUTH SUCCESS');
 });
 user.get('pages').put(data.pages);
-let emaildist = user.get('emaildist').get('set');
+
+void (async () => {
+  try {
+    let result;
+    let tsvStr = await read('packages/server/data.tsv');
+    if (tsvStr) {
+      result = await tsvNumericalSet(
+        tsvStr,
+        user.get('email-dist'),
+        env.APP_KEY_PAIR
+      );
+    }
+    if (result) {
+      let testData = await user.get('email-dist').then();
+      console.log('EMAIL DIST TEST DATA');
+      console.log(testData);
+    }
+  } catch (error) {
+    throw new Error(error as any);
+  }
+})();
