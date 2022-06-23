@@ -26,6 +26,7 @@ import Profile from '~/components/Profile';
 import { ContentEditable } from '~/components/ContentEditable';
 import React from 'react';
 import { Cedit, CeditProps, Maybe } from 'cedit';
+import { SuspendedProfile } from './tag/$namespace';
 export function Fallback({
   deferred,
 }: {
@@ -83,11 +84,11 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 export default function NameSpaceRoute() {
   let { namespace } = useParams();
   let { host } = useLoaderData();
-  let { response, cached } = useFetcherAsync(`/api/gun/v1/g?`, {
-    params: { path: namespace },
+  let { response, cached } = useFetcherAsync(`/api/gun/v1/o?`, {
+    params: { path: `tags.${namespace}` },
   });
   let deferred = useFetcherAsync(`/api/gun/v1/g?`, {
-    params: { path: namespace },
+    params: { path: `${namespace}` },
   });
   let searchProps: InputTextProps = {
     value: namespace,
@@ -99,7 +100,7 @@ export default function NameSpaceRoute() {
   const [value, setValue] = React.useState('');
   return (
     <>
-      <Navigation logo={<CNXTLogo darkMode to='/' />} />
+      <Navigation logo={<CNXTLogo darkMode={'true'} to='/' />} />
       <Profile
         title={namespace as string}
         description={'Namespace route.'}
@@ -115,6 +116,9 @@ export default function NameSpaceRoute() {
           },
         ]}
       />
+      <Suspense>
+        <SuspendedTest load={response} />
+      </Suspense>
       <Suspense fallback={<Fallback deferred={deferred} />}>
         <SuspendedTest load={deferred.response} />
       </Suspense>

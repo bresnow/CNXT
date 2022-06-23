@@ -1,5 +1,6 @@
 import { ISEAPair } from 'gun';
 import { Form, Link } from 'remix';
+import { ImageCard } from '../app/routes/index';
 export type SocialLinkType = {
   href: string;
   color:
@@ -152,6 +153,7 @@ export default function Profile({
               />
             </div>
           </div>
+          <ImageCard src={backgroundImage} />
         </div>
       </div>
     </div>

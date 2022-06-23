@@ -53,14 +53,13 @@ export default function Index() {
 
   return (
     <>
-      <Navigation logo={<CNXTLogo darkMode to='/' />} />
+      <Navigation logo={<CNXTLogo darkMode={'true'} to='/' />} />
       <Profile
         title={page_title}
         description={text}
         profilePic={profile}
-        backgroundImage={'/images/gradient.jpg'}
         button={[
-          { label: 'Aminion', color: 'white', to: '/aminion' },
+          { label: 'Aminion', color: 'white', to: '/aminion/sandbox' },
           { label: 'Namespace', color: 'blue', to: '/namespace' },
         ]}
         socials={[
