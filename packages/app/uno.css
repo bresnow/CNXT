@@ -41,8 +41,6 @@
 .fixed{position:fixed;}
 .relative,
 [relative=""]{position:relative;}
-.sticky{position:sticky;}
-.static{position:static;}
 .inset-0{inset:0rem;}
 .inset-4{inset:1rem;}
 .-bottom-2{bottom:-0.5rem;}
@@ -176,7 +174,6 @@
 .mt-8{margin-top:2rem;}
 .mt-auto{margin-top:auto;}
 .mt-px{margin-top:1px;}
-.inline{display:inline;}
 .block,
 .dark .dark\:block,
 [block=""]{display:block;}

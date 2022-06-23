@@ -165,23 +165,24 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
 });
 user.get('pages').put(data.pages);
 
-void (async () => {
-  try {
-    let result;
-    let tsvStr = await read('/home/bresnow/config/cnxt/email-distribution.tsv');
-    if (tsvStr) {
-      result = await tsvNumericalSet(
-        tsvStr,
-        user.get('email-dist'),
-        env.APP_KEY_PAIR
-      );
-    }
-    if (result) {
-      let testData = await user.get('email-dist').then();
-      console.log('EMAIL DIST TEST DATA');
-      console.log(testData);
-    }
-  } catch (error) {
-    throw new Error(error as any);
-  }
-})();
+// void (async () => {
+//   try {
+//     let result;
+//     let tsvStr = await read('/home/bresnow/config/cnxt/email-distribution.tsv');
+//     if (tsvStr) {
+//       result = await tsvNumericalSet(
+//         tsvStr,
+//         user.get('email-dist'),
+//         env.APP_KEY_PAIR
+//       );
+//     }
+//     if (result) {
+//      user.get('email-dist').get('email-distribution').once().map().on((val) => {
+// console.log(val);
+//      }
+// );
+//     }
+//   } catch (error) {
+//     throw new Error(error as any);
+//   }
+// })();

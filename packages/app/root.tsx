@@ -108,7 +108,6 @@ export default function App() {
       </head>
       <body className='bg-slate-500'>
         <Outlet />
-
         <ScrollRestoration />
         <Scripts />
         <ExternalScripts />
