@@ -40,7 +40,7 @@ export default function ProfileRoute() {
     <>
       {/* <Profile /> */}
       <Suspense fallback='Loading Profile....'>
-        <BlogNoSideBar getItems={postsLoader.response as any} />
+        <SuspendedProfileInfo getData={postsLoader.response as any} />
       </Suspense>
     </>
   );

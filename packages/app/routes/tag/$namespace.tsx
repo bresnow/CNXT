@@ -84,13 +84,12 @@ export default function NameSpaceRoute() {
   let { namespace } = useParams();
   let { host } = useLoaderData();
   let deferred = useFetcherAsync(`/api/v1/gun/g?`, {
-    params: { path: `${namespace}`, auth: 'true' },
+    params: { path: `tags.${namespace}` },
   });
   const [value, setValue] = React.useState('');
   return (
     <>
-      <Suspense fallback={<p>{JSON.stringify(deferred.cached)}</p>}>
-        <SuspendedProfile response={deferred.response} />
+      <Suspense fallback={<p>loading...</p>}>
         <SuspendedProfileInfo getData={deferred.response} />
       </Suspense>
 

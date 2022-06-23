@@ -19,6 +19,7 @@ export function createBrowserLoader() {
     async load(routePath: string, options?: Options) {
       let Gun = (window as Window).Gun;
       let { host, protocol } = window.location;
+      console.log(`${protocol + host + '/gun'}`);
       const cacheRef = Gun({
         peers: [`${protocol + host + '/gun'}`],
         localStorage: false,
@@ -34,11 +35,13 @@ export function createBrowserLoader() {
           routePath = LZString.compressToEncodedURIComponent(routePath);
         }
       }
-      let { data } = await axios.request(routePath, options);
+      let { data } = await axios.get(routePath, options);
+      console.log(data, '???????');
       let cache;
       if (includes(options?.params, 'path')) {
         let { path } = options?.params as any;
-        cacheRef.path(path).put(data.data);
+        console.log(path, data, 'Browser CTX');
+        cacheRef.path(path).put(data);
         cache = await new Promise((res, rej) =>
           cacheRef.path((path as string).replace('/', '.')).open((data) => {
             data ? res(data) : rej(data);

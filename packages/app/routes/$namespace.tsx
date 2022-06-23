@@ -84,10 +84,10 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 export default function NameSpaceRoute() {
   let { namespace } = useParams();
   let { host } = useLoaderData();
-  let { response, cached } = useFetcherAsync(`/api/gun/v1/o?`, {
+  let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
     params: { path: `${namespace}` },
   });
-  let deferred = useFetcherAsync(`/api/gun/v1/get?`, {
+  let deferred = useFetcherAsync(`/api/v1/gun/g?`, {
     params: { path: `${namespace}` },
   });
   let searchProps: InputTextProps = {
@@ -117,13 +117,24 @@ export default function NameSpaceRoute() {
         ]}
       />
       <Suspense>
-        <SuspendedTest load={response} />
+        <SuspendedProfileInfo response={response} />
       </Suspense>
-      <Suspense fallback={<Fallback deferred={deferred} />}>
-        <SuspendedTest load={response} />
+      <Suspense>
+        <SuspendedProfileInfo response={response} />
       </Suspense>
       <Outlet />
     </>
+  );
+}
+
+export function SuspendedProfileInfo({ response }: { response: () => any }) {
+  let log = console.log.bind(console);
+  let data = response();
+  log(data);
+  return (
+    <pre>
+      <code>{JSON.stringify(data, null, 2)}</code>
+    </pre>
   );
 }
 
