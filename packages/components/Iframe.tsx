@@ -38,6 +38,7 @@ export interface IIframe {
   onLoad?: (e: Event) => void;
   onMouseOver?: () => void;
   onMouseOut?: () => void;
+  onMessage?: (e: MessageEvent) => void;
   frameBorder?: number;
   scrolling?: 'auto' | 'yes' | 'no';
   id?: string;
@@ -76,6 +77,7 @@ const Iframe: ComponentType<IIframe> = ({
   onLoad,
   onMouseOver,
   onMouseOut,
+
   scrolling,
   srcdocument,
   reference,
@@ -154,7 +156,28 @@ const Iframe: ComponentType<IIframe> = ({
       props.style.border = frameBorder;
     }
   }
+
   return <iframe {...props} />;
 };
 
 export default Iframe;
+
+export function useEventListener(
+  eventType: string,
+  callback: (e: Event) => void,
+  element = window
+) {
+  const callbackRef = React.useRef(callback);
+
+  React.useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  React.useEffect(() => {
+    if (element == null) return;
+    const handler = (e: Event) => callbackRef.current(e);
+    element.addEventListener(eventType, handler);
+
+    return () => element.removeEventListener(eventType, handler);
+  }, [eventType, element]);
+}

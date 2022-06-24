@@ -21,7 +21,6 @@ export function createBrowserLoader() {
       let { host, protocol } = window.location;
       let { routeData } = __remixContext;
       console.log(routeData);
-      console.log(`${protocol + host + '/gun'}`);
       const cacheRef = Gun({
         peers: [`${protocol + host + '/gun'}`],
         localStorage: false,
@@ -38,7 +37,6 @@ export function createBrowserLoader() {
         }
       }
       let { data } = await axios.get(routePath, options);
-      console.log(data, '???????');
       let cache;
       if (includes(options?.params, 'path')) {
         let { path } = options?.params as any;

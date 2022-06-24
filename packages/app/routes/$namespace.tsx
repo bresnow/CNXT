@@ -83,7 +83,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export default function NameSpaceRoute() {
   let { namespace } = useParams();
-  let { host } = useLoaderData();
+  let { host, ...data } = useLoaderData();
   let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
     params: { path: `${namespace}` },
   });
@@ -103,7 +103,7 @@ export default function NameSpaceRoute() {
       <Navigation logo={<CNXTLogo to='/' />} />
       <Profile
         title={namespace as string}
-        description={'Namespace route.'}
+        description={data.description ?? 'description'}
         profilePic={'https://source.unsplash.com/1L71sPT5XKc'}
         button={[]}
         socials={[
