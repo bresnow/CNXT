@@ -44,11 +44,23 @@ export const data = {
         'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
       profilePic: '/images/AppIcon.svg',
     },
-  },
-  hashtagProtocol: {
-    title: '#HashTagProtocol',
-    description:
-      'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
-    profilePic: '/images/AppIcon.svg',
+    tag: {
+      title: '#Tag',
+      description:
+        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
+      profilePic: '/images/AppIcon.svg',
+    },
+    cnxt: {
+      title: '#CNXT',
+      description:
+        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
+      profilePic: '/images/AppIcon.svg',
+    },
+    bresnow: {
+      title: '#Bresnow',
+      description:
+        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
+      profilePic: '/images/AppIcon.svg',
+    },
   },
 };

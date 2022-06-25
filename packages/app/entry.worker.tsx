@@ -6,11 +6,7 @@ import Gun from 'gun';
 import { includes } from '../rmxgun-context/useFetcherAsync';
 export type {};
 declare let self: ServiceWorkerGlobalScope;
-let gun = Gun({
-  localStorage: false,
-  radisk: true,
-  file: 'SERVICE_WORKER_CACHE',
-});
+let gun = Gun();
 let STATIC_ASSETS = ['/build/', '/icons/'];
 let ASSET_CACHE = 'asset-cache';
 let DATA_CACHE = 'data-cache';

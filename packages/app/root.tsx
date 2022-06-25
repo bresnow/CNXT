@@ -48,11 +48,9 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     radisk: true,
     localStorage: false,
   };
-
   return json<RootLoaderData>({
     meta,
     gunOpts,
-    ENV,
   });
 };
 export type RootLoaderData = {
@@ -62,11 +60,10 @@ export type RootLoaderData = {
     radisk: boolean;
     localStorage: boolean;
   };
-  ENV: {
+  ENV?: {
     DOMAIN: string | undefined;
     PEER_DOMAIN: string[] | undefined;
     CLIENT: string | undefined;
-    APP_KEY_PAIR: ISEAPair;
   };
 };
 
@@ -97,7 +94,6 @@ export let handle: { links: MenuLinks; scripts: ExternalScriptsFunction } = {
 };
 
 export default function App() {
-  let { ENV } = useLoaderData();
   return (
     <html lang='en'>
       <head>

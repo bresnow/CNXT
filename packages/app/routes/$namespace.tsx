@@ -1,32 +1,23 @@
 import { Suspense } from 'react';
 import Gun from 'gun';
 import {
-  ActionFunction,
   json,
   LoaderFunction,
   useLoaderData,
-  useActionData,
   useCatch,
   Outlet,
   useParams,
-  useLocation,
   Form,
-  useFetcher,
 } from 'remix';
-import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
+import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
 import { HashtagLarge } from '~/components/svg/Icons';
 import { InputTextProps } from '~/components/InputText';
 import CNXTLogo from '~/components/svg/logos/CNXT';
-import FMLogo from '~/components/svg/logos/FltngMmth';
 import { Navigation } from '~/components/Navigator';
-import { SuspendedTest } from './$namespace/edit';
 import Profile from '~/components/Profile';
-import { ContentEditable } from '~/components/ContentEditable';
 import React from 'react';
-import { Cedit, CeditProps, Maybe } from 'cedit';
-import { SuspendedProfile } from './tag/$namespace';
 export function Fallback({
   deferred,
 }: {
@@ -73,38 +64,60 @@ type LoadError = {
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, seaAuth, ENV } = RemixGunContext(Gun, request);
-
   let namespace = params.namespace as string;
-
-  let data = { host: ENV.DOMAIN, namespace };
-
-  return json(data);
+  let nsNode = gun
+    .user()
+    .auth(ENV.APP_KEY_PAIR, function (ack) {
+      let err = (ack as any).err;
+      if (err) {
+        console.error(err);
+      }
+    })
+    .get('tags')
+    .get(namespace);
+  let data;
+  let nodeData = await nsNode.then();
+  if (!nodeData[namespace]) {
+    data = {
+      id: false,
+      title: namespace,
+      description: `#${namespace} is an available namespace.`,
+      profilePic: '/images/AppIcon.svg',
+    };
+    return json(data);
+  }
+  console.log('nodeData[namespace]', nodeData[namespace]);
+  return json(nodeData);
 };
 
 export default function NameSpaceRoute() {
   let { namespace } = useParams();
-  let { host, ...data } = useLoaderData();
+  let data = useLoaderData();
+  console.log(data);
   let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
-    params: { path: `${namespace}` },
+    params: { path: `tags.${namespace}` },
   });
-  let deferred = useFetcherAsync(`/api/v1/gun/g?`, {
-    params: { path: `${namespace}` },
-  });
-  let searchProps: InputTextProps = {
-    value: namespace,
-    placeholder: namespace,
-    icon: <HashtagLarge className={`${'fill-primary'} `} />,
-    className:
-      'w-full bg-transparent text-primary py-2 group placeholder:text-primary focus:outline-none rounded-md flex',
-  };
+
   const [value, setValue] = React.useState('');
   return (
     <>
       <Navigation logo={<CNXTLogo to='/' />} />
+      <Suspense>
+        <SuspendedProfileInfo response={response} />
+      </Suspense>
+      <Outlet />
+    </>
+  );
+}
+
+export function SuspendedProfileInfo({ response }: { response: () => any }) {
+  let data = response();
+  return (
+    <>
       <Profile
-        title={namespace as string}
-        description={data.description ?? 'description'}
-        profilePic={'https://source.unsplash.com/1L71sPT5XKc'}
+        title={data.title}
+        description={data.description}
+        profilePic={data.profilePic}
         button={[]}
         socials={[
           {
@@ -116,25 +129,7 @@ export default function NameSpaceRoute() {
           },
         ]}
       />
-      <Suspense>
-        <SuspendedProfileInfo response={response} />
-      </Suspense>
-      <Suspense>
-        <SuspendedProfileInfo response={response} />
-      </Suspense>
-      <Outlet />
     </>
-  );
-}
-
-export function SuspendedProfileInfo({ response }: { response: () => any }) {
-  let log = console.log.bind(console);
-  let data = response();
-  log(data);
-  return (
-    <pre>
-      <code>{JSON.stringify(data, null, 2)}</code>
-    </pre>
   );
 }
 

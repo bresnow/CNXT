@@ -65,6 +65,8 @@ export default function Profile({
   keypair?: ISEAPair;
   socials: SocialLinkType;
 }) {
+  const [edit, setEdit] = React.useState;
+
   return (
     <div className=' font-sans antialiased bg-gradient-to-tr from-cnxt_red via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
       <div className='p-5 font-sans antialiased bg-gradient-to-b from-cnxt_black via-blue-400 to-cnxt_blue text-gray-900 leading-normal tracking-wider bg-cover'>
@@ -84,7 +86,11 @@ export default function Profile({
                 ></div>
 
                 <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
-                  <h1 className='text-jacarta-700 font-display mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl'>
+                  <h1
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                    className='text-jacarta-700 font-display mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl'
+                  >
                     {title}
                   </h1>
                   <p className='dark:text-jacarta-200 mb-8 text-center text-lg md:text-left'>
