@@ -1,4 +1,5 @@
 import { ISEAPair } from 'gun';
+import React from 'react';
 import { Form, Link } from 'remix';
 import { ImageCard } from '../app/routes/index';
 export type SocialLinkType = {
@@ -16,23 +17,56 @@ export type SocialLinkType = {
   title: string;
   svgPath: string;
 }[];
-
+type ColorChoice =
+  | 'white'
+  | 'gray'
+  | 'red'
+  | 'yellow'
+  | 'green'
+  | 'blue'
+  | 'purple'
+  | 'pink'
+  | 'indigo';
 const colors = {
   white:
-    'shadow-md bg-white hover:bg-gray-100 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-indigo-900',
-  gray: 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500 focus:ring-offset-gray-200',
-  red: 'bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-red-200',
+    'bg-white border border-cnxt_red shadow-sm hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
+  gray: 'bg-white border border-slate-800 shadow-sm hover:bg-gradient-to-t hover:from-slate-500 hover:via-gray-100 hover:to-slate-200 ',
+  red: 'bg-white border border-cnxt_red shadow-sm hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
   yellow:
-    'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500 focus:ring-offset-yellow-200',
+    'bg-white border border-yellow-500 shadow-sm hover:bg-gradient-to-t hover:from-yellow-700 hover:via-gray-100 hover:to-yellow-300 ',
   green:
-    'bg-green-500 hover:bg-green-700 focus:ring-green-500 focus:ring-offset-green-200',
-  blue: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200',
+    'bg-white border border-green-500 shadow-sm hover:bg-gradient-to-t hover:from-green-700 hover:via-gray-100 hover:to-green-300 ',
+  blue: 'bg-white border border-cnxt_blue shadow-sm hover:bg-gradient-to-t hover:from-cnxt_blue hover:via-gray-100 hover:to-blue-300 ',
   indigo:
-    'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-offset-indigo-200',
+    'bg-white border border-indigo-500 shadow-sm hover:bg-gradient-to-t hover:from-indigo-700 hover:via-gray-100 hover:to-indigo-300 ',
   purple:
-    'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200',
-  pink: 'bg-pink-600 hover:bg-pink-700 focus:ring-pink-500 focus:ring-offset-pink-200',
+    'bg-white border border-purple-500 shadow-sm hover:bg-gradient-to-t hover:from-purple-700 hover:via-gray-100 hover:to-purple-300 ',
+  pink: 'bg-white border border-pink-500 shadow-sm hover:bg-gradient-to-t hover:from-pink-700 hover:via-gray-100 hover:to-pink-300 ',
 };
+
+const TagTemplate = ({
+  prefix,
+  tag,
+  color,
+}: {
+  prefix: string;
+  tag: string;
+  color: ColorChoice;
+}) => (
+  <>
+    <code
+      className={`${colors[color]} text-sm hover:shadow-md hover:shadow-gray-500 transition-all px-2 py-.5 rounded-md`}
+    >
+      <Link to={`/${tag}`}>
+        <span
+          key={prefix}
+          className={`font-italic font-semibold  pr-1`}
+        >{`${prefix}://`}</span>
+        <span key={tag} className={`font-semibold `}>{`${tag}`}</span>
+      </Link>
+    </code>{' '}
+  </>
+);
 export default function Profile({
   title,
   description,
@@ -65,7 +99,9 @@ export default function Profile({
   keypair?: ISEAPair;
   socials: SocialLinkType;
 }) {
-  const [edit, setEdit] = React.useState;
+  const [edit, setEdit] = React.useState(false);
+  const [valueTitle, setValueTitle] = React.useState('');
+  const [valueDesc, setValueDesc] = React.useState('');
 
   return (
     <div className=' font-sans antialiased bg-gradient-to-tr from-cnxt_red via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
@@ -84,63 +120,110 @@ export default function Profile({
                     backgroundImage: `url(${profilePic})`,
                   }}
                 ></div>
+                <button
+                  onClick={() => setEdit(!edit)}
+                  className={`${
+                    edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
+                  } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
+                >
+                  {edit ? 'Done' : 'Edit'}
+                </button>
 
                 <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
-                  <h1
-                    contentEditable={true}
-                    suppressContentEditableWarning={true}
-                    className='text-jacarta-700 font-display mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl'
-                  >
-                    {title}
-                  </h1>
-                  <p className='dark:text-jacarta-200 mb-8 text-center text-lg md:text-left'>
-                    {description.split(' ' || '\n').map((curr) => {
-                      if (curr.startsWith('@')) {
-                        return (
-                          <span className='text-blue-500'>{curr + ' '}</span>
-                        );
+                  <Form>
+                    <h1
+                      contentEditable={edit}
+                      suppressContentEditableWarning={true}
+                      onChange={(e) =>
+                        setValueTitle(
+                          (e.target as HTMLHeadingElement).innerText
+                        )
                       }
-                      if (curr.startsWith('$')) {
-                        return (
-                          <>
-                            <code
-                              className={`bg-gray-200 hover:bg-gray-300 hover:shadow-gray-400 hover:shadow-md transition-all px-2 py-.5 rounded-md`}
-                            >
-                              <Link
-                                to={`/${curr.replace(`$`, '')}`}
-                                className='text-green-600 font-bold '
-                              >
-                                {curr.replace(`$`, '$://')}
-                              </Link>
-                            </code>{' '}
-                          </>
-                        );
+                      className=' mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl'
+                    >
+                      {title}
+                    </h1>
+                    <p
+                      contentEditable={edit}
+                      suppressContentEditableWarning={true}
+                      onChange={(e) =>
+                        setValueDesc(
+                          (e.target as HTMLParagraphElement).innerText
+                        )
                       }
-                      if (curr.startsWith('#')) {
-                        return (
-                          <>
-                            <code
-                              className={`bg-gray-200 hover:bg-gray-300 hover:shadow-gray-400 hover:shadow-md transition-all px-2 py-.5 rounded-md`}
-                            >
-                              <Link
-                                to={`/${curr.replace(`#`, '')}`}
-                                className='text-red-600 font-bold '
-                              >
-                                {curr.replace(`#`, '#://')}
-                              </Link>
-                            </code>{' '}
-                          </>
-                        );
-                      }
-                      return curr + ' ';
-                    })}
-                  </p>
+                      className='mb-8 text-center text-lg md:text-left'
+                    >
+                      {description.split(' ' || '\n').map((curr) => {
+                        let _p = curr.charAt(0);
+                        let startsWith = (symbol: string) => _p === symbol;
+                        let [prefix, namespace] = curr
+                          .split(_p)
+                          .map((s) => s.trim());
+
+                        if (startsWith('@')) {
+                          return (
+                            <TagTemplate
+                              prefix={'@'}
+                              tag={namespace}
+                              color='blue'
+                            />
+                          );
+                        }
+                        if (startsWith('#')) {
+                          return (
+                            <TagTemplate
+                              prefix={'#'}
+                              tag={namespace}
+                              color='red'
+                            />
+                          );
+                        }
+                        if (startsWith('$')) {
+                          return (
+                            <TagTemplate
+                              prefix={'$'}
+                              tag={namespace}
+                              color='green'
+                            />
+                          );
+                        }
+                        if (startsWith('!')) {
+                          return (
+                            <TagTemplate
+                              prefix={'!'}
+                              tag={namespace}
+                              color='yellow'
+                            />
+                          );
+                        }
+                        if (startsWith('*')) {
+                          return (
+                            <TagTemplate
+                              prefix={'*'}
+                              tag={namespace}
+                              color='indigo'
+                            />
+                          );
+                        } else {
+                          return curr + ' ';
+                        }
+                      })}
+                    </p>
+                    {edit && (
+                      <button
+                        className={` bg-red-600 text-light-200 text-md transition-all px-2 py-.5 rounded-full`}
+                      >
+                        {'Submit'}
+                      </button>
+                    )}
+                  </Form>
+
                   <div className='flex space-x-4'>
                     {button.map(({ to, label, color }) => (
                       <Link
                         to={to}
                         key={label}
-                        className={`${colors[color]} w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all shadow-white-volume`}
+                        className={` w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all shadow-white-volume`}
                       >
                         {label}
                       </Link>
@@ -159,9 +242,9 @@ export default function Profile({
               />
             </div>
           </div>
-          <ImageCard src={backgroundImage} />
         </div>
       </div>
+      <ImageCard src={backgroundImage} />
     </div>
   );
 }

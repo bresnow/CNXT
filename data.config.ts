@@ -38,7 +38,7 @@ export const data = {
     },
   },
   tags: {
-    hashtagProtocol: {
+    hashtag: {
       title: '#HashTagProtocol',
       description:
         'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',

@@ -65,6 +65,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, seaAuth, ENV } = RemixGunContext(Gun, request);
   let namespace = params.namespace as string;
+  console.log(namespace);
   let nsNode = gun
     .user()
     .auth(ENV.APP_KEY_PAIR, function (ack) {
@@ -74,30 +75,36 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       }
     })
     .get('tags')
-    .get(namespace);
+    .get(namespace.toLocaleLowerCase());
   let data;
   let nodeData = await nsNode.then();
-  if (!nodeData[namespace]) {
+  if (!nodeData) {
     data = {
       id: false,
       title: namespace,
       description: `#${namespace} is an available namespace.`,
       profilePic: '/images/AppIcon.svg',
     };
-    return json(data);
+
+    throw new Response(JSON.stringify(data), { status: 404 });
   }
-  console.log('nodeData[namespace]', nodeData[namespace]);
-  return json(nodeData);
+  console.log(
+    'nodeData[namespace]',
+    nodeData,
+    `${nodeData['title']}`.toUpperCase() === `#${namespace}`.toUpperCase()
+  );
+  return json({ namespace: namespace.toLowerCase(), nodeData });
 };
 
 export default function NameSpaceRoute() {
-  let { namespace } = useParams();
-  let data = useLoaderData();
-  console.log(data);
+  let { namespace, ...data } = useLoaderData<{
+    namespace: string;
+    nodeData: Record<string, any>;
+  }>();
+  console.log('namespace', namespace);
   let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
     params: { path: `tags.${namespace}` },
   });
-
   const [value, setValue] = React.useState('');
   return (
     <>
@@ -112,6 +119,7 @@ export default function NameSpaceRoute() {
 
 export function SuspendedProfileInfo({ response }: { response: () => any }) {
   let data = response();
+  console.log(data);
   return (
     <>
       <Profile
@@ -135,21 +143,30 @@ export function SuspendedProfileInfo({ response }: { response: () => any }) {
 
 export function CatchBoundary() {
   let caught = useCatch();
-
+  console.log('caught', JSON.stringify(caught));
   switch (caught.status) {
     case 401:
     case 403:
     case 404:
       return (
-        <div className='min-h-screen py-4 flex flex-col justify-center items-center'>
-          <Display
-            title={`${caught.status}`}
-            titleColor='white'
-            span={`${caught.statusText}`}
-            spanColor='pink-500'
-            description={`${caught.statusText}`}
+        <>
+          <Navigation logo={<CNXTLogo to='/' />} />
+          <Profile
+            title={'Tag Available'}
+            description={'Edit the tag to create a profile.'}
+            profilePic={'/images/AppIcon.svg'}
+            button={[]}
+            socials={[
+              {
+                href: 'https://twitter.com/bresnow',
+                title: 'Twitter',
+                color: 'white',
+                svgPath:
+                  'M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z',
+              },
+            ]}
           />
-        </div>
+        </>
       );
   }
   throw new Error(`Unexpected caught response with status: ${caught.status}`);

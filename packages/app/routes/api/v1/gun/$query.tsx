@@ -1,7 +1,6 @@
 import { ActionFunction, json, LoaderFunction } from 'remix';
 import { LoadCtx } from 'types';
 import Gun, { ISEAPair } from 'gun';
-import { getSession } from '../../../../session.server';
 import LZString from 'lz-string';
 
 let QueryType = {
@@ -17,11 +16,11 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let url = new URL(request.url);
   let path = url.searchParams.get('path') as string;
   let data;
-  log(path, 'Path', query, 'Query');
+  // log(path, 'Path', query, 'Query');
   switch (query) {
     case QueryType.GET:
       data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
-      log(data, 'GET');
+      // log(data, 'GET');
       break;
     case QueryType.OPEN:
       data = await new Promise((res, _rej) => {
@@ -33,12 +32,12 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
             res(data);
           });
       });
-      log(data, 'OPEN');
+      // log(data, 'OPEN');
       break;
     default:
       data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
   }
-  log(data, 'Default');
+  // log(data, 'Default');
   return json(data);
 };
 
