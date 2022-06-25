@@ -1,7 +1,7 @@
 import { $ } from 'zx';
 await $`unocss \"packages/**/*.tsx\" --out-file \"packages/app/uno.css\" --watch`
   .pipe(
-    $`esbuild packages/app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch`
+    $`esbuild packages/app/entry.worker.tsx --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch`
   )
   .pipe($`cross-env NODE_ENV=development remix watch`)
   .pipe(

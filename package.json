@@ -1,7 +1,7 @@
 {
   "name": "cnxt",
   "description": "Dynamic namespaces for dynamic content. #://HashtagProtocol",
-  "version": "0.2.13",
+  "version": "0.2.133",
   "author": "bresnow",
   "license": "MIT",
   "module": "es2022",
@@ -12,7 +12,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
     "build:css": "unocss \"packages/**/*.tsx\" --out-file \"packages/app/uno.css\"",
-    "build:worker": "esbuild packages/app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
+    "build:worker": "esbuild packages/app/entry.worker.tsx --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
     "dev": "npx zx scripts/esm/dev.mjs",
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,mjs,js,jsx,ts,tsx}'",

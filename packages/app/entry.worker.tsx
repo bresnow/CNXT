@@ -65,7 +65,9 @@ async function handleMessage(event: ExtendableMessageEvent) {
       gunCacheData.then(),
       gunCacheDocument.then(),
     ]);
-
+    gunCacheDocument.once(function (data) {
+      _.log('Document cache node', data);
+    });
     let [dataCache, documentCache, existingDocument] = await Promise.all([
       caches.open(DATA_CACHE),
       caches.open(DOCUMENT_CACHE),
