@@ -1,25 +1,29 @@
 /// <reference lib="WebWorker" />
 
 import { json } from '@remix-run/server-runtime';
-import { isResponse } from '@remix-run/server-runtime/responses';
+import debug from '../no-scope/debug';
 import Gun from 'gun';
+import { includes } from '../rmxgun-context/useFetcherAsync';
 export type {};
 declare let self: ServiceWorkerGlobalScope;
-let gun = Gun({ localStorage: false, file: 'SERVICE_WORKER_CACHE' });
+let gun = Gun({
+  localStorage: false,
+  radisk: true,
+  file: 'SERVICE_WORKER_CACHE',
+});
 let STATIC_ASSETS = ['/build/', '/icons/'];
-
 let ASSET_CACHE = 'asset-cache';
 let DATA_CACHE = 'data-cache';
 let DOCUMENT_CACHE = 'document-cache';
 
-let debug = console.log.bind(console);
+let _ = debug({ devOnly: false });
 
 async function handleInstall(event: ExtendableEvent) {
-  debug('Service worker installed');
+  _.log('Service worker installed');
 }
 
 async function handleActivate(event: ExtendableEvent) {
-  debug('Service worker activated');
+  _.log('Service worker activated');
 }
 
 async function handleMessage(event: ExtendableMessageEvent) {
@@ -27,7 +31,40 @@ async function handleMessage(event: ExtendableMessageEvent) {
 
   if (event.data.type === 'REMIX_NAVIGATION') {
     let { isMount, location, matches, manifest } = event.data;
-    let documentUrl = location.pathname + location.search + location.hash;
+    let documentUrl = location.pathname + location.search + location.hash,
+      urlNode = {
+        pathname: location.pathname,
+        search: location.search,
+        hash: location.hash,
+      };
+    let [gunCacheData, gunCacheDocument] = [
+        gun.get(DATA_CACHE).get(documentUrl),
+        gun.get(DOCUMENT_CACHE).get(documentUrl),
+      ],
+      _cArr = [gunCacheData, gunCacheDocument];
+
+    _cArr.forEach(function (item) {
+      if (item) {
+        item.on(function (data) {
+          if (!data) {
+            _.log('Setting up gun cache');
+            item.put(urlNode, (put) => {
+              if (includes(put, 'err')) {
+                _.error(
+                  'Error while setting url node in cache graph',
+                  (put as any).err
+                );
+              }
+              _.log('URL node set in graph');
+            });
+          }
+        });
+      }
+    });
+    let nodeData = await Promise.all([
+      gunCacheData.then(),
+      gunCacheDocument.then(),
+    ]);
 
     let [dataCache, documentCache, existingDocument] = await Promise.all([
       caches.open(DATA_CACHE),
@@ -36,11 +73,11 @@ async function handleMessage(event: ExtendableMessageEvent) {
     ]);
 
     if (!existingDocument || !isMount) {
-      debug('Caching document for', documentUrl);
+      _.log('Caching document for', documentUrl);
       cachePromises.set(
         documentUrl,
         documentCache.add(documentUrl).catch((error) => {
-          debug(`Failed to cache document for ${documentUrl}:`, error);
+          _.error(`Failed to cache document for ${documentUrl}:`, error);
         })
       );
     }
@@ -54,11 +91,11 @@ async function handleMessage(event: ExtendableMessageEvent) {
           search = search ? `?${search}` : '';
           let url = location.pathname + search + location.hash;
           if (!cachePromises.has(url)) {
-            debug('Caching data for', url);
+            _.log('Caching data for', url);
             cachePromises.set(
               url,
               dataCache.add(url).catch((error) => {
-                debug(`Failed to cache data for ${url}:`, error);
+                _.error(`Failed to cache data for ${url}:`, error);
               })
             );
           }
@@ -80,11 +117,11 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
       ignoreSearch: true,
     });
     if (cached) {
-      debug('Serving asset from cache', url.pathname);
+      _.log('Serving asset from cache', url.pathname);
       return cached;
     }
 
-    debug('Serving asset from network', url.pathname);
+    _.log('Serving asset from network', url.pathname);
     let response = await fetch(event.request);
     if (response.status === 200) {
       let cache = await caches.open(ASSET_CACHE);
@@ -95,13 +132,13 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
 
   if (isLoaderRequest(event.request)) {
     try {
-      debug('Serving data from network', url.pathname + url.search);
+      _.log('Serving data from network', url.pathname + url.search);
       let response = await fetch(event.request.clone());
       let cache = await caches.open(DATA_CACHE);
       await cache.put(event.request, response.clone());
       return response;
     } catch (error) {
-      debug(
+      _.error(
         'Serving data from network failed, falling back to cache',
         url.pathname + url.search
       );
@@ -123,13 +160,13 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
 
   if (isDocumentGetRequest(event.request)) {
     try {
-      debug('Serving document from network', url.pathname);
+      _.log('Serving document from network', url.pathname);
       let response = await fetch(event.request);
       let cache = await caches.open(DOCUMENT_CACHE);
       await cache.put(event.request, response.clone());
       return response;
     } catch (error) {
-      debug(
+      _.error(
         'Serving document from network failed, falling back to cache',
         url.pathname
       );
@@ -202,5 +239,5 @@ async function appHandleFetch(
     | { error: unknown; response: undefined }
     | { error: undefined; response: Response }
 ): Promise<Response> {
-  return isResponse(response) ? response : json(error, { status: 500 });
+  return response ? response : json(error, { status: 500 });
 }

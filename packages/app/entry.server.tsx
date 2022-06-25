@@ -1,10 +1,6 @@
-//@ts-expect-error
 import { renderToPipeableStream } from 'react-dom/server';
 import { RemixServer } from 'remix';
 import type { EntryContext } from 'remix';
-import type { ServerResponse } from 'http';
-import { DataloaderProvider } from '~/rmxgun-context/useFetcherAsync';
-import { createServerDataloader } from '~/rmxgun-context/server';
 import { LoadCtx, RmxGunCtx } from 'types';
 import { EntryFactory } from '~/rmxgun-context/context';
 export default async function handleRequest(
@@ -45,10 +41,11 @@ export default async function handleRequest(
 
           resolve();
         },
+        //@ts-expect-error
         onShellError(err: Error) {
           reject(err);
         },
-        onError(err: Error) {
+        onError(err: any) {
           didError = true;
         },
       }

@@ -1,135 +1,134 @@
-import fs from 'fs-extra';
+import fs from 'fs';
+import { read, fg } from 'fsxx';
 import Gun from 'gun';
-import { read, write } from 'fsxx';
-import { $ } from 'zx';
-import fg from 'fast-glob';
-const gun = Gun(`http://0.0.0.0:${process.env.CLIENT_PORT || 8765}/gun`);
-
-try {
-  require('chokidar');
-} catch (error) {
-  let install = await $`npm i chokidar`;
-  if (install.stderr) {
-    throw new Error(install.stderr);
-  }
-}
 import chokidar from 'chokidar';
+
+import os from 'os';
+let peer =
+  process.env.NODE_ENV !== 'production'
+    ? `http://${process.env.DOMAIN}/gun`
+    : `https://${env.DOMAIN}/gun`;
+const gun = Gun({ peers: [peer], localStorage: false });
+import debug from './debug.mjs';
+const { log } = debug();
 /**
  * Watches a directory and send all its content in the database
  * @constructor
  * @param {string} what - Which directory hub should watch.
  * @param {Object} options - https://gun.eco/docs/hub.js#options
  */
-function watch(what, options) {
-  let { msg, scopeignore, encryptionKey, alias } = options;
-  msg ? (msg = msg) : (msg = false);
-  scopeignore ? (scopeignore = scopeignore) : (scopeignore = false);
-  alias ? (alias = alias) : (alias = require('os').userInfo().username);
-  encryptionKey ? (encryptionKey = encryptionKey) : (encryptionKey = null);
-  let modifiedPath = alias;
+async function watch(what, options) {
+  options = options ?? {
+    msg: true,
+    hubignore: false,
+    alias: os.userInfo().username,
+  };
 
+  options.msg = options.msg ?? true;
+  options.hubignore = options.hubignore ?? false;
+  options.alias = options.alias ?? os.userInfo().username;
+
+  let modifiedPath = options.alias;
+  what = fg(what);
   let watcher;
   try {
-    if (scopeignore) {
-      what = fg(what, { globstar: true, baseNameMatch: true });
+    if (options.hubignore) {
       watcher = chokidar.watch(what, {
+        ignored: fg(
+          (await read('.hubignore'))
+            .toString()
+            .split('\n')
+            .map((x) => x.trim())
+            .filter((x) => x.length > 0)
+        ),
         persistent: true,
+        ignoreInitial: true,
+        awaitWriteFinish: {
+          stabilityThreshold: 100,
+          pollInterval: 100,
+        },
       });
-    } else if (!scopeignore) {
+    } else if (!options.hubignore) {
       watcher = chokidar.watch(what, {
-        ignored: /(^|[\/\\])\../, // ignore dotfiles
         persistent: true,
+        ignoreInitial: true,
+        awaitWriteFinish: {
+          stabilityThreshold: 100,
+          pollInterval: 100,
+        },
       });
     }
 
-    const log = console.log.bind(console);
+    // const log = console.log.bind(console);
 
-    let scopeignore;
+    let hubignore;
 
     // Handle events !
     watcher
       .on('add', async function (path) {
-        if (options.scopeignore && path.includes('.scopeignore')) {
-          scopeignore = fs.readFileSync(what + '/.scopeignore', 'utf-8');
+        if (options.hubignore && path.includes('.hubignore')) {
+          hubignore = await read(what + '/.hubignore', 'utf-8');
         } else if (
-          !path.includes('.scopeignore') &&
-          !scopeignore?.includes(path.substring(path.lastIndexOf('/') + 1))
+          !path.includes('.hubignore') &&
+          !hubignore?.includes(path.substring(path.lastIndexOf('/') + 1))
         ) {
           if (options.msg) log(`File ${path} has been added`);
 
           if (path[path.search(/^./gm)] === '/' || '.') {
             gun
               .get('hub')
-              .get(
-                modifiedPath + path.split(require('os').userInfo().username)[1]
-              )
-              .put(fs.readFileSync(path, 'utf-8'));
+              .get(modifiedPath + path.split(os.userInfo().username)[1])
+              .put(await read(path, 'utf-8'));
           } else {
             gun
               .get('hub')
-              .get(
-                modifiedPath +
-                  '/' +
-                  path.split(require('os').userInfo().username)[1]
-              )
-              .put(fs.readFileSync(path, 'utf-8'));
+              .get(modifiedPath + '/' + path.split(os.userInfo().username)[1])
+              .put(await read(path, 'utf-8'));
           }
         } else {
           if (options.msg) log(`The addition of ${path} has been ignored !`);
         }
       })
       .on('change', async function (path) {
-        if (options.scopeignore && path.includes('.scopeignore')) {
-          scopeignore = fs.readFileSync(what + '/.scopeignore', 'utf-8');
+        if (options.hubignore && path.includes('.hubignore')) {
+          hubignore = await read(what + '/.hubignore', 'utf-8');
         } else if (
-          !path.includes('.scopeignore') &&
-          !scopeignore?.includes(path.substring(path.lastIndexOf('/') + 1))
+          !path.includes('.hubignore') &&
+          !hubignore?.includes(path.substring(path.lastIndexOf('/') + 1))
         ) {
           if (options.msg) log(`File ${path} has been changed`);
           if (path[path.search(/^./gm)] === '/' || '.') {
             gun
               .get('hub')
-              .get(
-                modifiedPath + path.split(require('os').userInfo().username)[1]
-              )
-              .put(fs.readFileSync(path, 'utf-8'));
+              .get(modifiedPath + path.split(os.userInfo().username)[1])
+              .put(await read(path, 'utf-8'));
           } else {
             gun
               .get('hub')
-              .get(
-                modifiedPath +
-                  '/' +
-                  path.split(require('os').userInfo().username)[1]
-              )
-              .put(fs.readFileSync(path, 'utf-8'));
+              .get(modifiedPath + '/' + path.split(os.userInfo().username)[1])
+              .put(await read(path, 'utf-8'));
           }
         } else {
           if (options.msg) log(`The changes on ${path} has been ignored.`);
         }
       })
       .on('unlink', async function (path) {
-        if (options.scopeignore && path.includes('.scopeignore')) {
-          scopeignore = fs.readFileSync(what + '/.scopeignore', 'utf-8');
+        if (options.hubignore && path.includes('.hubignore')) {
+          hubignore = await read(what + '/.hubignore', 'utf-8');
         } else if (
-          !path.includes('.scopeignore') &&
-          !scopeignore?.includes(path.substring(path.lastIndexOf('/') + 1))
+          !path.includes('.hubignore') &&
+          !hubignore?.includes(path.substring(path.lastIndexOf('/') + 1))
         ) {
           if (options.msg) log(`File ${path} has been removed`);
           if (path[path.search(/^./gm)] === '/' || '.') {
             gun
               .get('hub')
-              .get(
-                modifiedPath + path.split(require('os').userInfo().username)[1]
-              )
+              .get(modifiedPath + path.split(os.userInfo().username)[1])
               .put(null);
           } else {
             gun
               .get('hub')
-              .get(
-                modifiedPath +
-                  '/' +
-                  path.split(require('os').userInfo().username)[1]
-              )
+              .get(modifiedPath + '/' + path.split(os.userInfo().username)[1])
               .put(null);
           }
         } else {
@@ -150,4 +149,4 @@ function watch(what, options) {
   }
 }
 
-module.exports = { watch: watch };
+export default { watch };

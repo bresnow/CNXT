@@ -11,8 +11,8 @@ COPY . /app
 
 WORKDIR  /app
 RUN yarn \
-    && yarn build \
+    && yarn build:worker \
     && yarn build:css \
-    && yarn build:worker
+    && yarn build 
 CMD ["yarn", "start"] 
 LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun
