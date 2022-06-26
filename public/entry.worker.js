@@ -1,4 +1,77 @@
 "use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
+
+// node_modules/@remix-run/server-runtime/responses.js
+var require_responses = __commonJS({
+  "node_modules/@remix-run/server-runtime/responses.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function json2(data, init = {}) {
+      let responseInit = init;
+      if (typeof init === "number") {
+        responseInit = {
+          status: init
+        };
+      }
+      let headers = new Headers(responseInit.headers);
+      if (!headers.has("Content-Type")) {
+        headers.set("Content-Type", "application/json; charset=utf-8");
+      }
+      return new Response(JSON.stringify(data), {
+        ...responseInit,
+        headers
+      });
+    }
+    function redirect2(url, init = 302) {
+      let responseInit = init;
+      if (typeof responseInit === "number") {
+        responseInit = {
+          status: responseInit
+        };
+      } else if (typeof responseInit.status === "undefined") {
+        responseInit.status = 302;
+      }
+      let headers = new Headers(responseInit.headers);
+      headers.set("Location", url);
+      return new Response(null, {
+        ...responseInit,
+        headers
+      });
+    }
+    function isResponse2(value) {
+      return value != null && typeof value.status === "number" && typeof value.statusText === "string" && typeof value.headers === "object" && typeof value.body !== "undefined";
+    }
+    var redirectStatusCodes = /* @__PURE__ */ new Set([301, 302, 303, 307, 308]);
+    function isRedirectResponse(response) {
+      return redirectStatusCodes.has(response.status);
+    }
+    function isCatchResponse(response) {
+      return response.headers.get("X-Remix-Catch") != null;
+    }
+    exports.isCatchResponse = isCatchResponse;
+    exports.isRedirectResponse = isRedirectResponse;
+    exports.isResponse = isResponse2;
+    exports.json = json2;
+    exports.redirect = redirect2;
+  }
+});
 
 // node_modules/@remix-run/server-runtime/esm/responses.js
 function json(data, init = {}) {
@@ -19,7 +92,7 @@ function json(data, init = {}) {
 }
 
 // packages/app/entry.worker.tsx
-var gun = Gun();
+var import_responses2 = __toESM(require_responses());
 var STATIC_ASSETS = ["/build/", "/icons/"];
 var ASSET_CACHE = "asset-cache";
 var DATA_CACHE = "data-cache";
@@ -165,7 +238,7 @@ async function appHandleFetch(event, {
   error,
   response
 }) {
-  return response ? response : json(error, { status: 500 });
+  return (0, import_responses2.isResponse)(response) ? response : json(error, { status: 500 });
 }
 /**
  * @remix-run/server-runtime v0.0.0-experimental-4e814511

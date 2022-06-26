@@ -1,6 +1,7 @@
 import { ISEAPair } from 'gun';
 import React from 'react';
 import { Form, Link } from 'remix';
+import { SubmitButton } from '~/app/routes/$namespace';
 import { ImageCard } from '../app/routes/index';
 export type SocialLinkType = {
   href: string;
@@ -67,6 +68,7 @@ const TagTemplate = ({
     </code>{' '}
   </>
 );
+
 export default function Profile({
   title,
   description,
@@ -100,7 +102,7 @@ export default function Profile({
   socials: SocialLinkType;
 }) {
   const [edit, setEdit] = React.useState(false);
-  const [valueTitle, setValueTitle] = React.useState('');
+  const [valueTitle, setValueTitle] = React.useState(title);
   const [valueDesc, setValueDesc] = React.useState('');
 
   return (
@@ -120,102 +122,103 @@ export default function Profile({
                     backgroundImage: `url(${profilePic})`,
                   }}
                 ></div>
-                <button
-                  onClick={() => setEdit(!edit)}
-                  className={`${
-                    edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
-                  } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
-                >
-                  {edit ? 'Done' : 'Edit'}
-                </button>
 
                 <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
-                  <Form>
-                    <h1
-                      contentEditable={edit}
-                      suppressContentEditableWarning={true}
-                      onChange={(e) =>
-                        setValueTitle(
-                          (e.target as HTMLHeadingElement).innerText
-                        )
-                      }
-                      className=' mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl'
-                    >
-                      {title}
+                  <button
+                    onClick={() => setEdit(!edit)}
+                    className={`${
+                      edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
+                    } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
+                  >
+                    {edit ? 'Done' : 'Edit Title & Description'}
+                  </button>
+                  {!edit ? (
+                    <h1 className=' mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none'>
+                      {valueTitle}
                     </h1>
-                    <p
-                      contentEditable={edit}
-                      suppressContentEditableWarning={true}
-                      onChange={(e) =>
-                        setValueDesc(
-                          (e.target as HTMLParagraphElement).innerText
-                        )
-                      }
-                      className='mb-8 text-center text-lg md:text-left'
-                    >
-                      {description.split(' ' || '\n').map((curr) => {
-                        let _p = curr.charAt(0);
-                        let startsWith = (symbol: string) => _p === symbol;
-                        let [prefix, namespace] = curr
-                          .split(_p)
-                          .map((s) => s.trim());
+                  ) : (
+                    <input
+                      type='text'
+                      min={4}
+                      maxLength={12}
+                      onChange={({ target }) => {
+                        target = target as HTMLInputElement;
+                        setValueTitle(target.value);
+                      }}
+                      defaultValue={valueTitle}
+                      className={`mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none bg-transparent flex`}
+                    />
+                  )}
 
-                        if (startsWith('@')) {
-                          return (
-                            <TagTemplate
-                              prefix={'@'}
-                              tag={namespace}
-                              color='blue'
-                            />
-                          );
-                        }
-                        if (startsWith('#')) {
-                          return (
-                            <TagTemplate
-                              prefix={'#'}
-                              tag={namespace}
-                              color='red'
-                            />
-                          );
-                        }
-                        if (startsWith('$')) {
-                          return (
-                            <TagTemplate
-                              prefix={'$'}
-                              tag={namespace}
-                              color='green'
-                            />
-                          );
-                        }
-                        if (startsWith('!')) {
-                          return (
-                            <TagTemplate
-                              prefix={'!'}
-                              tag={namespace}
-                              color='yellow'
-                            />
-                          );
-                        }
-                        if (startsWith('*')) {
-                          return (
-                            <TagTemplate
-                              prefix={'*'}
-                              tag={namespace}
-                              color='indigo'
-                            />
-                          );
-                        } else {
-                          return curr + ' ';
-                        }
-                      })}
-                    </p>
-                    {edit && (
-                      <button
-                        className={` bg-red-600 text-light-200 text-md transition-all px-2 py-.5 rounded-full`}
-                      >
-                        {'Submit'}
-                      </button>
-                    )}
+                  <p
+                    contentEditable={edit}
+                    suppressContentEditableWarning={true}
+                    onChange={(e) =>
+                      setValueDesc((e.target as HTMLParagraphElement).innerText)
+                    }
+                    className='mb-8 text-center text-lg md:text-left'
+                  >
+                    {description.split(' ' || '\n').map((curr) => {
+                      let _p = curr.charAt(0);
+                      let startsWith = (symbol: string) => _p === symbol;
+                      let [prefix, namespace] = curr
+                        .split(_p)
+                        .map((s) => s.trim());
+
+                      if (startsWith('@')) {
+                        return (
+                          <TagTemplate
+                            prefix={'@'}
+                            tag={namespace}
+                            color='blue'
+                          />
+                        );
+                      }
+                      if (startsWith('#')) {
+                        return (
+                          <TagTemplate
+                            prefix={'#'}
+                            tag={namespace}
+                            color='red'
+                          />
+                        );
+                      }
+                      if (startsWith('$')) {
+                        return (
+                          <TagTemplate
+                            prefix={'$'}
+                            tag={namespace}
+                            color='green'
+                          />
+                        );
+                      }
+                      if (startsWith('!')) {
+                        return (
+                          <TagTemplate
+                            prefix={'!'}
+                            tag={namespace}
+                            color='yellow'
+                          />
+                        );
+                      }
+                      if (startsWith('*')) {
+                        return (
+                          <TagTemplate
+                            prefix={'*'}
+                            tag={namespace}
+                            color='indigo'
+                          />
+                        );
+                      } else {
+                        return curr + ' ';
+                      }
+                    })}
+                  </p>
+
+                  <Form method='post'>
+                    <input type='hidden' name='title' value={valueTitle} />
+                    <input type='hidden' name='description' value={valueDesc} />
+                    <SubmitButton label={'Submit'} />
                   </Form>
 
                   <div className='flex space-x-4'>
@@ -230,11 +233,13 @@ export default function Profile({
                     ))}
                   </div>
                 </div>
+
                 <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'>
                   <SocialLinks socials={socials} />
                 </div>
               </div>
             </div>
+
             <div className='w-full lg:w-2/5 pl-4'>
               <img
                 src={profilePic}

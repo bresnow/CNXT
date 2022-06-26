@@ -1,12 +1,10 @@
 /// <reference lib="WebWorker" />
 
 import { json } from '@remix-run/server-runtime';
-import debug from '../no-scope/debug';
-
-import { includes } from '../rmxgun-context/useFetcherAsync';
+import { isResponse } from '@remix-run/server-runtime/responses';
 export type {};
 declare let self: ServiceWorkerGlobalScope;
-let gun = Gun();
+
 let STATIC_ASSETS = ['/build/', '/icons/'];
 let ASSET_CACHE = 'asset-cache';
 let DATA_CACHE = 'data-cache';
@@ -31,6 +29,7 @@ async function handleMessage(event: ExtendableMessageEvent) {
         search: location.search,
         hash: location.hash,
       };
+
     let [dataCache, documentCache, existingDocument] = await Promise.all([
       caches.open(DATA_CACHE),
       caches.open(DOCUMENT_CACHE),
@@ -204,5 +203,5 @@ async function appHandleFetch(
     | { error: unknown; response: undefined }
     | { error: undefined; response: Response }
 ): Promise<Response> {
-  return response ? response : json(error, { status: 500 });
+  return isResponse(response) ? response : json(error, { status: 500 });
 }
