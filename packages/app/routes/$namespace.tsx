@@ -131,7 +131,7 @@ export default function NameSpaceRoute() {
       let Gun = window.Gun;
       let { protocol, host } = window.location;
       warn('RemixGunContext');
-      loader((window as any).__remixContext);
+      log(window.__remixContext);
       let gun = Gun({
         peers: [`${protocol}://${host}/gun`],
         localStorage: false,
