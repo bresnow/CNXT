@@ -33,9 +33,9 @@ services:
     networks:
       - traefik-public
     volumes:
-      - rad_data:/app/radata
+      - radata:/app/radata
 volumes:
-  rad_data:
+  radata:
 
 networks:
   traefik-public:

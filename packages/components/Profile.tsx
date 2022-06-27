@@ -106,133 +106,114 @@ export default function Profile({
 }) {
   const [edit, setEdit] = React.useState(false);
   return (
-    <div className=' font-sans antialiased bg-gradient-to-tr from-cnxt_red via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
-      <div className='p-5 font-sans antialiased bg-gradient-to-b from-cnxt_black via-blue-400 to-cnxt_blue text-gray-900 leading-normal tracking-wider bg-cover'>
-        {' '}
-        <div className='py-10 mt-10 font-sans antialiased bg-gradient-to-tr from-slate-900 via-transparent to-cnxt_red text-gray-900 leading-normal tracking-wider bg-cover'>
-          <div className='max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0'>
+    <div className='max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0'>
+      <div
+        id='profile'
+        className='w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-2xl bg-white opacity-75 mx-6 lg:mx-0'
+      >
+        <div className='p-4 md:p-12 text-center lg:text-left'>
+          <div
+            className='block lg:hidden rounded-lg  mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
+            style={{
+              backgroundImage: `url(${profilePic})`,
+            }}
+          ></div>
+
+          <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
             <div
-              id='profile'
-              className='w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-2xl bg-white opacity-75 mx-6 lg:mx-0'
+              onClick={() => setEdit(!edit)}
+              className={`${
+                edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
+              } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
             >
-              <div className='p-4 md:p-12 text-center lg:text-left'>
-                <div
-                  className='block lg:hidden rounded-lg  mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
-                  style={{
-                    backgroundImage: `url(${profilePic})`,
-                  }}
-                ></div>
-
-                <Form className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
-                  <button
-                    onClick={() => setEdit(!edit)}
-                    className={`${
-                      edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
-                    } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
-                  >
-                    {edit ? 'Done' : 'Edit Title & Description'}
-                  </button>
-                  <ContentEditable
-                    className={` mb-6 text-center text-5xl  md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none`}
-                    edit={edit}
-                    name={`title`}
-                    id={`PROFILE`}
-                  >
-                    {title}
-                  </ContentEditable>
-
-                  <ContentEditable
-                    edit={edit}
-                    name={'description'}
-                    id={`PROFILE`}
-                    className='mb-8 text-center text-lg md:text-left'
-                  >
-                    {description.split(' ' || '\n').map((curr) => {
-                      let _p = curr.charAt(0);
-                      let startsWith = (symbol: string) => _p === symbol;
-                      let [prefix, namespace] = curr
-                        .split(_p)
-                        .map((s) => s.trim());
-
-                      if (startsWith('@')) {
-                        return (
-                          <TagTemplate
-                            prefix={'@'}
-                            tag={namespace}
-                            color='blue'
-                          />
-                        );
-                      }
-                      if (startsWith('#')) {
-                        return (
-                          <TagTemplate
-                            prefix={'#'}
-                            tag={namespace}
-                            color='red'
-                          />
-                        );
-                      }
-                      if (startsWith('$')) {
-                        return (
-                          <TagTemplate
-                            prefix={'$'}
-                            tag={namespace}
-                            color='green'
-                          />
-                        );
-                      }
-                      if (startsWith('!')) {
-                        return (
-                          <TagTemplate
-                            prefix={'!'}
-                            tag={namespace}
-                            color='yellow'
-                          />
-                        );
-                      }
-                      if (startsWith('*')) {
-                        return (
-                          <TagTemplate
-                            prefix={'*'}
-                            tag={namespace}
-                            color='indigo'
-                          />
-                        );
-                      } else {
-                        return curr + ' ';
-                      }
-                    })}
-                  </ContentEditable>
-                  <SubmitButton label={'Submit'} />
-                  <div className='flex space-x-4'>
-                    {button.map(({ to, label, color }) => (
-                      <Link
-                        to={to}
-                        key={label}
-                        className={` w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all shadow-white-volume`}
-                      >
-                        {label}
-                      </Link>
-                    ))}
-                  </div>
-                </Form>
-
-                <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'>
-                  <SocialLinks socials={socials} />
-                </div>
-              </div>
+              {edit ? 'Done' : 'Edit Title & Description'}
             </div>
+            <ContentEditable
+              className={` mb-6 text-center text-5xl ${
+                edit && 'bg-gray-300'
+              } md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none`}
+              edit={edit}
+              name={`title`}
+              id={`PROFILE`}
+            >
+              {title}
+            </ContentEditable>
 
-            <div className='w-full lg:w-2/5 pl-4'>
-              <img
-                src={profilePic}
-                className='rounded-none lg:rounded-lg hidden lg:block'
-              />
+            <ContentEditable
+              edit={edit}
+              name={'description'}
+              id={`PROFILE`}
+              className={`mb-8 text-center text-lg md:text-left ${
+                edit && 'bg-gray-300'
+              }`}
+            >
+              {description.split(' ' || '\n').map((curr) => {
+                let _p = curr.charAt(0);
+                let startsWith = (symbol: string) => _p === symbol;
+                let [prefix, namespace] = curr.split(_p).map((s) => s.trim());
+
+                if (startsWith('@')) {
+                  return (
+                    <TagTemplate prefix={'@'} tag={namespace} color='blue' />
+                  );
+                }
+                if (startsWith('#')) {
+                  return (
+                    <TagTemplate prefix={'#'} tag={namespace} color='red' />
+                  );
+                }
+                if (startsWith('$')) {
+                  return (
+                    <TagTemplate prefix={'$'} tag={namespace} color='green' />
+                  );
+                }
+                if (startsWith('!')) {
+                  return (
+                    <TagTemplate prefix={'!'} tag={namespace} color='yellow' />
+                  );
+                }
+                if (startsWith('*')) {
+                  return (
+                    <TagTemplate prefix={'*'} tag={namespace} color='indigo' />
+                  );
+                } else {
+                  return curr + ' ';
+                }
+              })}
+            </ContentEditable>
+            <div className='flex space-x-4'>
+              {button.map(({ to, label, color }) => (
+                <Link
+                  to={to}
+                  key={label}
+                  className={` w-36 rounded-full py-3 px-8 text-center font-semibold text-white transition-all shadow-white-volume`}
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
+          </div>
+
+          {edit && (
+            <button
+              name={'submit'}
+              className={`bg-cnxt_red text-light-200 text-md transition-all py-2 px-4 rounded-full`}
+            >
+              {'Submit'}
+            </button>
+          )}
+          <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'>
+            <SocialLinks socials={socials} />
           </div>
         </div>
       </div>
-      <ImageCard src={backgroundImage} />
+
+      <div className='w-full lg:w-2/5 pl-4'>
+        <img
+          src={profilePic}
+          className='rounded-none lg:rounded-lg hidden lg:block'
+        />
+      </div>
     </div>
   );
 }

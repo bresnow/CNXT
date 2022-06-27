@@ -51,6 +51,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   return json<RootLoaderData>({
     meta,
     gunOpts,
+    ENV,
   });
 };
 export type RootLoaderData = {
@@ -64,6 +65,7 @@ export type RootLoaderData = {
     DOMAIN: string | undefined;
     PEER_DOMAIN: string[] | undefined;
     CLIENT: string | undefined;
+    APP_KEY_PAIR?: ISEAPair | undefined;
   };
 };
 
@@ -103,7 +105,14 @@ export default function App() {
         <Links />
       </head>
       <body className='bg-dark-800'>
-        <Outlet />
+        <div className=' font-sans antialiased bg-gradient-to-tr from-cnxt_red via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
+          <div className='p-5 font-sans antialiased bg-gradient-to-b from-cnxt_black via-blue-400 to-cnxt_blue text-gray-900 leading-normal tracking-wider bg-cover'>
+            {' '}
+            <div className='py-10 mt-10 font-sans antialiased bg-gradient-to-tr from-slate-900 via-transparent to-cnxt_red text-gray-900 leading-normal tracking-wider bg-cover'>
+              <Outlet />
+            </div>
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <ExternalScripts />
