@@ -1,27 +1,30 @@
 let collapse = console.groupCollapsed.bind(console.trace);
-type DebugOptions = Partial<{ off: boolean; devOnly: boolean }>;
+type DebugOptions = Partial<{ off: boolean; dev: boolean }>;
 interface Debug {
   log(...args: any[]): void;
   warn(...args: any[]): void;
   error(...args: any[]): void;
-  opt({ off, devOnly }: DebugOptions): Debug;
+  opt({ off, dev: devOnly }: DebugOptions): Debug;
 }
 
-function debug({ off = false, devOnly = true }: DebugOptions): Debug {
+function debug({ off = false, dev = true }: DebugOptions): Debug {
   let isProd = process.env.NODE_ENV === 'production';
   return {
     log(...args: any[]) {
-      (devOnly && !isProd && !off) || (!devOnly && !off)
+      (dev && !isProd && !off) || (!dev && !off)
         ? args.forEach((arg) => {
-            console.log(
-              `%c${arg}`,
-              'color:#42bfdd;font-size:15px;font-weight:light;font-family:system-ui;font-style:italic;'
-            );
+            if (typeof arg === 'object') {
+              arg = JSON.stringify(arg, null, 2);
+              console.log(
+                `%c${arg.toString()}`,
+                'color:#f6f8ff;font-size:15px;font-weight:light;font-family:system-ui;font-style:semi-bold;'
+              );
+            }
           })
         : null;
     },
     warn(...args: any[]) {
-      (devOnly && !isProd && !off) || (!devOnly && !off)
+      (dev && !isProd && !off) || (!dev && !off)
         ? args.forEach((arg) => {
             console.log(
               `%c${arg}`,
@@ -31,7 +34,7 @@ function debug({ off = false, devOnly = true }: DebugOptions): Debug {
         : null;
     },
     error(...args: any[]) {
-      (devOnly && !isProd && !off) || (!devOnly && !off)
+      (dev && !isProd && !off) || (!dev && !off)
         ? args.forEach((arg) => {
             console.log(
               `%c${arg}`,
@@ -40,8 +43,8 @@ function debug({ off = false, devOnly = true }: DebugOptions): Debug {
           })
         : null;
     },
-    opt({ off, devOnly }: DebugOptions) {
-      let thisFn = debug.bind(debug, { off, devOnly });
+    opt({ off, dev }: DebugOptions) {
+      let thisFn = debug.bind(debug, { off, dev });
       return thisFn();
     },
   };

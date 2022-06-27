@@ -96,26 +96,29 @@ var import_responses2 = __toESM(require_responses());
 
 // packages/app/debug.ts
 var collapse = console.groupCollapsed.bind(console.trace);
-function debug({ off = false, devOnly = true }) {
+function debug({ off = false, dev = true }) {
   let isProd = false;
   return {
     log(...args) {
-      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
-        console.log(`%c${arg}`, "color:#42bfdd;font-size:15px;font-weight:light;font-family:system-ui;font-style:italic;");
+      dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
+        if (typeof arg === "object") {
+          arg = JSON.stringify(arg, null, 2);
+          console.log(`%c${arg.toString()}`, "color:#f6f8ff;font-size:15px;font-weight:light;font-family:system-ui;font-style:semi-bold;");
+        }
       }) : null;
     },
     warn(...args) {
-      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
+      dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
         console.log(`%c${arg}`, "color:#f3a712;font-size:15px;font-weight:light;font-family:monospace;font-style:semibold;");
       }) : null;
     },
     error(...args) {
-      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
+      dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
         console.log(`%c${arg}`, "color:red;font-size:15px;font-weight:light;font-family:monospace;font-style:bold;");
       }) : null;
     },
-    opt({ off: off2, devOnly: devOnly2 }) {
-      let thisFn = debug.bind(debug, { off: off2, devOnly: devOnly2 });
+    opt({ off: off2, dev: dev2 }) {
+      let thisFn = debug.bind(debug, { off: off2, dev: dev2 });
       return thisFn();
     }
   };
@@ -123,7 +126,7 @@ function debug({ off = false, devOnly = true }) {
 var debug_default = debug;
 
 // packages/app/entry.worker.tsx
-var { log, error, opt, warn } = debug_default({ devOnly: true });
+var { log, error, opt, warn } = debug_default({ dev: false });
 var STATIC_ASSETS = ["/build/", "/icons/"];
 var ASSET_CACHE = "asset-cache";
 var DATA_CACHE = "data-cache";

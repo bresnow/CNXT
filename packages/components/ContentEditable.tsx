@@ -1,6 +1,6 @@
 import React from 'react';
 import debug from '~/app/debug';
-let { log, error, opt, warn } = debug({ devOnly: true });
+let { log, error, opt, warn } = debug({ dev: true });
 export const ContentEditable = ({
   children,
   name,
@@ -24,10 +24,7 @@ export const ContentEditable = ({
           target instanceof HTMLDivElement &&
           input instanceof HTMLInputElement
         ) {
-          input.value = ((state: HTMLDivElement, newText: string) => {
-            return state.innerText + newText;
-          })(target, target.innerText);
-          log(`inputElement - ${input.value}`);
+          input.value = target.innerText;
         }
       };
     }

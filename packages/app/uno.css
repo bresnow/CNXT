@@ -663,9 +663,7 @@
 .uppercase,
 [uppercase=""]{text-transform:uppercase;}
 .italic,
-.focus\:font-italic:focus,
 .font-italic,
-[focus\:font-italic=""]:focus,
 [font-italic=""]{font-style:italic;}
 .color-transparent{color:transparent;}
 .dark .dark\:text-\$\{color\}-200{color:var(--\{color\}-200);}

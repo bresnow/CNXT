@@ -3,7 +3,7 @@
 import { json } from '@remix-run/server-runtime';
 import { isResponse } from '@remix-run/server-runtime/responses';
 import debug from '~/app/debug';
-let { log, error, opt, warn } = debug({ devOnly: true });
+let { log, error, opt, warn } = debug({ dev: false });
 export type {};
 declare let self: ServiceWorkerGlobalScope;
 

@@ -6,7 +6,6 @@ import {
   useLoaderData,
   useCatch,
   Outlet,
-  useParams,
   Form,
   ActionFunction,
   useActionData,
@@ -14,16 +13,13 @@ import {
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
-import { HashtagLarge } from '~/components/svg/Icons';
-import { InputTextProps } from '~/components/InputText';
 import CNXTLogo from '~/components/svg/logos/CNXT';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
 import React from 'react';
 import debug from '~/app/debug';
-import { title } from 'process';
 
-let { log, error, opt, warn } = debug({ devOnly: true });
+let { log, error, opt, warn } = debug({ dev: true });
 export function Fallback({
   deferred,
 }: {
@@ -68,8 +64,9 @@ type LoaderData = {
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, seaAuth, ENV } = RemixGunContext(Gun, request);
-  let namespace = params.namespace as string;
-  console.log(namespace);
+  let { namespace } = params as { namespace: string };
+  namespace = namespace.toLocaleLowerCase();
+  log(namespace);
   let nsNode = gun
     .user()
     .auth(ENV.APP_KEY_PAIR, function (ack) {
@@ -79,12 +76,12 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       }
     })
     .get('tags')
-    .get(namespace.toLocaleLowerCase());
+    .get(namespace);
   let data;
   let nodeData = await nsNode.then();
   if (!nodeData) {
     data = {
-      title: namespace.toLowerCase(),
+      title: namespace,
       description: `#${namespace} is an available namespace.`,
       profilePic: '/images/AppIcon.svg',
     };
@@ -92,49 +89,72 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     return json(data);
   }
   let { description, profilePic } = nodeData;
-  return json({ title: namespace.toLowerCase(), description, profilePic });
+  return json({ title: namespace, description, profilePic });
 };
+
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
 
-  let { gun, seaAuth, formData, ENV } = RemixGunContext(Gun, request);
-  let namespace = params.namespace as string;
-  console.log(namespace);
+  let { gun, formData, ENV } = RemixGunContext(Gun, request);
+  let { namespace } = params as { namespace: string };
+  namespace = namespace.toLocaleLowerCase();
+  log(namespace);
   let nsNode = gun
     .user()
     .auth(ENV.APP_KEY_PAIR, function (ack) {
       let err = (ack as any).err;
       if (err) {
-        console.error(err);
+        error(err);
       }
     })
     .get('tags')
-    .get(namespace.toLocaleLowerCase());
+    .get(namespace);
   let { title, description } = await formData();
-  let data;
-  nsNode.put({ title, description });
-  data = { title, description };
+  if (description.length < 1) {
+    return json(
+      {
+        error: 'Please add description',
+      },
+      { status: 301 }
+    );
+  }
+  if (title.length < 4) {
+    return json(
+      {
+        error: 'Title must be at least 4 characters long.',
+      },
+      { status: 301 }
+    );
+  }
+  let data = { namespace, title, description };
+  nsNode.put(data);
   return json(data);
 };
 export default function NameSpaceRoute() {
   let { title, description, profilePic } = useLoaderData<LoaderData>();
-
   let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
     params: { path: `tags.${title}` },
   });
   let actionData = useActionData();
   React.useEffect(() => {
     if (actionData) {
-      actionData = JSON.stringify(actionData);
       warn('ACTION DATA');
       log(actionData);
       let Gun = window.Gun;
       let { protocol, host } = window.location;
-      warn('RemixGunContext');
-      log(window.__remixContext);
+      let root = window.__remixContext.routeData.root;
+      let APP_KEYS = root.ENV.APP_KEY_PAIR;
+      let opts = root.gunOpts;
+      log(opts);
       let gun = Gun({
         peers: [`${protocol}://${host}/gun`],
         localStorage: false,
+      });
+      let user = gun.user().auth(APP_KEYS, function (ack) {
+        let err = (ack as any).err;
+        if (err) {
+          error(err);
+        }
       });
     }
   }, [actionData]);

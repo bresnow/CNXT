@@ -5,7 +5,7 @@ import { SubmitButton } from '~/app/routes/$namespace';
 import { ImageCard } from '../app/routes/index';
 import debug from '~/app/debug';
 import { ContentEditable } from '~/components/ContentEditable';
-let { log, error, opt, warn } = debug({ devOnly: true });
+let { log, error, opt, warn } = debug({ dev: true });
 export type SocialLinkType = {
   href: string;
   color:
@@ -130,8 +130,9 @@ export default function Profile({
             </div>
             <ContentEditable
               className={` mb-6 text-center text-5xl ${
-                edit && 'bg-gray-300'
-              } md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none`}
+                edit &&
+                'bg-gray-300 font-italic rounded-md focus:border focus:border-rounded-md p-2 focus:border-green-500  focus:outline-none'
+              } md:text-left lg:text-6xl xl:text-7xl`}
               edit={edit}
               name={`title`}
               id={`PROFILE`}
@@ -144,42 +145,63 @@ export default function Profile({
               name={'description'}
               id={`PROFILE`}
               className={`mb-8 text-center text-lg md:text-left ${
-                edit && 'bg-gray-300'
+                edit &&
+                'bg-gray-300 font-italic rounded-md focus:border focus:border-rounded-md p-2 focus:border-green-500  focus:outline-none'
               }`}
             >
-              {description.split(' ' || '\n').map((curr) => {
-                let _p = curr.charAt(0);
-                let startsWith = (symbol: string) => _p === symbol;
-                let [prefix, namespace] = curr.split(_p).map((s) => s.trim());
+              {!edit
+                ? description.split(' ' || '\n').map((curr) => {
+                    let _p = curr.charAt(0);
+                    let startsWith = (symbol: string) => _p === symbol;
+                    let [prefix, namespace] = curr
+                      .split(_p)
+                      .map((s) => s.trim());
 
-                if (startsWith('@')) {
-                  return (
-                    <TagTemplate prefix={'@'} tag={namespace} color='blue' />
-                  );
-                }
-                if (startsWith('#')) {
-                  return (
-                    <TagTemplate prefix={'#'} tag={namespace} color='red' />
-                  );
-                }
-                if (startsWith('$')) {
-                  return (
-                    <TagTemplate prefix={'$'} tag={namespace} color='green' />
-                  );
-                }
-                if (startsWith('!')) {
-                  return (
-                    <TagTemplate prefix={'!'} tag={namespace} color='yellow' />
-                  );
-                }
-                if (startsWith('*')) {
-                  return (
-                    <TagTemplate prefix={'*'} tag={namespace} color='indigo' />
-                  );
-                } else {
-                  return curr + ' ';
-                }
-              })}
+                    if (startsWith('@')) {
+                      return (
+                        <TagTemplate
+                          prefix={'@'}
+                          tag={namespace}
+                          color='blue'
+                        />
+                      );
+                    }
+                    if (startsWith('#')) {
+                      return (
+                        <TagTemplate prefix={'#'} tag={namespace} color='red' />
+                      );
+                    }
+                    if (startsWith('$')) {
+                      return (
+                        <TagTemplate
+                          prefix={'$'}
+                          tag={namespace}
+                          color='green'
+                        />
+                      );
+                    }
+                    if (startsWith('!')) {
+                      return (
+                        <TagTemplate
+                          prefix={'!'}
+                          tag={namespace}
+                          color='yellow'
+                        />
+                      );
+                    }
+                    if (startsWith('*')) {
+                      return (
+                        <TagTemplate
+                          prefix={'*'}
+                          tag={namespace}
+                          color='indigo'
+                        />
+                      );
+                    } else {
+                      return curr + ' ';
+                    }
+                  })
+                : description}
             </ContentEditable>
             <div className='flex space-x-4'>
               {button.map(({ to, label, color }) => (
