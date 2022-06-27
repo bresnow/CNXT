@@ -141,12 +141,12 @@ export default function NameSpaceRoute() {
   return (
     <>
       <Navigation logo={<CNXTLogo to='/' />} />
-      <Suspense
-        fallback={
-          <Form method={'post'}>
+      <Form method={'post'}>
+        <Suspense
+          fallback={
             <Profile
-              title={actionData ? actionData.title : title}
-              description={actionData ? actionData.description : description}
+              title={title}
+              description={description}
               profilePic={profilePic}
               button={[]}
               socials={[
@@ -159,13 +159,11 @@ export default function NameSpaceRoute() {
                 },
               ]}
             />
-          </Form>
-        }
-      >
-        <Form method={'post'}>
+          }
+        >
           <SuspendedProfileInfo response={response} />
-        </Form>
-      </Suspense>
+        </Suspense>
+      </Form>
 
       <Outlet />
     </>
