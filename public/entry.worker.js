@@ -93,34 +93,61 @@ function json(data, init = {}) {
 
 // packages/app/entry.worker.tsx
 var import_responses2 = __toESM(require_responses());
+
+// packages/app/debug.ts
+var collapse = console.groupCollapsed.bind(console.trace);
+function debug({ off = false, devOnly = true }) {
+  let isProd = false;
+  return {
+    log(...args) {
+      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
+        console.log(`%c${arg}`, "color:#42bfdd;font-size:15px;font-weight:light;font-family:system-ui;font-style:italic;");
+      }) : null;
+    },
+    warn(...args) {
+      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
+        console.log(`%c${arg}`, "color:#f3a712;font-size:15px;font-weight:light;font-family:monospace;font-style:semibold;");
+      }) : null;
+    },
+    error(...args) {
+      devOnly && !isProd && !off || !devOnly && !off ? args.forEach((arg) => {
+        console.log(`%c${arg}`, "color:red;font-size:15px;font-weight:light;font-family:monospace;font-style:bold;");
+      }) : null;
+    },
+    opt({ off: off2, devOnly: devOnly2 }) {
+      let thisFn = debug.bind(debug, { off: off2, devOnly: devOnly2 });
+      return thisFn();
+    }
+  };
+}
+var debug_default = debug;
+
+// packages/app/entry.worker.tsx
+var { log, error, opt, warn } = debug_default({ devOnly: true });
 var STATIC_ASSETS = ["/build/", "/icons/"];
 var ASSET_CACHE = "asset-cache";
 var DATA_CACHE = "data-cache";
 var DOCUMENT_CACHE = "document-cache";
 async function handleInstall(event) {
-  console.log("Service worker installed");
+  log("Service worker installed");
 }
 async function handleActivate(event) {
-  console.log("Service worker activated");
+  log("Service worker activated");
 }
 async function handleMessage(event) {
   let cachePromises = /* @__PURE__ */ new Map();
   if (event.data.type === "REMIX_NAVIGATION") {
     let { isMount, location, matches, manifest } = event.data;
-    let documentUrl = location.pathname + location.search + location.hash, urlNode = {
-      pathname: location.pathname,
-      search: location.search,
-      hash: location.hash
-    };
+    let documentUrl = location.pathname + location.search + location.hash;
     let [dataCache, documentCache, existingDocument] = await Promise.all([
       caches.open(DATA_CACHE),
       caches.open(DOCUMENT_CACHE),
       caches.match(documentUrl)
     ]);
     if (!existingDocument || !isMount) {
-      console.log("Caching document for", documentUrl);
-      cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error) => {
-        console.error(`Failed to cache document for ${documentUrl}:`, error);
+      log("Caching document for", documentUrl);
+      cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error2) => {
+        error2(`Failed to cache document for ${documentUrl}:`, error2);
       }));
     }
     if (isMount) {
@@ -132,9 +159,9 @@ async function handleMessage(event) {
           search = search ? `?${search}` : "";
           let url = location.pathname + search + location.hash;
           if (!cachePromises.has(url)) {
-            console.log("Caching data for", url);
-            cachePromises.set(url, dataCache.add(url).catch((error) => {
-              console.error(`Failed to cache data for ${url}:`, error);
+            log("Caching data for", url);
+            cachePromises.set(url, dataCache.add(url).catch((error2) => {
+              error2(`Failed to cache data for ${url}:`, error2);
             }));
           }
         }
@@ -152,10 +179,10 @@ async function handleFetch(event) {
       ignoreSearch: true
     });
     if (cached) {
-      console.log("Serving asset from cache", url.pathname);
+      log("Serving asset from cache", url.pathname);
       return cached;
     }
-    console.log("Serving asset from network", url.pathname);
+    log("Serving asset from network", url.pathname);
     let response = await fetch(event.request);
     if (response.status === 200) {
       let cache = await caches.open(ASSET_CACHE);
@@ -165,13 +192,13 @@ async function handleFetch(event) {
   }
   if (isLoaderRequest(event.request)) {
     try {
-      console.log("Serving data from network", url.pathname + url.search);
+      log("Serving data from network", url.pathname);
       let response = await fetch(event.request.clone());
       let cache = await caches.open(DATA_CACHE);
       await cache.put(event.request, response.clone());
       return response;
-    } catch (error) {
-      console.error("Serving data from network failed, falling back to cache", url.pathname + url.search);
+    } catch (err) {
+      error("Serving data from network failed, falling back to cache", url.pathname);
       let response = await caches.match(event.request);
       if (response) {
         response.headers.set("X-Remix-Worker", "yes");
@@ -185,18 +212,18 @@ async function handleFetch(event) {
   }
   if (isDocumentGetRequest(event.request)) {
     try {
-      console.log("Serving document from network", url.pathname);
+      log("Serving document from network", url.pathname);
       let response = await fetch(event.request);
       let cache = await caches.open(DOCUMENT_CACHE);
       await cache.put(event.request, response.clone());
       return response;
-    } catch (error) {
-      console.error("Serving document from network failed, falling back to cache", url.pathname);
+    } catch (err) {
+      error("Serving document from network failed, falling back to cache", url.pathname);
       let response = await caches.match(event.request);
       if (response) {
         return response;
       }
-      throw error;
+      throw err;
     }
   }
   return fetch(event.request.clone());
@@ -228,17 +255,17 @@ self.addEventListener("fetch", (event) => {
     let result = {};
     try {
       result.response = await handleFetch(event);
-    } catch (error) {
-      result.error = error;
+    } catch (error2) {
+      result.error = error2;
     }
     return appHandleFetch(event, result);
   })());
 });
 async function appHandleFetch(event, {
-  error,
+  error: error2,
   response
 }) {
-  return (0, import_responses2.isResponse)(response) ? response : json(error, { status: 500 });
+  return (0, import_responses2.isResponse)(response) ? response : json(error2, { status: 500 });
 }
 /**
  * @remix-run/server-runtime v0.0.0-experimental-4e814511

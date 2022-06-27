@@ -1,7 +1,7 @@
 {
   "name": "cnxt",
   "description": "Dynamic namespaces for dynamic content. #://HashtagProtocol",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "author": "bresnow",
   "license": "MIT",
   "module": "es2022",

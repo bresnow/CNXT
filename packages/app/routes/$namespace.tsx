@@ -8,6 +8,8 @@ import {
   Outlet,
   useParams,
   Form,
+  ActionFunction,
+  useActionData,
 } from 'remix';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx } from 'types';
@@ -95,7 +97,16 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   );
   return json({ namespace: namespace.toLowerCase(), nodeData });
 };
+export let action: ActionFunction = async ({ params, request, context }) => {
+  let { RemixGunContext } = context as LoadCtx;
 
+  let { gun, seaAuth, formData, ENV } = RemixGunContext(Gun, request);
+
+  let data = await formData();
+  console.log(data);
+
+  return json(data);
+};
 export default function NameSpaceRoute() {
   let { namespace, ...data } = useLoaderData<{
     namespace: string;
@@ -105,7 +116,7 @@ export default function NameSpaceRoute() {
   let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
     params: { path: `tags.${namespace}` },
   });
-  const [value, setValue] = React.useState('');
+  let actionData = useActionData();
   return (
     <>
       <Navigation logo={<CNXTLogo to='/' />} />
@@ -143,7 +154,8 @@ export function SuspendedProfileInfo({ response }: { response: () => any }) {
 
 export function CatchBoundary() {
   let caught = useCatch();
-  console.log('caught', JSON.stringify(caught));
+  let datis = useLoaderData();
+  console.log('caught', datis);
   switch (caught.status) {
     case 401:
     case 403:

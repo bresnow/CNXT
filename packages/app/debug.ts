@@ -15,17 +15,30 @@ function debug({ off = false, devOnly = true }: DebugOptions): Debug {
         ? args.forEach((arg) => {
             console.log(
               `%c${arg}`,
-              'color:#f6f8ff;font-family:system-ui;font-size:25px;font-weight:light;'
+              'color:#42bfdd;font-size:15px;font-weight:light;font-family:system-ui;font-style:italic;'
             );
           })
         : null;
     },
     warn(...args: any[]) {
-      ((devOnly && !isProd) || !devOnly) && console.log(...args);
+      (devOnly && !isProd && !off) || (!devOnly && !off)
+        ? args.forEach((arg) => {
+            console.log(
+              `%c${arg}`,
+              'color:#f3a712;font-size:15px;font-weight:light;font-family:monospace;font-style:semibold;'
+            );
+          })
+        : null;
     },
     error(...args: any[]) {
-      ((devOnly && !isProd) || !devOnly) && console.log(...args);
-      ((devOnly && !isProd) || !devOnly) && collapse(...args);
+      (devOnly && !isProd && !off) || (!devOnly && !off)
+        ? args.forEach((arg) => {
+            console.log(
+              `%c${arg}`,
+              'color:red;font-size:15px;font-weight:light;font-family:monospace;font-style:bold;'
+            );
+          })
+        : null;
     },
     opt({ off, devOnly }: DebugOptions) {
       let thisFn = debug.bind(debug, { off, devOnly });

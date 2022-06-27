@@ -1,8 +1,11 @@
 import { ISEAPair } from 'gun';
-import React from 'react';
+import React, { ChangeEventHandler } from 'react';
 import { Form, Link } from 'remix';
 import { SubmitButton } from '~/app/routes/$namespace';
 import { ImageCard } from '../app/routes/index';
+import debug from '~/app/debug';
+import { ContentEditable } from '~/components/ContentEditable';
+let { log, error, opt, warn } = debug({ devOnly: true });
 export type SocialLinkType = {
   href: string;
   color:
@@ -45,7 +48,7 @@ const colors = {
   pink: 'bg-white border border-pink-500 shadow-sm hover:bg-gradient-to-t hover:from-pink-700 hover:via-gray-100 hover:to-pink-300 ',
 };
 
-const TagTemplate = ({
+export const TagTemplate = ({
   prefix,
   tag,
   color,
@@ -102,9 +105,6 @@ export default function Profile({
   socials: SocialLinkType;
 }) {
   const [edit, setEdit] = React.useState(false);
-  const [valueTitle, setValueTitle] = React.useState(title);
-  const [valueDesc, setValueDesc] = React.useState('');
-
   return (
     <div className=' font-sans antialiased bg-gradient-to-tr from-cnxt_red via-white to-transparent text-gray-900 leading-normal tracking-wider bg-cover'>
       <div className='p-5 font-sans antialiased bg-gradient-to-b from-cnxt_black via-blue-400 to-cnxt_blue text-gray-900 leading-normal tracking-wider bg-cover'>
@@ -123,7 +123,7 @@ export default function Profile({
                   }}
                 ></div>
 
-                <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
+                <Form className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
                   <button
                     onClick={() => setEdit(!edit)}
                     className={`${
@@ -132,30 +132,19 @@ export default function Profile({
                   >
                     {edit ? 'Done' : 'Edit Title & Description'}
                   </button>
-                  {!edit ? (
-                    <h1 className=' mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none'>
-                      {valueTitle}
-                    </h1>
-                  ) : (
-                    <input
-                      type='text'
-                      min={4}
-                      maxLength={12}
-                      onChange={({ target }) => {
-                        target = target as HTMLInputElement;
-                        setValueTitle(target.value);
-                      }}
-                      defaultValue={valueTitle}
-                      className={`mb-6 text-center text-5xl dark:text-white md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none bg-transparent flex`}
-                    />
-                  )}
+                  <ContentEditable
+                    className={` mb-6 text-center text-5xl  md:text-left lg:text-6xl xl:text-7xl focus:border focus:border-rounded-md p-2 focus:font-italic focus:border-green-500 focus:outline-none`}
+                    edit={edit}
+                    name={`title`}
+                    id={`PROFILE`}
+                  >
+                    {title}
+                  </ContentEditable>
 
-                  <p
-                    contentEditable={edit}
-                    suppressContentEditableWarning={true}
-                    onChange={(e) =>
-                      setValueDesc((e.target as HTMLParagraphElement).innerText)
-                    }
+                  <ContentEditable
+                    edit={edit}
+                    name={'description'}
+                    id={`PROFILE`}
                     className='mb-8 text-center text-lg md:text-left'
                   >
                     {description.split(' ' || '\n').map((curr) => {
@@ -213,14 +202,8 @@ export default function Profile({
                         return curr + ' ';
                       }
                     })}
-                  </p>
-
-                  <Form method='post'>
-                    <input type='hidden' name='title' value={valueTitle} />
-                    <input type='hidden' name='description' value={valueDesc} />
-                    <SubmitButton label={'Submit'} />
-                  </Form>
-
+                  </ContentEditable>
+                  <SubmitButton label={'Submit'} />
                   <div className='flex space-x-4'>
                     {button.map(({ to, label, color }) => (
                       <Link
@@ -232,7 +215,7 @@ export default function Profile({
                       </Link>
                     ))}
                   </div>
-                </div>
+                </Form>
 
                 <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'>
                   <SocialLinks socials={socials} />

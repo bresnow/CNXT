@@ -2,6 +2,8 @@
 
 import { json } from '@remix-run/server-runtime';
 import { isResponse } from '@remix-run/server-runtime/responses';
+import debug from '~/app/debug';
+let { log, error, opt, warn } = debug({ devOnly: true });
 export type {};
 declare let self: ServiceWorkerGlobalScope;
 
@@ -11,11 +13,11 @@ let DATA_CACHE = 'data-cache';
 let DOCUMENT_CACHE = 'document-cache';
 
 async function handleInstall(event: ExtendableEvent) {
-  console.log('Service worker installed');
+  log('Service worker installed');
 }
 
 async function handleActivate(event: ExtendableEvent) {
-  console.log('Service worker activated');
+  log('Service worker activated');
 }
 
 async function handleMessage(event: ExtendableMessageEvent) {
@@ -23,12 +25,7 @@ async function handleMessage(event: ExtendableMessageEvent) {
 
   if (event.data.type === 'REMIX_NAVIGATION') {
     let { isMount, location, matches, manifest } = event.data;
-    let documentUrl = location.pathname + location.search + location.hash,
-      urlNode = {
-        pathname: location.pathname,
-        search: location.search,
-        hash: location.hash,
-      };
+    let documentUrl = location.pathname + location.search + location.hash;
 
     let [dataCache, documentCache, existingDocument] = await Promise.all([
       caches.open(DATA_CACHE),
@@ -37,11 +34,11 @@ async function handleMessage(event: ExtendableMessageEvent) {
     ]);
 
     if (!existingDocument || !isMount) {
-      console.log('Caching document for', documentUrl);
+      log('Caching document for', documentUrl);
       cachePromises.set(
         documentUrl,
         documentCache.add(documentUrl).catch((error) => {
-          console.error(`Failed to cache document for ${documentUrl}:`, error);
+          error(`Failed to cache document for ${documentUrl}:`, error);
         })
       );
     }
@@ -55,11 +52,11 @@ async function handleMessage(event: ExtendableMessageEvent) {
           search = search ? `?${search}` : '';
           let url = location.pathname + search + location.hash;
           if (!cachePromises.has(url)) {
-            console.log('Caching data for', url);
+            log('Caching data for', url);
             cachePromises.set(
               url,
               dataCache.add(url).catch((error) => {
-                console.error(`Failed to cache data for ${url}:`, error);
+                error(`Failed to cache data for ${url}:`, error);
               })
             );
           }
@@ -81,11 +78,11 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
       ignoreSearch: true,
     });
     if (cached) {
-      console.log('Serving asset from cache', url.pathname);
+      log('Serving asset from cache', url.pathname);
       return cached;
     }
 
-    console.log('Serving asset from network', url.pathname);
+    log('Serving asset from network', url.pathname);
     let response = await fetch(event.request);
     if (response.status === 200) {
       let cache = await caches.open(ASSET_CACHE);
@@ -96,15 +93,15 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
 
   if (isLoaderRequest(event.request)) {
     try {
-      console.log('Serving data from network', url.pathname + url.search);
+      log('Serving data from network', url.pathname);
       let response = await fetch(event.request.clone());
       let cache = await caches.open(DATA_CACHE);
       await cache.put(event.request, response.clone());
       return response;
-    } catch (error) {
-      console.error(
+    } catch (err) {
+      error(
         'Serving data from network failed, falling back to cache',
-        url.pathname + url.search
+        url.pathname
       );
       let response = await caches.match(event.request);
       if (response) {
@@ -124,13 +121,13 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
 
   if (isDocumentGetRequest(event.request)) {
     try {
-      console.log('Serving document from network', url.pathname);
+      log('Serving document from network', url.pathname);
       let response = await fetch(event.request);
       let cache = await caches.open(DOCUMENT_CACHE);
       await cache.put(event.request, response.clone());
       return response;
-    } catch (error) {
-      console.error(
+    } catch (err) {
+      error(
         'Serving document from network failed, falling back to cache',
         url.pathname
       );
@@ -138,7 +135,7 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
       if (response) {
         return response;
       }
-      throw error;
+      throw err;
     }
   }
 
