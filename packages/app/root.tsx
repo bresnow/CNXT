@@ -46,7 +46,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
     meta = await user.auth(ENV.APP_KEY_PAIR).path(`pages.root.meta`).then();
   } catch (error) {}
   let gunOpts = {
-    peers: [`${protocol}//${host}/gun`, `https://${ENV.PEER_DOMAIN}/gun`],
+    peers: [`${protocol}//${host}/gun`],
     radisk: true,
     localStorage: false,
   };
