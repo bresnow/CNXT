@@ -23,6 +23,7 @@ import debug from '~/app/lib/debug';
 import { useIff, Iff } from '~/app/lib/Iff';
 import { ImageCard } from '.';
 import { IGunUserInstance } from 'gun/types';
+import LZString from 'lz-string';
 
 let { log, error, opt, warn } = debug({ dev: false });
 export function Fallback({
@@ -293,33 +294,51 @@ export function SuspendedProfileInfo({
   response: SuspendedResponse<{
     title: string;
     description: string;
-    profilePic: string;
+    avatar?: { image?: string; name?: string };
     _?: { ['#']: string };
   }>;
 }) {
   let data = response();
-  let { title, description, profilePic } = data;
+  let { title, description, avatar } = data,
+    profilePic = profilePreview;
   React.useEffect(() => {
     let { user } = handle.getMasterUser(window);
     let { pathname } = window.location,
       namespace = pathname.replace('/', '').toLocaleLowerCase();
-    let node = user.get('tags').get(namespace);
-    node.once((data) => {
+    let node = user.get('tags').get(namespace),
+      avinode = node.get('avatar');
+    avinode.once((data) =>
+      console.log(`%c${JSON.stringify(data, null, 2)}`, `color:#f89`)
+    );
+    node.on((data) => {
       data && log(data);
-      if (profilePreview !== undefined) {
-        node.put({ profilePic: profilePreview });
+      if (profilePreview) {
+        let compressed = LZString.compressToUTF16(profilePreview);
+        console.log(`%c` + profilePreview, `color:#37F`);
+        console.log(`%c${compressed}`, `color:#f83`);
+        avinode.put(null);
+        avinode.put(
+          { image: profilePreview, name: `${namespace}-avi.jpg` },
+          (put) => {
+            console.log(`%c${JSON.stringify(put, null, 2)}`, `color:#178`);
+          }
+        );
       }
     });
   }, []);
+
+  React.useEffect(() => {}, []);
   return (
     <>
       <Profile
         title={title}
         description={description}
         profilePic={
-          profilePreview === profilePic || !profilePreview
+          avatar?.image
+            ? avatar?.image
+            : profilePic
             ? profilePic
-            : profilePreview
+            : '/images/AppIcon.svg'
         }
         button={[]}
         socials={[
