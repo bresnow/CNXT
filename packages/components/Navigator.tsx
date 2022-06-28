@@ -393,6 +393,5 @@ export function Navigation({
         </div>
       </div>
     </header>
-  )
-}
+  );
 }
