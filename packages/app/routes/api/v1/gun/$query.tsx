@@ -53,7 +53,6 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { formData } = RemixGunContext(Gun, request);
   let data;
-
   try {
     data = await formData();
     log(data);

@@ -170,11 +170,7 @@ export default function NameSpaceRoute() {
       log(actionData);
     }
   }, [actionData]);
-  let Post = useFetcher();
 
-  useIff([Post.type === 'actionReload', Post.data], () => {
-    log('POST-DATA', Post.data);
-  });
   function imgChange(e: React.ChangeEvent<HTMLInputElement>) {
     let file = (e?.target as any).files[0];
     var reader = new FileReader();

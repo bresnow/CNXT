@@ -36,8 +36,6 @@ export function useFetcherAsync(routePath: string, options?: Options) {
   let { key, search } = useLocation();
   let formRef = React.useRef<HTMLFormElement>(null);
 
-  let formdata = new FormData(formRef.current ?? undefined);
-
   let deferred = useMemo(() => {
     invariant(dataloader, 'Context Provider is undefined for useFetcherAsync');
     let _deferred = { resolved: false } as {
@@ -47,6 +45,10 @@ export function useFetcherAsync(routePath: string, options?: Options) {
       error?: any;
       promise: Promise<void>;
     };
+    let formdata = new FormData();
+    if (formRef.current) {
+      formdata = new FormData(formRef.current);
+    }
     if (typeof options?.body === 'object') {
       for (let prop in options.body) {
         formdata.append(prop, (options.body as any)[prop]);
@@ -66,7 +68,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
         _deferred.resolved = true;
       });
     return _deferred;
-  }, [routePath, options, formdata, key]);
+  }, [routePath, options, formRef, key]);
 
   return {
     response() {
