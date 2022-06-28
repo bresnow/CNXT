@@ -21,6 +21,7 @@ import {
   ExternalScriptsFunction,
 } from '~/remix-gun-utility/remix/external-scripts';
 import jsesc from 'jsesc';
+import { HomeIcon } from '~/components/svg/Icons';
 
 export const links: LinksFunction = () => {
   return [
@@ -81,7 +82,7 @@ export type MenuLinks = {
   id: string;
   link: string;
   label: string;
-  icon?: string;
+  icon?: JSX.Element;
   subMenu?: MenuLinks;
 }[];
 export let handle: { links: MenuLinks; scripts: ExternalScriptsFunction } = {
@@ -90,7 +91,7 @@ export let handle: { links: MenuLinks; scripts: ExternalScriptsFunction } = {
       label: 'HOME',
       id: 'home',
       link: '/',
-      icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
+      icon: <HomeIcon />,
     },
   ],
   scripts: () => [],
