@@ -38,13 +38,14 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { ENV, gun } = RemixGunContext(Gun, request);
   let user = gun.user();
-
+  let url = new URL(request.url);
+  let { protocol, host } = url;
   let meta;
   try {
     meta = await user.auth(ENV.APP_KEY_PAIR).path(`pages.root.meta`).then();
   } catch (error) {}
   let gunOpts = {
-    peers: (ENV.PEER_DOMAIN as string[]).map((peer) => `https://${peer}/gun`),
+    peers: [`${protocol}//${host}/gun`, `https://${ENV.PEER_DOMAIN}/gun`],
     radisk: true,
     localStorage: false,
   };

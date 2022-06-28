@@ -1,5 +1,5 @@
 import React from 'react';
-import debug from '~/app/debug';
+import debug from '~/app/lib/debug';
 let { log, error, opt, warn } = debug({ dev: true });
 export const ContentEditable = ({
   children,

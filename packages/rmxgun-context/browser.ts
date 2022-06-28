@@ -36,7 +36,10 @@ export function createBrowserLoader() {
           routePath = LZString.compressToEncodedURIComponent(routePath);
         }
       }
-      let { data } = await axios.get(routePath, options);
+      let { data } =
+        !options?.method || options.method !== ('GET' || 'get')
+          ? await axios.get(routePath, options)
+          : await axios.request(routePath, options);
       let cache;
       if (includes(options?.params, 'path')) {
         let { path } = options?.params as any;

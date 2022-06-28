@@ -2,7 +2,7 @@
 
 import { json } from '@remix-run/server-runtime';
 import { isResponse } from '@remix-run/server-runtime/responses';
-import debug from '~/app/debug';
+import debug from '~/app/lib/debug';
 let { log, error, opt, warn } = debug({ dev: false });
 export type {};
 declare let self: ServiceWorkerGlobalScope;

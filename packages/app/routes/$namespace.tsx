@@ -9,6 +9,8 @@ import {
   Form,
   ActionFunction,
   useActionData,
+  useFetcher,
+  EntryContext,
 } from 'remix';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx } from 'types';
@@ -17,9 +19,12 @@ import CNXTLogo from '~/components/svg/logos/CNXT';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
 import React from 'react';
-import debug from '~/app/debug';
+import debug from '~/app/lib/debug';
+import { useIff, Iff } from '~/app/lib/Iff';
+import { ImageCard } from '.';
+import { IGunUserInstance } from 'gun/types';
 
-let { log, error, opt, warn } = debug({ dev: true });
+let { log, error, opt, warn } = debug({ dev: false });
 export function Fallback({
   deferred,
 }: {
@@ -60,7 +65,28 @@ type LoaderData = {
   description: string;
   profilePic: string;
 };
+type Handle = {
+  getMasterUser(window: Window): {
+    user: IGunUserInstance;
+  };
+};
+export let handle: Handle = {
+  getMasterUser(window: Window) {
+    let Gun = window.Gun;
+    let root = ((window as any).__remixContext as EntryContext).routeData.root;
+    let APP_KEYS = root.ENV.APP_KEY_PAIR;
+    let opts = root.gunOpts;
+    let gun = Gun(opts);
+    let user = gun.user().auth(APP_KEYS, function (ack) {
+      let err = (ack as any).err;
+      if (err) {
+        error(err);
+      }
+    });
 
+    return { user };
+  },
+};
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
   let { gun, seaAuth, ENV } = RemixGunContext(Gun, request);
@@ -94,7 +120,6 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-
   let { gun, formData, ENV } = RemixGunContext(Gun, request);
   let { namespace } = params as { namespace: string };
   namespace = namespace.toLocaleLowerCase();
@@ -110,7 +135,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
     .get('tags')
     .get(namespace);
   let { title, description } = await formData();
-  if (description.length < 1) {
+  if (typeof description !== 'string' || description.length < 1) {
     return json(
       {
         error: 'Please add description',
@@ -118,7 +143,7 @@ export let action: ActionFunction = async ({ params, request, context }) => {
       { status: 301 }
     );
   }
-  if (title.length < 4) {
+  if (typeof title !== 'string' || title.length < 4) {
     return json(
       {
         error: 'Title must be at least 4 characters long.',
@@ -136,28 +161,32 @@ export default function NameSpaceRoute() {
     params: { path: `tags.${title}` },
   });
   let actionData = useActionData();
+  let [preview, previewSet] = React.useState<string>();
+  React.useEffect(() => {}, []);
   React.useEffect(() => {
     if (actionData) {
       warn('ACTION DATA');
       log(actionData);
-      let Gun = window.Gun;
-      let { protocol, host } = window.location;
-      let root = window.__remixContext.routeData.root;
-      let APP_KEYS = root.ENV.APP_KEY_PAIR;
-      let opts = root.gunOpts;
-      log(opts);
-      let gun = Gun({
-        peers: [`${protocol}://${host}/gun`],
-        localStorage: false,
-      });
-      let user = gun.user().auth(APP_KEYS, function (ack) {
-        let err = (ack as any).err;
-        if (err) {
-          error(err);
-        }
-      });
     }
   }, [actionData]);
+  let Post = useFetcher();
+
+  useIff([Post.type === 'actionReload', Post.data], () => {
+    log('POST-DATA', Post.data);
+  });
+  function imgChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let file = (e?.target as any).files[0];
+    var reader = new FileReader();
+
+    reader.onload = ({ target }: ProgressEvent<FileReader>) => {
+      let base64 = (target as FileReader).result as string;
+      previewSet(base64);
+    };
+    reader.onerror = (r: any) => {
+      error(r.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
   return (
     <>
       <Navigation logo={<CNXTLogo to='/' />} />
@@ -181,8 +210,55 @@ export default function NameSpaceRoute() {
             />
           }
         >
-          <SuspendedProfileInfo response={response} />
+          <SuspendedProfileInfo response={response} profilePreview={preview} />
         </Suspense>
+      </Form>
+      <Form method={'post'}>
+        <div className='mb-6'>
+          <label className='font-display text-jacarta-700 mb-2 block dark:text-white'>
+            Image, Video, Audio, or 3D Model
+            <span className='text-red'>*</span>
+          </label>
+          <p className='dark:text-jacarta-300 text-2xs mb-3'>
+            Drag or choose your file to upload
+          </p>
+
+          <div className='group relative flex max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white py-20 px-5 text-center'>
+            <div className='relative z-10 cursor-pointer'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 24 24'
+                width='24'
+                height='24'
+                className='fill-jacarta-500 mb-4 inline-block dark:fill-white'
+              >
+                <path fill='none' d='M0 0h24v24H0z' />
+                <path d='M16 13l6.964 4.062-2.973.85 2.125 3.681-1.732 1-2.125-3.68-2.223 2.15L16 13zm-2-7h2v2h5a1 1 0 0 1 1 1v4h-2v-3H10v10h4v2H9a1 1 0 0 1-1-1v-5H6v-2h2V9a1 1 0 0 1 1-1h5V6zM4 14v2H2v-2h2zm0-4v2H2v-2h2zm0-4v2H2V6h2zm0-4v2H2V2h2zm4 0v2H6V2h2zm4 0v2h-2V2h2zm4 0v2h-2V2h2z' />
+              </svg>
+              <p className='dark:text-jacarta-300 mx-auto max-w-xs text-xs'>
+                JPG, PNG, GIF, SVG, WEBP Max size: 100 MB
+                {/* MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. */}
+              </p>
+            </div>
+            <div className='absolute inset-4 cursor-pointer rounded opacity-0 group-hover:opacity-100'></div>
+            <input
+              type='file'
+              accept='image/*,video/*,audio/*,webgl/*,.glb,.gltf'
+              id='file-upload'
+              name={'file'}
+              onChange={imgChange}
+              className='absolute inset-0 z-20 cursor-pointer opacity-0'
+            />
+          </div>
+        </div>
+        <button
+          type={'submit'}
+          name={'test'}
+          id={'test-budden'}
+          value={'butt-Mahm'}
+        >
+          {'TEST BUDDEN'}
+        </button>
       </Form>
 
       <Outlet />
@@ -190,15 +266,61 @@ export default function NameSpaceRoute() {
   );
 }
 
-export function SuspendedProfileInfo({ response }: { response: () => any }) {
+interface SuspendedResponse<Return> {
+  (): Return;
+}
+export function SuspendedTest({
+  response,
+}: {
+  response: SuspendedResponse<any>;
+}) {
+  let res = response();
+  return (
+    <div
+      className={`w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-2xl bg-white opacity-75 mx-6 lg:mx-0`}
+    >
+      <pre>
+        <code>{JSON.stringify(res, null, 2)}</code>
+      </pre>
+    </div>
+  );
+}
+export function SuspendedProfileInfo({
+  response,
+  profilePreview,
+}: {
+  profilePreview?: string;
+  response: SuspendedResponse<{
+    title: string;
+    description: string;
+    profilePic: string;
+    _?: { ['#']: string };
+  }>;
+}) {
   let data = response();
-  log(JSON.stringify(data));
+  let { title, description, profilePic } = data;
+  React.useEffect(() => {
+    let { user } = handle.getMasterUser(window);
+    let { pathname } = window.location,
+      namespace = pathname.replace('/', '').toLocaleLowerCase();
+    let node = user.get('tags').get(namespace);
+    node.once((data) => {
+      data && log(data);
+      if (profilePreview !== undefined) {
+        node.put({ profilePic: profilePreview });
+      }
+    });
+  }, []);
   return (
     <>
       <Profile
-        title={data.title}
-        description={data.description}
-        profilePic={data.profilePic}
+        title={title}
+        description={description}
+        profilePic={
+          profilePreview === profilePic || !profilePreview
+            ? profilePic
+            : profilePreview
+        }
         button={[]}
         socials={[
           {
