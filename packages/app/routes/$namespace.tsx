@@ -188,6 +188,10 @@ export default function NameSpaceRoute() {
     };
     reader.readAsDataURL(file);
   }
+  let post = useFetcherAsync(`/api/v1/gun/o?`, {
+    body: { lemon: 'grab', fifty: 'shades' },
+    params: { path: `tags.${title}` },
+  });
   return (
     <>
       <Navigation logo={<CNXTLogo to='/' />} />

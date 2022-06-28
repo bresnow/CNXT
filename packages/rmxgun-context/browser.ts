@@ -2,6 +2,7 @@ import LZString from 'lz-string';
 import objectAssign from 'object-assign';
 import axios, { RequestHeaders } from 'redaxios';
 import { includes } from './useFetcherAsync';
+import type { IGunMeta } from 'gun';
 import 'gun/lib/path';
 import 'gun/sea';
 import 'gun/lib/webrtc';
@@ -14,44 +15,38 @@ import 'gun/lib/load';
 import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
+
+export type GunNodeData = IGunMeta<Record<string, any>>;
 export function createBrowserLoader() {
   return {
     async load(routePath: string, options?: Options) {
       let Gun = (window as Window).Gun;
-      let { host, protocol } = window.location;
+      let { body, params, method, ...opts } = options ?? {};
       let { routeData } = __remixContext;
-      console.log(routeData);
-      const cacheRef = Gun({
-        peers: [`${protocol + host + '/gun'}`],
-        localStorage: false,
-      });
-      if (options && options.params) {
+      let { gunOpts } = routeData.root;
+      const cacheRef = Gun(gunOpts);
+      if (params) {
         if (!routePath.endsWith('/')) {
           routePath += '/';
         }
-        if (
-          includes(options.params, 'compressed') &&
-          (options.params as any).compressed === ('true' || true)
-        ) {
-          routePath = LZString.compressToEncodedURIComponent(routePath);
-        }
+        // TODO: search param stuff goes here
       }
+      let postfix = 'post' || 'POST';
       let { data } =
-        !options?.method || options.method !== ('GET' || 'get')
-          ? await axios.get(routePath, options)
-          : await axios.request(routePath, options);
+        body || method === postfix
+          ? await axios.post(routePath, body, { params, method, ...opts })
+          : await axios.get(routePath, options);
       let cache;
-      if (includes(options?.params, 'path')) {
-        let { path } = options?.params as any;
-        console.log(path, data, 'Browser CTX');
+      if (includes(params, 'path')) {
+        let { path } = params ?? {};
         cacheRef.path(path).put(data);
         cache = await new Promise((res, rej) =>
-          cacheRef.path((path as string).replace('/', '.')).open((data) => {
-            data ? res(data) : rej(data);
+          cacheRef.path((path as string).replace('/', '.')).load((data) => {
+            data && res(data);
           })
         );
       }
-      return { data, cache: cache && (cache as Record<string, any>) };
+      return { data, cache };
     },
   };
 }
@@ -74,7 +69,7 @@ export type Options = {
     | 'OPTIONS'
     | 'HEAD';
   headers?: RequestHeaders;
-  body?: FormData | string | object;
+  body?: FormData | object;
   responseType?:
     | 'text'
     | 'json'
