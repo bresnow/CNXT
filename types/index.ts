@@ -3,11 +3,15 @@ import type {
   IGun,
   IGunChain,
   IGunInstance,
+  IGunMeta,
   IGunUserInstance,
 } from 'gun/types';
 import type { ISEAPair } from 'gun/types';
 import type { Params } from 'react-router';
 import type { ServerResponse } from 'http';
+import { FileUploadHandlerOptions } from '@remix-run/node/upload/fileUploadHandler';
+import { MemoryUploadHandlerOptions } from '@remix-run/node/upload/memoryUploadHandler';
+import { type } from 'os';
 export * from './loaders';
 
 export interface _Window extends Window {
@@ -18,41 +22,18 @@ export interface _Window extends Window {
     APP_KEY_PAIR: ISEAPair;
   };
 }
-export type NodeValues = Record<string, string>;
-export interface ChainCtx {
-  get: (path: string) => {
-    val: (opts?: { open: boolean }) => Promise<NodeValues | undefined>;
-    put: (
-      data: NodeValues | IGunChain<Record<string, any>, any>
-    ) => Promise<string>;
-    set: (
-      data: NodeValues | IGunChain<Record<string, any>, any>
-    ) => Promise<string>;
-    map: (callback?: (args?: any) => any) => Promise<NodeValues[] | undefined>;
-  };
-  options: (peers: string | string[], remove?: boolean) => any;
-}
-
-export interface CredentialsAuth {
-  (alias: string, password: string): Promise<{
-    user: IGunUserInstance;
-  }>;
-  (alias: string, password: string): Promise<{
-    error: string;
-  }>;
-}
-export interface Keydentials {
-  (): Promise<{
-    pair: ISEAPair;
-  }>;
-}
-
-export interface SEAAuth {
-  keypair: Keydentials;
-  logout(): Promise<Response>;
-  credentials: CredentialsAuth;
-}
-
+export type JSobject = {
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | JSobject[]
+    | JSobject;
+};
+export type NodeValues = IGunMeta<Record<string, string | JSobject>>;
+export type FormDataOptions = MemoryUploadHandlerOptions;
 export type LoadCtx = { RemixGunContext: RmxGunCtx; res: ServerResponse };
 export interface RmxGunCtx {
   (Gun: IGun, request: Request): {
@@ -68,10 +49,13 @@ export interface RmxGunCtx {
       localStorage: boolean;
     };
     gun: IGunInstance;
-    graph: ChainCtx;
-    seaAuth: SEAAuth;
-    formData: () => Promise<Record<string, string>>;
+    user: IGunUserInstance;
+    formData: (options?: FormDataOptions) => Promise<Record<string, string>>;
+    opt_mesh: (
+      peers: string | string[],
+      remove?: boolean
+    ) => {
+      message: string;
+    };
   };
-  createToken: (sessionKey?: string) => Promise<string>;
-  verifyToken: (request: Request, sessionKey?: string) => Promise<void>;
 }

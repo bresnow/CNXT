@@ -13,7 +13,7 @@ export async function remove(path: string) {
 
 export async function read(arg: string) {
   const path = resolvePath(arg);
-  return fs.readFile(path, 'utf-8');
+  return fs.readFile(path, 'base64');
 }
 
 export async function write(path: string, content: any) {

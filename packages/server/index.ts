@@ -24,7 +24,6 @@ import 'gun/lib/not';
 import 'gun/lib/axe';
 import { data } from '../../data.config';
 import { read, write } from './fs-util';
-import { tsvNumericalSet } from './email-dist';
 installGlobals();
 const env = {
   DOMAIN: process.env.DOMAIN,
@@ -164,7 +163,6 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
   console.log('APP AUTH SUCCESS');
 });
 user.put(data);
-gun.get('data-unsigned').put(data);
 // void (async () => {
 //   try {
 //     let result;

@@ -15,6 +15,7 @@ import 'gun/lib/load';
 import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
+import { errorCheck } from '~/remix-gun-utility/remix/helpers';
 
 export type GunNodeData = IGunMeta<Record<string, any>>;
 export function createBrowserLoader() {
@@ -37,7 +38,7 @@ export function createBrowserLoader() {
           ? await axios.post(routePath, body, { params, method, ...opts })
           : await axios.get(routePath, options);
       let cache;
-      if (includes(params, 'path')) {
+      if (data && includes(params, 'path') && !errorCheck(data)) {
         let { path } = params ?? {};
         cacheRef.path(path).put(data);
         cache = await new Promise((res, rej) =>

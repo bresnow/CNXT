@@ -24,6 +24,7 @@
     "@remix-run/node": "0.0.0-experimental-4e814511",
     "@remix-run/react": "0.0.0-experimental-4e814511",
     "@remix-run/server-runtime": "0.0.0-experimental-4e814511",
+    "base64-stream": "^1.0.0",
     "bresnow_utility-react-hooks": "0.2.9",
     "cedit": "^1.1.0",
     "chalk": "^5.0.1",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@remix-run/dev": "0.0.0-experimental-4e814511",
     "@remix-run/eslint-config": "^1.4.0",
+    "@types/base64-stream": "^1.0.2",
     "@types/dockerode": "^3.3.9",
     "@types/gun": "^0.9.3",
     "@types/jsesc": "^3.0.1",
