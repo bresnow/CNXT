@@ -1,8 +1,12 @@
-import type { RmxGunCtx } from 'types';
-import type { IGun, ISEAPair } from 'gun/types';
+import type { HashedTag, RmxGunCtx, TagDelimiter } from 'types';
+import type { IGun, IGunChain, ISEAPair } from 'gun/types';
 import { getDomain } from '.';
 import { parseMultipartFormData } from '@remix-run/node/parseMultipartFormData';
 import { createMemoryUploadHandler } from '@remix-run/node/upload/memoryUploadHandler';
+import { Params } from 'react-router';
+import debug from '~/app/lib/debug';
+
+let { log, error, opt, warn } = debug({ dev: true });
 export function RemixGunContext(
   Gun: IGun,
   request: Request
@@ -32,14 +36,14 @@ export function RemixGunContext(
     radisk: true,
   };
   let gun = Gun(gunOpts),
-    user = gun.user().auth(ENV.APP_KEY_PAIR, function (ack) {
-      let err = (ack as any).err;
-      if (err) {
-        console.error(err);
-        throw new Error(err + ' App Authentication at LoadCtx');
-      }
-    });
-
+    user = gun.user();
+  user.auth(ENV.APP_KEY_PAIR, function (ack) {
+    let err = (ack as any).err;
+    if (err) {
+      console.error(err);
+      throw new Error(err + ' App Authentication at LoadCtx');
+    }
+  });
   const opt_mesh = (peers: string | string[], remove?: boolean) => {
     var peerOpt = (gun as any).back('opt.peers');
     var mesh = (gun as any).back('opt.mesh'); // DAM
@@ -61,9 +65,39 @@ export function RemixGunContext(
     });
     return { message: `Peers ${peers} added` };
   };
+  let lex = user.get('hashed-tags');
 
-  // }
-
+  const hashTagWork = async (
+    delimiter: TagDelimiter,
+    params: Params<string>
+  ) => {
+    let { namespace } = params as { namespace: string };
+    return {
+      tagNode: lex
+        .get(
+          `${await Gun.SEA.work(
+            { delimiter, namespace },
+            ENV.APP_KEY_PAIR,
+            null,
+            { name: 'SHA-256', length: 12 }
+          )}`
+        )
+        .put({ delimiter, namespace }),
+    };
+  };
+  const findTagFromHash = async (hash: HashedTag) => {
+    let { namespace, delimiter } = await lex.get(hash).then();
+    let work = await Gun.SEA.work(
+      { delimiter, namespace },
+      ENV.APP_KEY_PAIR,
+      null,
+      { name: 'SHA-256', length: 12 }
+    );
+    if (hash === work) {
+      return { namespace, delimiter };
+    }
+    return null;
+  };
   return {
     ENV,
     gunOpts,
@@ -87,5 +121,9 @@ export function RemixGunContext(
       });
     },
     opt_mesh,
+    cnxtCtx: {
+      findTagFromHash,
+      hashTagWork,
+    },
   };
 }

@@ -6,7 +6,7 @@ import {
   unstable_parseMultipartFormData,
 } from 'remix';
 import { LoadCtx } from 'types';
-import Gun, { ISEAPair } from 'gun';
+import Gun, { IGunChain, ISEAPair } from 'gun';
 import LZString from 'lz-string';
 import debug from '~/app/lib/debug';
 import { createMemoryUploadHandler } from '@remix-run/node/upload/memoryUploadHandler';
@@ -59,9 +59,10 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData } = RemixGunContext(Gun, request);
+  let { formData, user } = RemixGunContext(Gun, request);
   let url = new URL(request.url);
   let fname = url.searchParams.get('filename');
+  let path = url.searchParams.get('path') as string;
   const handler = composeUploadHandlers(
     createFileUploadHandler({
       directory: './public/images',
@@ -73,7 +74,8 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   let data;
   try {
     data = Object.fromEntries(await parseMultipartFormData(request, handler));
-    log(data);
+    let put = await (user as any).path(path).put(data).then();
+    log(data, put);
   } catch (error) {
     data = error;
   }
