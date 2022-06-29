@@ -2,7 +2,7 @@ import LZString from 'lz-string';
 import objectAssign from 'object-assign';
 import axios, { RequestHeaders } from 'redaxios';
 import { includes } from './useFetcherAsync';
-import type { IGunMeta } from 'gun';
+import type { IGunChain, IGunMeta } from 'gun';
 import 'gun/lib/path';
 import 'gun/sea';
 import 'gun/lib/webrtc';
@@ -24,8 +24,11 @@ export function createBrowserLoader() {
       let Gun = (window as Window).Gun;
       let { body, params, method, ...opts } = options ?? {};
       let { routeData } = __remixContext;
-      let { gunOpts } = routeData.root;
-      const cacheRef = Gun(gunOpts);
+      let { gunOpts, ENV } = routeData.root;
+      const gun = Gun(gunOpts);
+      const user = gun.user();
+      user.auth(ENV.APP_KEY_PAIR);
+      let db = user as unknown as IGunChain<any>;
       if (params) {
         if (!routePath.endsWith('/')) {
           routePath += '/';
@@ -37,17 +40,17 @@ export function createBrowserLoader() {
         body || method === postfix
           ? await axios.post(routePath, body, { params, method, ...opts })
           : await axios.get(routePath, options);
-      let cache;
+      let idb;
       if (data && includes(params, 'path') && !errorCheck(data)) {
         let { path } = params ?? {};
-        cacheRef.path(path).put(data);
-        cache = await new Promise((res, rej) =>
-          cacheRef.path((path as string).replace('/', '.')).load((data) => {
+        db.path(path).put(data);
+        idb = await new Promise((res, rej) =>
+          db.path((path as string).replace('/', '.')).load((data) => {
             data && res(data);
           })
         );
       }
-      return { data, cache };
+      return { data, cache: idb };
     },
   };
 }

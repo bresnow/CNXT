@@ -1,8 +1,6 @@
 import { ISEAPair } from 'gun';
-import React, { ChangeEventHandler } from 'react';
-import { Form, Link } from 'remix';
-import { SubmitButton } from '~/app/routes/$namespace';
-import { ImageCard } from '../app/routes/index';
+import React from 'react';
+import { Link } from 'remix';
 import debug from '~/app/lib/debug';
 import { ContentEditable } from '~/components/ContentEditable';
 let { log, error, opt, warn } = debug({ dev: true });
@@ -21,7 +19,7 @@ export type SocialLinkType = {
   title: string;
   svgPath: string;
 }[];
-type ColorChoice =
+export type ColorChoice =
   | 'white'
   | 'gray'
   | 'red'
@@ -31,21 +29,21 @@ type ColorChoice =
   | 'purple'
   | 'pink'
   | 'indigo';
-const colors = {
+export const colors = {
   white:
-    'bg-white border border-cnxt_red shadow-sm hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
-  gray: 'bg-white border border-slate-800 shadow-sm hover:bg-gradient-to-t hover:from-slate-500 hover:via-gray-100 hover:to-slate-200 ',
-  red: 'bg-white border border-cnxt_red shadow-sm hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
+    'bg-white border border-cnxt_red shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
+  gray: 'bg-white border border-slate-800 hover:border-transparent shadow-sm hover:bg-gradient-to-t hover:from-slate-500 hover:via-gray-100 hover:to-slate-200 ',
+  red: 'bg-white border border-cnxt_red hover:border-transparent shadow-sm hover:bg-gradient-to-t hover:from-cnxt_red hover:via-gray-100 hover:to-red-300 ',
   yellow:
-    'bg-white border border-yellow-500 shadow-sm hover:bg-gradient-to-t hover:from-yellow-700 hover:via-gray-100 hover:to-yellow-300 ',
+    'bg-white border border-yellow-500 hover:border-transparent shadow-sm hover:bg-gradient-to-t hover:from-yellow-700 hover:via-gray-100 hover:to-yellow-300 ',
   green:
-    'bg-white border border-green-500 shadow-sm hover:bg-gradient-to-t hover:from-green-700 hover:via-gray-100 hover:to-green-300 ',
-  blue: 'bg-white border border-cnxt_blue shadow-sm hover:bg-gradient-to-t hover:from-cnxt_blue hover:via-gray-100 hover:to-blue-300 ',
+    'bg-white border border-green-500 shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-green-700 hover:via-gray-100 hover:to-green-300 ',
+  blue: 'bg-white border border-cnxt_blue shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-cnxt_blue hover:via-gray-100 hover:to-blue-300 ',
   indigo:
-    'bg-white border border-indigo-500 shadow-sm hover:bg-gradient-to-t hover:from-indigo-700 hover:via-gray-100 hover:to-indigo-300 ',
+    'bg-white border border-indigo-500 shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-indigo-700 hover:via-gray-100 hover:to-indigo-300 ',
   purple:
-    'bg-white border border-purple-500 shadow-sm hover:bg-gradient-to-t hover:from-purple-700 hover:via-gray-100 hover:to-purple-300 ',
-  pink: 'bg-white border border-pink-500 shadow-sm hover:bg-gradient-to-t hover:from-pink-700 hover:via-gray-100 hover:to-pink-300 ',
+    'bg-white border border-purple-500 shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-purple-700 hover:via-gray-100 hover:to-purple-300 ',
+  pink: 'bg-white border border-pink-500 shadow-sm hover:border-transparent hover:bg-gradient-to-t hover:from-pink-700 hover:via-gray-100 hover:to-pink-300 ',
 };
 
 export const TagTemplate = ({
@@ -65,7 +63,7 @@ export const TagTemplate = ({
         <span
           key={prefix}
           className={`font-italic font-semibold  pr-1`}
-        >{`${prefix}://`}</span>
+        >{`${prefix}:\\`}</span>
         <span key={tag} className={`font-semibold `}>{`${tag}`}</span>
       </Link>
     </code>{' '}

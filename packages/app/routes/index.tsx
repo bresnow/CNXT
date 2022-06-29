@@ -1,6 +1,6 @@
-import Gun from 'gun';
+import Gun, { IGunChain } from 'gun';
 import { json, LoaderFunction, useLoaderData, useCatch } from 'remix';
-import { LoadCtx } from 'types';
+import { JSobject, LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
 
 import React from 'react';
@@ -9,17 +9,34 @@ import FormBuilder from '~/components/FormBuilder';
 import { Navigation } from '~/components/Navigator';
 import Profile from '~/components/Profile';
 
-type ErrObj = {
-  _key?: string | undefined;
-  _value?: string | undefined;
-  _form?: string | undefined;
-};
+export type DefaultLoader = {
+  page_title: string;
+  version: string;
+  profile: string;
+  subtitle: string;
+  text: string;
+  images?: { avatar: { src: string; alt: string } };
+  meta_cards: {
+    service_delimiters: {
+      [key: string]: {
+        prefix: string;
+        service: string;
+        description: string;
+      };
+    };
+    links: {
+      [key: string]: {
+        id: string;
+        link: string;
+        label: string;
+      };
+    };
+  };
+} & Partial<{ [key: string]: JSobject }>;
 
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, ENV } = RemixGunContext(Gun, request);
-  let user = gun.user();
-  user.auth(ENV.APP_KEY_PAIR);
+  let { gun, user, ENV } = RemixGunContext(Gun, request);
   let data;
   try {
     data = await user.get('pages').get('cnxt').then();

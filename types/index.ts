@@ -58,7 +58,7 @@ export interface RmxGunCtx {
       findTagFromHash: (hash: HashedTag) => Promise<{
         namespace: string;
         delimiter: string;
-      } | null>;
+      }>;
       hashTagWork: (
         delimiter: TagDelimiter,
         params: Params<'namespace'>

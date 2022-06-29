@@ -23,45 +23,41 @@ let QueryType = {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, user, ENV, formData } = RemixGunContext(Gun, request);
-  let { query } = params;
   let url = new URL(request.url);
   let path = url.searchParams.get('path') as string;
+  let { gun, user, ENV, formData } = RemixGunContext(Gun, request),
+    db = user as unknown as IGunChain<any, any>;
+  let { query } = params;
   let data;
   switch (query) {
     case QueryType.GET:
-      data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
+      data = await db.path(path).then();
       break;
     case QueryType.OPEN:
       data = await new Promise((res, _rej) => {
-        gun
-          .user()
-          .auth(ENV.APP_KEY_PAIR)
-          .path(path)
-          .load((data: any) => {
-            res(data);
-          });
+        db.load((data: any) => {
+          res(data);
+        });
       });
       break;
     case 'p':
       try {
         data = await formData();
-        log(request.body, 'FORMDATA');
       } catch (error) {
         data = error;
       }
       break;
     default:
-      data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
+      data = await db.path(path).then();
   }
   return json(data);
 };
 
 export let action: ActionFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { formData, user } = RemixGunContext(Gun, request);
+  let { formData, user } = RemixGunContext(Gun, request),
+    db = user as unknown as IGunChain<any, any>;
   let url = new URL(request.url);
-  let fname = url.searchParams.get('filename');
   let path = url.searchParams.get('path') as string;
   const handler = composeUploadHandlers(
     createFileUploadHandler({
@@ -71,19 +67,32 @@ export let action: ActionFunction = async ({ params, request, context }) => {
     createMemoryUploadHandler({ maxFileSize: 3000000000 })
   );
 
-  let data;
+  let values;
   try {
-    data = Object.fromEntries(await parseMultipartFormData(request, handler));
-    let put = await (user as any).path(path).put(data).then();
-    log(data, put);
+    values = Object.fromEntries(await parseMultipartFormData(request, handler));
+    let obj = recursiveCheck(values);
+    await db.path(path).put(obj).then();
+    values = { success: true, data: obj };
   } catch (error) {
-    data = error;
+    values = { error };
   }
-
-  // let file = await read(`./tmp/${fname}`)
-  // log(file)
-  return json(data);
+  return json(values);
 };
+
+export function recursiveCheck(values: any): Record<string, any> {
+  let obj: Record<string, any> = {};
+  for (const prop in values) {
+    let value = values[prop];
+    if (typeof value === 'object') {
+      return recursiveCheck(value as any);
+    }
+    if (typeof value === 'string') {
+      Object.assign(obj, { [prop]: value });
+    }
+  }
+  return obj;
+}
+
 export function composeUploadHandlers(
   ...handlers: UploadHandler[]
 ): UploadHandler {

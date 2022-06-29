@@ -1,3 +1,4 @@
+import { MenuLinks } from '~/app/root';
 import pkg from './package.json';
 let { version } = JSON.parse(JSON.stringify(pkg));
 export const data = {
@@ -32,35 +33,55 @@ export const data = {
       },
     },
     cnxt: {
-      page_title: `CNXT  Dynamic Namespaces  v.${version}`,
+      page_title: `CNXT  Dynamic Namespaces`,
+      version: `v.${version}`,
       profile: '/images/AppIcon.svg',
-      text: `Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].`,
-    },
-  },
-  tags: {
-    hashtag: {
-      title: '#HashTagProtocol',
-      description:
-        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
-      profilePic: '/images/AppIcon.svg',
-    },
-    tag: {
-      title: '#Tag',
-      description:
-        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
-      profilePic: '/images/AppIcon.svg',
-    },
-    cnxt: {
-      title: '#CNXT',
-      description:
-        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
-      profilePic: '/images/AppIcon.svg',
-    },
-    bresnow: {
-      title: '#Bresnow',
-      description:
-        'Use the #HashTagProtocol to launch dynamic namespaces for dynamic content. #Tag your instances. Attach and provide $Services to encrypted namespaces and deploy #AaaS [Anything as a Service].',
-      profilePic: '/images/AppIcon.svg',
+      subtitle: `This is the alpha implementation of the #HashedTagNamespaceProtocol. An open source #PaaS built by developer and #interfaceDesigner @Bresnow.`,
+      text: `#CNXT [ pronounced kuh-next ] is a peer-to-peer, offline-first content management network. A *ProofOfWork hashing algorithm create unique content addresses or #nameSpaces. These !dynamicDomains can host an unlimited array of content and services. !inDEVELOPMENT`,
+      meta_cards: {
+        service_delimiters: {
+          hash: {
+            prefix: '#:\\',
+            service: 'Information Delimiter',
+            description: 'Point to any information. The default delimiter.',
+          },
+          at_rate: {
+            prefix: '@:\\',
+            service: 'Identity Delimiter',
+            description:
+              'User profiles, resumes, #eBusinessCards, and namespaces identifying individual personalities.',
+          },
+          dollar: {
+            prefix: '$:\\',
+            service: 'Finance & Barter Delimiter',
+            description:
+              'Price tickers, ecommerce, cryptocurrency, coupons, etc. The default delimiter for namespaces about money.',
+          },
+          x_clam: {
+            prefix: '!:\\',
+            service: 'Alert Delimiter',
+            description:
+              'Messages, notifications, chat, etc... The default delimiter for building namespaces around communication awareness.',
+          },
+          wildcard: {
+            prefix: '*:\\',
+            service: 'WildCard Delimiter',
+            description: 'Namespaces dealing with more than one hash service.',
+          },
+        },
+        links: {
+          github: {
+            id: 'github-remix.gun',
+            link: 'https://github.com/bresnow/remix.gun/tree/cnxt',
+            label: 'Github',
+          },
+          twitter: {
+            id: 'github-remix.gun',
+            link: 'https://github.com/bresnow/remix.gun/tree/cnxt',
+            label: 'Github',
+          },
+        },
+      },
     },
   },
 };

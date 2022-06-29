@@ -45,7 +45,6 @@ export function RemixGunContext(
     }
   });
   const opt_mesh = (peers: string | string[], remove?: boolean) => {
-    var peerOpt = (gun as any).back('opt.peers');
     var mesh = (gun as any).back('opt.mesh'); // DAM
     if (remove) {
       if (Array.isArray(peers)) {
@@ -72,6 +71,7 @@ export function RemixGunContext(
     params: Params<string>
   ) => {
     let { namespace } = params as { namespace: string };
+    var peerOpt = (gun as any).back('opt.peers');
     return {
       tagNode: lex
         .get(
@@ -82,21 +82,22 @@ export function RemixGunContext(
             { name: 'SHA-256', length: 12 }
           )}`
         )
-        .put({ delimiter, namespace }),
+        .put({
+          delimiter,
+          namespace,
+          peer: { origin: ENV.DOMAIN, mesh: peerOpt },
+        }),
     };
   };
   const findTagFromHash = async (hash: HashedTag) => {
     let { namespace, delimiter } = await lex.get(hash).then();
-    let work = await Gun.SEA.work(
-      { delimiter, namespace },
-      ENV.APP_KEY_PAIR,
-      null,
-      { name: 'SHA-256', length: 12 }
-    );
-    if (hash === work) {
-      return { namespace, delimiter };
-    }
-    return null;
+    // let work = await Gun.SEA.work(
+    //   { delimiter, namespace },
+    //   ENV.APP_KEY_PAIR,
+    //   null,
+    //   { name: 'SHA-256', length: 12 }
+    // );
+    return { namespace, delimiter };
   };
   return {
     ENV,

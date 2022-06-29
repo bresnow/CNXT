@@ -11,21 +11,30 @@ import {
   useActionData,
   useFetcher,
   EntryContext,
+  Link,
 } from 'remix';
 import { useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { LoadCtx, NodeValues } from 'types';
 import Display from '~/components/DisplayHeading';
 import CNXTLogo from '~/components/svg/logos/CNXT';
 import { Navigation } from '~/components/Navigator';
-import Profile, { SocialLinkType } from '~/components/Profile';
+import Profile, {
+  ColorChoice,
+  colors,
+  SocialLinks,
+  SocialLinkType,
+  TagTemplate,
+} from '~/components/Profile';
 import React from 'react';
 import debug from '~/app/lib/debug';
 import { useIff, Iff } from '~/app/lib/Iff';
-import { ImageCard } from '.';
+import { DefaultLoader, ImageCard } from '.';
 import { IGunUserInstance } from 'gun/types';
 import LZString from 'lz-string';
 import Button from '~/components/Button';
 import SimpleSkeleton from '~/components/skeleton/SimpleSkeleton';
+import { ContentEditable } from '~/components/ContentEditable';
+import edit from './$namespace/edit';
 
 let { log, error, opt, warn } = debug({ dev: true });
 export function Fallback({
@@ -91,7 +100,7 @@ export let handle: Handle = {
     return { user };
   },
 };
-type ProfileImages = { avatar: { src: string; alt: string } };
+export type ProfileImages = { avatar: { src: string; alt: string } };
 
 type ProfileData = {
   title: string;
@@ -118,7 +127,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
 
   return json(
     { hash: workhash },
-    { headers: { 'X-Namespace-Hash': workhash } }
+    { headers: { 'X-CNXT_Namespace_Hash': workhash } }
   );
 };
 
@@ -154,7 +163,10 @@ export let action: ActionFunction = async ({ params, request, context }) => {
 export default function NameSpaceRoute() {
   let { hash } = useLoaderData();
 
-  let { response, cached } = useFetcherAsync(`/api/v1/gun/o?`, {
+  let defaul = useFetcherAsync(`/api/v1/gun/get?`, {
+    params: { path: `pages.cnxt` },
+  });
+  let { response, cached } = useFetcherAsync(`/api/v1/gun/get?`, {
     params: { path: `hashed-tags.${hash}` },
   });
   let actionData = useActionData();
@@ -175,7 +187,7 @@ export default function NameSpaceRoute() {
   } // le route
   let Post = useFetcherAsync(`/api/v1/gun/o?`, {
     // Body posts as formdata... if !body =>  get request
-    body: {},
+    body: { POW_hash: hash },
     //search params
     params: { path: `hashed-tags.${hash}` },
   });
@@ -185,8 +197,11 @@ export default function NameSpaceRoute() {
 
       <Post.Form>
         <Suspense fallback={<SimpleSkeleton />}>
-          <SuspendedProfileInfo response={response} />
-          <SuspendedTest response={response} />
+          <SuspendedProfileInfo
+            response={response}
+            defaultRes={defaul.response}
+          />
+          <FetcherDebug response={response} />
         </Suspense>
       </Post.Form>
 
@@ -198,7 +213,7 @@ export default function NameSpaceRoute() {
 interface SuspendedResponse<Return> {
   (): Return;
 }
-export function SuspendedTest({
+export function FetcherDebug({
   response,
 }: {
   response: SuspendedResponse<any>;
@@ -215,65 +230,188 @@ export function SuspendedTest({
     </div>
   );
 }
+export const TagTitle = ({
+  prefix,
+  tag,
+  color,
+}: {
+  prefix: string;
+  tag: string;
+  color: ColorChoice;
+}) => (
+  <>
+    <div
+      className={` text-2xl hover:shadow-md hover:shadow-gray-500 transition-all px-2 py-.5 rounded-md`}
+    >
+      <h1>
+        <span
+          key={prefix}
+          className={`font-italic font-bold pl-2 rounded-lg bg-slate-2 text-${color}-400 pr-1`}
+        >{`${prefix}:\\`}</span>
+        <span key={tag} className={`font-semibold pl-2 `}>{`${tag}`}</span>
+      </h1>
+    </div>{' '}
+  </>
+);
+
 export function SuspendedProfileInfo({
   response,
-  profilePreview,
+  defaultRes,
 }: {
-  profilePreview?: string;
-  response: SuspendedResponse<{
-    title: string;
-    description: string;
-    avatar?: { image?: string; name?: string };
-    _?: { ['#']: string };
-  }>;
+  response: SuspendedResponse<DefaultLoader>;
+  defaultRes: SuspendedResponse<DefaultLoader>;
 }) {
-  let data = response();
-  let { title, description } = data,
-    profilePic = profilePreview;
-  React.useEffect(() => {
-    let { user } = handle.getMasterUser(window);
-    let { pathname } = window.location,
-      namespace = pathname.replace('/', '').toLocaleLowerCase();
-    let node = user.get('tags').get(namespace),
-      avinode = node.get('avatar');
-    avinode.once((data) =>
-      console.log(`%c${JSON.stringify(data, null, 2)}`, `color:#f89`)
-    );
-    node.on((data) => {
-      data && log(data);
-      if (profilePreview) {
-        let compressed = LZString.compressToUTF16(profilePreview);
-        console.log(`%c` + profilePreview, `color:#37F`);
-        console.log(`%c${compressed}`, `color:#f83`);
-        avinode.put(null);
-        avinode.put(
-          { image: profilePreview, name: `${namespace}-avi.jpg` },
-          (put) => {
-            console.log(`%c${JSON.stringify(put, null, 2)}`, `color:#178`);
-          }
-        );
-      }
-    });
-  }, []);
+  let {
+    page_title,
+    delimiter,
+    namespace,
+    version,
+    profile,
+    subtitle,
+    images,
+    text,
+    meta_cards,
+  } = response();
+
+  let d = defaultRes();
+
+  const [edit, setEdit] = React.useState(false);
 
   return (
-    <>
-      <Profile
-        title={title}
-        description={description ?? '#available here'}
-        profilePic={'/images/AppIcon.svg'}
-        button={[]}
-        socials={[
-          {
-            href: 'https://twitter.com/bresnow',
-            title: 'Twitter',
-            color: 'white',
-            svgPath:
-              'M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z',
-          },
-        ]}
-      />
-    </>
+    <div className='max-w-4xl flex items-center h-auto lg:h-screen flex-wrap mx-auto my-32 lg:my-0'>
+      <div
+        id='profile'
+        className='w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-2xl bg-white opacity-75 mx-6 lg:mx-0'
+      >
+        <div className='p-4 md:p-12 text-center lg:text-left'>
+          <div
+            className='block lg:hidden rounded-lg  mx-auto -mt-16 h-48 w-48 bg-cover bg-center'
+            style={{
+              backgroundImage: `url(${profile ?? d.profile})`,
+            }}
+          ></div>
+
+          <div className='col-span-6 flex h-full flex-col items-center justify-center py-10 md:items-start md:py-20 xl:col-span-4'>
+            <div
+              onClick={() => setEdit(!edit)}
+              className={`${
+                edit ? 'bg-cnxt_blue' : 'bg-cnxt_red'
+              } text-light-200 text-xs transition-all px-2 py-.5 rounded-full`}
+            >
+              {edit ? 'Done' : 'Edit Title & Description'}
+            </div>
+            <ContentEditable
+              className={` mb-6 text-center focus:border focus:border-rounded-md p-2 focus:border-transparent focus:outline-none md:text-left `}
+              edit={edit}
+              name={`title`}
+              id={`PROFILE`}
+            >
+              <div
+                className={` text-4xl lg:text-5xl xl:text-6xl px-2 py-.5 rounded-md`}
+              >
+                <h1>
+                  <span
+                    className={`text-5xl  ${
+                      edit &&
+                      'shadow-sm shadow-gray-500 animate-shadow animate-pulse animate'
+                    } font-italic font-bold pl-2 rounded-l-xl rounded-r-none bg-slate-2  pr-2`}
+                  >{`${delimiter}:\\`}</span>
+                  <span
+                    className={`font-semibold pl-2 `}
+                  >{`${namespace}`}</span>
+                </h1>
+              </div>
+            </ContentEditable>
+
+            <ContentEditable
+              edit={edit}
+              name={'description'}
+              id={`PROFILE`}
+              className={`mb-8 text-center text-lg md:text-left ${
+                edit &&
+                'bg-gray-300 font-italic rounded-md focus:border focus:border-rounded-md p-2 focus:border-green-500  focus:outline-none'
+              }`}
+            >
+              {(text ?? d.text).split(' ' || '\n').map((curr) => {
+                let _p = curr.charAt(0);
+                let startsWith = (symbol: string) => _p === symbol;
+                let [prefix, namespace] = curr.split(_p).map((s) => s.trim());
+
+                if (startsWith('@')) {
+                  return (
+                    <TagTemplate
+                      key={'@' + namespace}
+                      prefix={'@'}
+                      tag={namespace}
+                      color='blue'
+                    />
+                  );
+                }
+                if (startsWith('#')) {
+                  return (
+                    <TagTemplate
+                      key={'#' + namespace}
+                      prefix={'#'}
+                      tag={namespace}
+                      color='red'
+                    />
+                  );
+                }
+                if (startsWith('$')) {
+                  return (
+                    <TagTemplate
+                      key={'$' + namespace}
+                      prefix={'$'}
+                      tag={namespace}
+                      color='green'
+                    />
+                  );
+                }
+                if (startsWith('!')) {
+                  return (
+                    <TagTemplate
+                      key={'!' + namespace}
+                      prefix={'!'}
+                      tag={namespace}
+                      color='yellow'
+                    />
+                  );
+                }
+                if (startsWith('*')) {
+                  return (
+                    <TagTemplate
+                      key={'*' + namespace}
+                      prefix={'*'}
+                      tag={namespace}
+                      color='indigo'
+                    />
+                  );
+                } else {
+                  return curr + ' ';
+                }
+              })}
+            </ContentEditable>
+
+            {edit && (
+              <button
+                name={'submit'}
+                className={`bg-cnxt_red text-light-200 text-md transition-all py-2 px-4 rounded-full`}
+              >
+                {'Submit'}
+              </button>
+            )}
+
+            <div className='mt-6 pb-16 lg:pb-0 w-4/5 lg:w-full mx-auto flex flex-wrap items-end justify-between'></div>
+          </div>
+        </div>
+      </div>
+      <div className='w-full lg:w-2/5 pl-4'>
+        <img
+          src={profile ?? d.profile}
+          className='rounded-none lg:rounded-lg hidden lg:block'
+        />
+      </div>
+    </div>
   );
 }
 
