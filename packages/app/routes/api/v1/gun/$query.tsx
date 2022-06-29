@@ -15,6 +15,7 @@ import { composeEventHandlers } from '@remix-run/react/components';
 import { createFileUploadHandler } from '@remix-run/node/upload/fileUploadHandler';
 import { UploadHandler } from '@remix-run/node/formData';
 import { read, write } from '~/server/fs-util';
+import fs from 'fs';
 let { log, error, opt, warn } = debug({ dev: true });
 let QueryType = {
   GET: 'g' || 'get',
@@ -22,7 +23,7 @@ let QueryType = {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, ENV, formData } = RemixGunContext(Gun, request);
+  let { gun, user, ENV, formData } = RemixGunContext(Gun, request);
   let { query } = params;
   let url = new URL(request.url);
   let path = url.searchParams.get('path') as string;
@@ -63,20 +64,16 @@ export let action: ActionFunction = async ({ params, request, context }) => {
   let fname = url.searchParams.get('filename');
   const handler = composeUploadHandlers(
     createFileUploadHandler({
-      directory: './tmp',
-      avoidFileConflicts: true,
+      directory: './public/images',
       maxFileSize: 3000000000,
     }),
-    createMemoryUploadHandler({})
+    createMemoryUploadHandler({ maxFileSize: 3000000000 })
   );
 
   let data;
   try {
-    let _data = Object.fromEntries(
-      await parseMultipartFormData(request, handler)
-    );
-    // let b64 = await convertFileToBase64()
-    log(_data);
+    data = Object.fromEntries(await parseMultipartFormData(request, handler));
+    log(data);
   } catch (error) {
     data = error;
   }

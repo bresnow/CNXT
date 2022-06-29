@@ -24,6 +24,7 @@ export type FetcherInputProps = {
   name: string;
   id: string;
   edit?: boolean | undefined;
+  file?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 /**
  * Fetches route loaders for Suspended Components. Uses RAD/ and the browser's indexedDB store to load and store cached data.
@@ -111,7 +112,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
             aria-describedby={ariaDescribed}
             reloadDocument={reloadDocument}
             replace={replace}
-            encType={encType}
+            encType={encType ?? 'multipart/form-data'}
             onSubmit={onSubmit}
             className={className}
           >

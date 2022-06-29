@@ -1,24 +1,22 @@
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
-var __reExport = (target, module, desc) => {
-  if (module && typeof module === "object" || typeof module === "function") {
-    for (let key of __getOwnPropNames(module))
-      if (!__hasOwnProp.call(target, key) && key !== "default")
-        __defProp(target, key, { get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable });
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
-  return target;
+  return to;
 };
-var __toModule = (module) => {
-  return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
-};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
 
 // node_modules/@remix-run/server-runtime/responses.js
 var require_responses = __commonJS({
@@ -60,9 +58,9 @@ var require_responses = __commonJS({
     function isResponse2(value) {
       return value != null && typeof value.status === "number" && typeof value.statusText === "string" && typeof value.headers === "object" && typeof value.body !== "undefined";
     }
-    var redirectStatusCodes2 = new Set([301, 302, 303, 307, 308]);
+    var redirectStatusCodes = /* @__PURE__ */ new Set([301, 302, 303, 307, 308]);
     function isRedirectResponse(response) {
-      return redirectStatusCodes2.has(response.status);
+      return redirectStatusCodes.has(response.status);
     }
     function isCatchResponse(response) {
       return response.headers.get("X-Remix-Catch") != null;
@@ -92,10 +90,9 @@ function json(data, init = {}) {
     headers
   });
 }
-var redirectStatusCodes = new Set([301, 302, 303, 307, 308]);
 
 // packages/app/entry.worker.tsx
-var import_responses2 = __toModule(require_responses());
+var import_responses2 = __toESM(require_responses());
 
 // packages/app/lib/debug.ts
 var collapse = console.groupCollapsed.bind(console.trace);
@@ -141,7 +138,7 @@ async function handleActivate(event) {
   log("Service worker activated");
 }
 async function handleMessage(event) {
-  let cachePromises = new Map();
+  let cachePromises = /* @__PURE__ */ new Map();
   if (event.data.type === "REMIX_NAVIGATION") {
     let { isMount, location, matches, manifest } = event.data;
     let documentUrl = location.pathname + location.search + location.hash;
