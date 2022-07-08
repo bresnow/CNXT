@@ -219,7 +219,7 @@ export function FetcherDebug({
   response: SuspendedResponse<any>;
 }) {
   let res = response();
-  delete res._;
+  res ? delete res._ : null;
   return (
     <div
       className={`w-full lg:w-3/5 rounded-lg lg:rounded-l-lg lg:rounded-r-none shadow-2xl bg-white opacity-75 mx-6 lg:mx-0`}
