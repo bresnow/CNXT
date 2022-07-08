@@ -47,7 +47,9 @@ export interface RmxGunCtx {
     };
     gun: IGunInstance;
     user: IGunUserInstance;
-    formData: (options?: FormDataOptions) => Promise<Record<string, string>>;
+    formData: (
+      options?: FormDataOptions
+    ) => Promise<Record<string, FormDataEntryValue>>;
     opt_mesh: (
       peers: string | string[],
       remove?: boolean

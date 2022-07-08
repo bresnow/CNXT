@@ -8,5 +8,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let ctx = RemixGunContext(Gun, request);
   let method = params.method;
   let keys: ISEAPair;
+  try {
+  } catch (err: JSON) {}
   return null;
 };

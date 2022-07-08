@@ -91,12 +91,6 @@ export function RemixGunContext(
   };
   const findTagFromHash = async (hash: HashedTag) => {
     let { namespace, delimiter } = await lex.get(hash).then();
-    // let work = await Gun.SEA.work(
-    //   { delimiter, namespace },
-    //   ENV.APP_KEY_PAIR,
-    //   null,
-    //   { name: 'SHA-256', length: 12 }
-    // );
     return { namespace, delimiter };
   };
   return {
@@ -109,17 +103,8 @@ export function RemixGunContext(
       let values = Object.fromEntries(
         await parseMultipartFormData(request, handler)
       );
-      let obj: Record<string, string> = {};
-      return new Promise((resolve, _reject) => {
-        for (const prop in values) {
-          let value = values[prop];
-          if (typeof value !== 'string') {
-            value = JSON.stringify(value);
-          }
-          Object.assign(obj, { [prop]: value });
-        }
-        resolve(obj);
-      });
+return  values
+      };
     },
     opt_mesh,
     cnxtCtx: {
@@ -127,4 +112,4 @@ export function RemixGunContext(
       hashTagWork,
     },
   };
-}
+
