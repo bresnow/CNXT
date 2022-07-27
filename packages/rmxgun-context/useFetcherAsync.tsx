@@ -1,5 +1,5 @@
-import { FormEvent, FormEventHandler, useMemo } from 'react';
-import { Form, useLocation } from 'remix';
+import { useMemo } from 'react';
+import { useLocation } from 'remix';
 import invariant from '@remix-run/react/invariant';
 import jsesc from 'jsesc';
 import Gun from 'gun';
@@ -7,7 +7,6 @@ import { ClientContext, useDataLoader } from './context';
 import { useIf, useSafeCallback } from 'bresnow_utility-react-hooks';
 import React from 'react';
 import { Options } from './browser';
-import { ContentEditable } from '~/components/ContentEditable';
 export { DataloaderProvider } from './context';
 /**
  * @param {string} remix route path to load
@@ -19,12 +18,6 @@ export interface DeferedData {
   submit: (options: Options) => any;
 }
 
-export type FetcherInputProps = {
-  children: React.ReactNode;
-  name: string;
-  id: string;
-  edit?: boolean | undefined;
-} & React.HTMLAttributes<HTMLDivElement>;
 /**
  * Fetches route loaders for Suspended Components. Uses RAD/ and the browser's indexedDB store to load and store cached data.
  * @param routePath remix route path to load
@@ -34,12 +27,8 @@ export type FetcherInputProps = {
 export function useFetcherAsync(routePath: string, options?: Options) {
   let dataloader = useDataLoader();
   let { key, search } = useLocation();
-  let formRef = React.useRef<HTMLFormElement>(null);
-
-  let formdata = new FormData(formRef.current ?? undefined);
-
   let deferred = useMemo(() => {
-    invariant(dataloader, 'Context Provider is undefined for useFetcherAsync');
+    invariant(dataloader, 'Context Provider is undefined for useGunFetcher');
     let _deferred = { resolved: false } as {
       resolved: boolean;
       cache?: Record<string, any>;
@@ -47,12 +36,6 @@ export function useFetcherAsync(routePath: string, options?: Options) {
       error?: any;
       promise: Promise<void>;
     };
-    if (typeof options?.body === 'object') {
-      for (let prop in options.body) {
-        formdata.append(prop, (options.body as any)[prop]);
-      }
-      options.body = formdata;
-    }
     _deferred.promise = dataloader
       .load(routePath, options)
       .then(({ data, cache }) => ({ data, cache }))
@@ -66,7 +49,7 @@ export function useFetcherAsync(routePath: string, options?: Options) {
         _deferred.resolved = true;
       });
     return _deferred;
-  }, [routePath, options, formdata, key]);
+  }, [routePath, key]);
 
   return {
     response() {
@@ -78,48 +61,6 @@ export function useFetcherAsync(routePath: string, options?: Options) {
       }
 
       throw deferred.promise;
-    },
-    Form({
-      children,
-      ariaDescribed,
-      method,
-      action,
-      className,
-      reloadDocument,
-      encType,
-      replace,
-      onSubmit,
-    }: {
-      children: React.ReactNode;
-      ariaDescribed?: string;
-      method?: 'get' | 'post';
-      action?: string;
-      className?: string;
-      reloadDocument?: boolean;
-      encType?: 'multipart/form-data' | 'application/x-www-form-urlencoded';
-      replace?: boolean;
-      onSubmit?: FormEventHandler<HTMLFormElement>;
-    }) {
-      return (
-        <>
-          <Form
-            ref={formRef}
-            method={method ?? 'post'}
-            action={action}
-            aria-describedby={ariaDescribed}
-            reloadDocument={reloadDocument}
-            replace={replace}
-            encType={encType}
-            onSubmit={onSubmit}
-            className={className}
-          >
-            {children}
-          </Form>
-        </>
-      );
-    },
-    Input({ children, ...props }: FetcherInputProps) {
-      return <ContentEditable {...props}>{children}</ContentEditable>;
     },
     cached: deferred.cache && deferred.cache,
   };
