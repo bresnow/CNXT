@@ -104,7 +104,7 @@ export function RemixGunContext(
         await parseMultipartFormData(request, handler)
       );
 return  values
-      };
+      
     },
     opt_mesh,
     cnxtCtx: {
