@@ -24,6 +24,10 @@ import { useIff, Iff } from '~/app/lib/Iff';
 import { ImageCard } from '.';
 import { IGunUserInstance } from 'gun/types';
 import LZString from 'lz-string';
+import {
+  SuspendedProfileInfo,
+  SuspendedResponse,
+} from '~/components/namespace/suspended/profile-info';
 
 let { log, error, opt, warn } = debug({ dev: false });
 export function Fallback({
@@ -212,64 +216,66 @@ export default function NameSpaceRoute() {
           }
         >
           <SuspendedProfileInfo response={response} profilePreview={preview} />
+          <SuspendedTest response={response} />
         </Suspense>
-      </Form>
-      <Form method={'post'}>
-        <div className='mb-6'>
-          <label className='font-display text-jacarta-700 mb-2 block dark:text-white'>
-            Image, Video, Audio, or 3D Model
-            <span className='text-red'>*</span>
-          </label>
-          <p className='dark:text-jacarta-300 text-2xs mb-3'>
-            Drag or choose your file to upload
-          </p>
-
-          <div className='group relative flex max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white py-20 px-5 text-center'>
-            <div className='relative z-10 cursor-pointer'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                width='24'
-                height='24'
-                className='fill-jacarta-500 mb-4 inline-block dark:fill-white'
-              >
-                <path fill='none' d='M0 0h24v24H0z' />
-                <path d='M16 13l6.964 4.062-2.973.85 2.125 3.681-1.732 1-2.125-3.68-2.223 2.15L16 13zm-2-7h2v2h5a1 1 0 0 1 1 1v4h-2v-3H10v10h4v2H9a1 1 0 0 1-1-1v-5H6v-2h2V9a1 1 0 0 1 1-1h5V6zM4 14v2H2v-2h2zm0-4v2H2v-2h2zm0-4v2H2V6h2zm0-4v2H2V2h2zm4 0v2H6V2h2zm4 0v2h-2V2h2zm4 0v2h-2V2h2z' />
-              </svg>
-              <p className='dark:text-jacarta-300 mx-auto max-w-xs text-xs'>
-                JPG, PNG, GIF, SVG, WEBP Max size: 100 MB
-                {/* MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. */}
-              </p>
-            </div>
-            <div className='absolute inset-4 cursor-pointer rounded opacity-0 group-hover:opacity-100'></div>
-            <input
-              type='file'
-              accept='image/*,video/*,audio/*,webgl/*,.glb,.gltf'
-              id='file-upload'
-              name={'file'}
-              onChange={imgChange}
-              className='absolute inset-0 z-20 cursor-pointer opacity-0'
-            />
-          </div>
-        </div>
-        <button
-          type={'submit'}
-          name={'test'}
-          id={'test-budden'}
-          value={'butt-Mahm'}
-        >
-          {'TEST BUDDEN'}
-        </button>
       </Form>
 
       <Outlet />
     </>
   );
 }
+export const ImageUploadForm = ({ imgChange }: { imgChange: any }) => {
+  return (
+    <Form method={'post'}>
+      <div className='mb-6'>
+        <label className='font-display text-jacarta-700 mb-2 block dark:text-white'>
+          Image, Video, Audio, or 3D Model
+          <span className='text-red'>*</span>
+        </label>
+        <p className='dark:text-jacarta-300 text-2xs mb-3'>
+          Drag or choose your file to upload
+        </p>
 
-interface SuspendedResponse<Return> {
-  (): Return;
-}
+        <div className='group relative flex max-w-md flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white py-20 px-5 text-center'>
+          <div className='relative z-10 cursor-pointer'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 24 24'
+              width='24'
+              height='24'
+              className='fill-jacarta-500 mb-4 inline-block dark:fill-white'
+            >
+              <path fill='none' d='M0 0h24v24H0z' />
+              <path d='M16 13l6.964 4.062-2.973.85 2.125 3.681-1.732 1-2.125-3.68-2.223 2.15L16 13zm-2-7h2v2h5a1 1 0 0 1 1 1v4h-2v-3H10v10h4v2H9a1 1 0 0 1-1-1v-5H6v-2h2V9a1 1 0 0 1 1-1h5V6zM4 14v2H2v-2h2zm0-4v2H2v-2h2zm0-4v2H2V6h2zm0-4v2H2V2h2zm4 0v2H6V2h2zm4 0v2h-2V2h2zm4 0v2h-2V2h2z' />
+            </svg>
+            <p className='dark:text-jacarta-300 mx-auto max-w-xs text-xs'>
+              JPG, PNG, GIF, SVG, WEBP Max size: 100 MB
+              {/* MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. */}
+            </p>
+          </div>
+          <div className='absolute inset-4 cursor-pointer rounded opacity-0 group-hover:opacity-100'></div>
+          <input
+            type='file'
+            accept='image/*,video/*,audio/*,webgl/*,.glb,.gltf'
+            id='file-upload'
+            name={'file'}
+            onChange={imgChange}
+            className='absolute inset-0 z-20 cursor-pointer opacity-0'
+          />
+        </div>
+      </div>
+      <button
+        type={'submit'}
+        name={'test'}
+        id={'test-budden'}
+        value={'butt-Mahm'}
+      >
+        {'TEST BUDDEN'}
+      </button>
+    </Form>
+  );
+};
+
 export function SuspendedTest({
   response,
 }: {
@@ -284,74 +290,6 @@ export function SuspendedTest({
         <code>{JSON.stringify(res, null, 2)}</code>
       </pre>
     </div>
-  );
-}
-export function SuspendedProfileInfo({
-  response,
-  profilePreview,
-}: {
-  profilePreview?: string;
-  response: SuspendedResponse<{
-    title: string;
-    description: string;
-    avatar?: { image?: string; name?: string };
-    _?: { ['#']: string };
-  }>;
-}) {
-  let data = response();
-  let { title, description, avatar } = data,
-    profilePic = profilePreview;
-  React.useEffect(() => {
-    let { user } = handle.getMasterUser(window);
-    let { pathname } = window.location,
-      namespace = pathname.replace('/', '').toLocaleLowerCase();
-    let node = user.get('tags').get(namespace),
-      avinode = node.get('avatar');
-    avinode.once((data) =>
-      console.log(`%c${JSON.stringify(data, null, 2)}`, `color:#f89`)
-    );
-    node.on((data) => {
-      data && log(data);
-      if (profilePreview) {
-        let compressed = LZString.compressToUTF16(profilePreview);
-        console.log(`%c` + profilePreview, `color:#37F`);
-        console.log(`%c${compressed}`, `color:#f83`);
-        avinode.put(null);
-        avinode.put(
-          { image: profilePreview, name: `${namespace}-avi.jpg` },
-          (put) => {
-            console.log(`%c${JSON.stringify(put, null, 2)}`, `color:#178`);
-          }
-        );
-      }
-    });
-  }, []);
-
-  React.useEffect(() => {}, []);
-  return (
-    <>
-      <Profile
-        title={title}
-        description={description}
-        profilePic={
-          avatar?.image
-            ? avatar?.image
-            : profilePic
-            ? profilePic
-            : '/images/AppIcon.svg'
-        }
-        button={[]}
-        socials={[
-          {
-            href: 'https://twitter.com/bresnow',
-            title: 'Twitter',
-            color: 'white',
-            svgPath:
-              'M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z',
-          },
-        ]}
-      />
-    </>
   );
 }
 

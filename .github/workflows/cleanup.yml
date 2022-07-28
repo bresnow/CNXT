@@ -11,6 +11,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Cleanup
         run: |
-          docker image prune --force
+          docker image prune -a --force
           docker volume prune --force
           docker container prune --force
