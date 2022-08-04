@@ -2,7 +2,7 @@
  * @type {import('@remix-run/dev/config').AppConfig}
  */
 module.exports = {
-  appDirectory: 'packages/app',
-  customServer: 'packages/server/index.ts',
+  appDirectory: 'app',
+  customServer: 'server/index.ts',
   ignoredRouteFiles: ['.*'],
 };

@@ -20,7 +20,7 @@ services:
         - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}.service=${SERVICE_NAME:?Service Name Not Set}
         - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.tls=true
         - traefik.http.routers.${SERVICE_NAME:?Service Name Not Set}-https.tls.certresolver=le
-        - traefik.http.services.${SERVICE_NAME:?Service Name Not Set}.loadbalancer.server.port=${PORT:-3333}
+        - traefik.http.services.${SERVICE_NAME:?Service Name Not Set}.loadbalancer.server.port=${CLIENT_PORT:-3333}
     # Default keypair is compromised and should never be used.
     environment:
       - PUB=${PUB:-xpMInBAQZexkhPUirdleQiibMkF1K7xE_i_xvNZOZLs.u6lvp1AmfFfsH6rVbJZARFs5ZDQxfugnneT7IdcHjtg}
@@ -28,7 +28,7 @@ services:
       - EPUB=${EPUB:-CY0To7Ok2IqBY02sN4BkkSctqoc0mzw-Wog-gpNMvHk.2cSsHNjoF0SwXIYaROZdJhX7lkpUWX4ynfwvAdGiBO4}
       - EPRIV=${EPRIV:-LyGECl_2gBdk_BMndlKgqJieWnkWb0bXMbo4QvylugE}
       - PEER_DOMAIN=${PEER_DOMAIN:-dev.cnxt.app}
-      - PORT=${PORT:-3333}
+      - CLIENT_PORT=${CLIENT_PORT:-3333}
       - DOMAIN=${DOMAIN:-remix-gun.fltngmmth.com}
     networks:
       - traefik-public

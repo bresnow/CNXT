@@ -8,36 +8,22 @@ import type {
 import type { ISEAPair } from 'gun/types';
 import type { Params } from 'react-router';
 import type { ServerResponse } from 'http';
+import { EntryContext } from 'remix';
 export * from './loaders';
 
-declare global { 
-
+declare global {
   export interface Window {
-    Gun:IGun
+    Gun: IGun;
     ENV: {
       DOMAIN: string | undefined;
       PEER_DOMAIN: string[] | undefined;
       CLIENT: string | undefined;
       APP_KEY_PAIR: ISEAPair;
     };
+    __remixContext: EntryContext;
   }
-  
 }
 export type NodeValues = Record<string, string>;
-export interface ChainCtx {
-  get: (path: string) => {
-    val: (opts?: { open: boolean }) => Promise<NodeValues | undefined>;
-    put: (
-      data: NodeValues | IGunChain<Record<string, any>, any>
-    ) => Promise<string>;
-    set: (
-      data: NodeValues | IGunChain<Record<string, any>, any>
-    ) => Promise<string>;
-    map: (callback?: (args?: any) => any) => Promise<NodeValues[] | undefined>;
-  };
-  options: (peers: string | string[], remove?: boolean) => any;
-}
-
 export interface CredentialsAuth {
   (alias: string, password: string): Promise<{
     user: IGunUserInstance;
@@ -73,7 +59,6 @@ export interface RmxGunCtx {
       localStorage: boolean;
     };
     gun: IGunInstance;
-    graph: ChainCtx;
     seaAuth: SEAAuth;
     formData: () => Promise<Record<string, string>>;
   };

@@ -62,7 +62,7 @@ for (let i = 0; i < args.length; i++) {
       await $`export DOMAIN=${value};`;
     }
     if (key === ('port' || 'p')) {
-      await $`export CLIENT_PORT=${value};`;
+      await $`export PORT=${value};`;
     }
     if (key === ('relay-peer' || 'r')) {
       await $`export PEER_DOMAIN=${value};`;

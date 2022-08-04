@@ -1,27 +1,19 @@
 version: '3.3'
 
 services:
-## traefik hub agent
-  hub-agent:
-    hostname: hub-agent
-    image: ghcr.io/traefik/hub-agent-traefik:v0.7.2
-    command:
-      - run
-      - --hub.token=${HUB_TOKEN:-cf72ec92-2453-4d43-a947-4b5bec733ab4}
-      - --auth-server.advertise-url=http://hub-agent
-      - --traefik.host=traefik
-      - --traefik.docker.swarm-mode
-      - --traefik.tls.insecure=true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      replicas: 1
+
   traefik:
     # Use the latest Traefik image
-    image: traefik:v2.8
+    image: traefik:v2.6
     ports:
-      - 80:80
-      - 443:443
+      # Listen on port 80, default for HTTP, necessary to redirect to HTTPS
+      - target: 80
+        published: 80
+        mode: host
+      # Listen on port 443, default for HTTPS
+      - target: 443
+        published: 443
+        mode: host
     deploy:
       placement:
         constraints:
@@ -86,10 +78,6 @@ services:
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
-      # Enable Hub communication (open the port 9900 and 9901 by default)
-      - --experimental.hub=true
-      - --hub.tls.insecure=true
-      - --metrics.prometheus.addrouterslabels=true
       # Enable the access log, with HTTP requests
       - --accesslog
       # Enable the Traefik log, for configurations and errors

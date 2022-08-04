@@ -91,10 +91,10 @@ function json(data, init = {}) {
   });
 }
 
-// packages/app/entry.worker.tsx
+// app/entry.worker.tsx
 var import_responses2 = __toESM(require_responses());
 
-// packages/app/lib/debug.ts
+// lib/debug.ts
 var collapse = console.groupCollapsed.bind(console.trace);
 function debug({ off = false, dev = true }) {
   let isProd = false;
@@ -125,7 +125,7 @@ function debug({ off = false, dev = true }) {
 }
 var debug_default = debug;
 
-// packages/app/entry.worker.tsx
+// app/entry.worker.tsx
 var { log, error, opt, warn } = debug_default({ dev: false });
 var STATIC_ASSETS = ["/build/", "/icons/"];
 var ASSET_CACHE = "asset-cache";

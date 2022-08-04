@@ -11,14 +11,14 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
-    "build:css": "unocss \"packages/**/*.tsx\" --out-file \"packages/app/uno.css\"",
-    "build:worker": "esbuild packages/app/entry.worker.tsx --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
+    "build:css": "unocss \"**/*.tsx\" --out-file \"app/uno.css\"",
+    "build:worker": "esbuild app/entry.worker.tsx --outfile=public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
     "dev": "npx zx scripts/esm/dev.mjs",
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,mjs,js,jsx,ts,tsx}'",
     "purge": "rm -rf radata *.tmp",
     "push": " npx zx scripts/esm/git/push.mjs",
-    "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN CLIENT_PORT=$CLIENT_PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
+    "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN PORT=$PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
   },
   "dependencies": {
     "@remix-run/node": "0.0.0-experimental-4e814511",

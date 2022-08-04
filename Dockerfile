@@ -1,18 +1,20 @@
-FROM node:17-alpine 
+FROM bresnow/alpnode-wrkspce:base
 ENV PUB=${PUB} 
 ENV PRIV=${PRIV} 
 ENV EPUB=${EPUB}
 ENV EPRIV=${EPRIV}
-ENV CLIENT_PORT=${CLIENT_PORT}
+ENV PORT=8081
 ENV PEER_DOMAIN=${PEER_DOMAIN}
 ENV DOMAIN=${DOMAIN}
 
+COPY ./cnxt-supervisor.conf /etc/supervisord/cnxt-supervisor.conf
 COPY . /app
 
 WORKDIR  /app
-RUN yarn \
-    && yarn build:worker \
-    && yarn build:css \
-    && yarn build 
-CMD ["yarn", "start"] 
-LABEL org.opencontainers.image.source https://github.com/bresnow/remix.gun
+RUN yarn 
+#     && yarn build:worker \
+#     && yarn build:css \
+#     && yarn build 
+
+
+ENTRYPOINT /usr/bin/supervisord "/etc/supervisord/cnxt-supervisor.conf"
