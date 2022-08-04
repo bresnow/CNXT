@@ -12,7 +12,6 @@ import { DeferedData, useFetcherAsync } from '~/rmxgun-context/useFetcherAsync';
 import { useIf } from 'bresnow_utility-react-hooks';
 import { LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
-import { useGunStatic } from '~/remix-gun-utility/gun/hooks';
 import FormBuilder from '~/components/FormBuilder';
 import invariant from '@remix-run/react/invariant';
 import React from 'react';
@@ -122,12 +121,12 @@ export default function BuilderRoute() {
   let action = useActionData<LoadAction | LoadError>(),
     error = action && (action as LoadError).error,
     ackData = action && (action as LoadAction).data;
-  const [gun] = useGunStatic(Gun);
+ 
   let namespace = useParams().namespace as string;
   const ObjectBuilder = FormBuilder();
   useIf([ackData, !error], () => {
     invariant(ackData, 'ackData is undefined');
-    gun.path(namespace).put(ackData);
+
   });
   let buildLoader = useFetcherAsync(`/api/gun/q`, {
     params: { path: namespace },

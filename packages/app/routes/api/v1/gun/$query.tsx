@@ -16,17 +16,20 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   let url = new URL(request.url);
   let path = url.searchParams.get('path') as string;
   let data;
+  let pathArr = path.split(/[\/\.]/g);
+  console.log('\nPATHARR\n',pathArr);
+  let user = gun.user().auth(ENV.APP_KEY_PAIR);
   // log(path, 'Path', query, 'Query');
+  let node = user.path(path);
   switch (query) {
     case QueryType.GET:
-      data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
+
+      data = await node.then()
       // log(data, 'GET');
       break;
     case QueryType.OPEN:
       data = await new Promise((res, _rej) => {
-        gun
-          .user()
-          .auth(ENV.APP_KEY_PAIR)
+        user
           .path(path)
           .load((data: any) => {
             res(data);
@@ -43,7 +46,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       }
       break;
     default:
-      data = await gun.user().auth(ENV.APP_KEY_PAIR).path(path).then();
+      data = await node.then();
   }
   // log(data, 'Default');
   return json(data);

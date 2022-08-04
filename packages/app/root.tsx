@@ -19,7 +19,7 @@ import Display from '../components/DisplayHeading';
 import {
   ExternalScripts,
   ExternalScriptsFunction,
-} from '~/remix-gun-utility/remix/external-scripts';
+} from '~/rmxgun-context/external-scripts';
 import jsesc from 'jsesc';
 import { HomeIcon } from '~/components/svg/Icons';
 

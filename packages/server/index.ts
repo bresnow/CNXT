@@ -22,6 +22,7 @@ import 'gun/lib/load';
 import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
+
 import { data } from '../../data.config';
 import { read, write } from './fs-util';
 import { tsvNumericalSet } from './email-dist';
@@ -143,7 +144,7 @@ let peerList = {
 };
 
 export const gun = Gun({
-  peers: [peerList.DOMAIN, ...peerList.PEERS],
+  // peers: [peerList.DOMAIN, ...peerList.PEERS],
   web: server.listen(env.CLIENT, () => {
     console.log(`Remix.Gun Relay Server is listening on ${getDomain()}`);
   }),
@@ -165,6 +166,17 @@ user.auth(env.APP_KEY_PAIR as any, (ack) => {
 });
 user.put(data);
 gun.get('data-unsigned').put(data);
+
+(async function(){
+  await import ('chainlocker');
+  let _gun = new Gun({file: 'chainlocker'})
+  _gun.vault('data-chainlocker', await _gun.keys(['arbitrary', 'secret']))
+  let lock = _gun.locker(['the', 'world', 'is', 'safe'])
+  lock.put(data)
+  lock.value((data) => {
+    console.log('CHAINLOCKER\n',data)
+  })
+})()
 // void (async () => {
 //   try {
 //     let result;

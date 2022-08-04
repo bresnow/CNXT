@@ -4,7 +4,7 @@ interface Debug {
   log(...args: any[]): void;
   warn(...args: any[]): void;
   error(...args: any[]): void;
-  opt({ off, dev: devOnly }: DebugOptions): Debug;
+  opt({ off, dev }: DebugOptions): Debug;
 }
 
 function debug({ off = false, dev = true }: DebugOptions): Debug {

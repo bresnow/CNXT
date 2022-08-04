@@ -26,6 +26,7 @@
     "@remix-run/server-runtime": "0.0.0-experimental-4e814511",
     "bresnow_utility-react-hooks": "0.2.9",
     "cedit": "^1.1.0",
+    "chainlocker": "^1.1.2",
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
