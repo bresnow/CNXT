@@ -6,3 +6,8 @@ radata
 /public/build
 .env
 .DS_Store
+.github
+.git*
+.dockerignore
+README.md
+

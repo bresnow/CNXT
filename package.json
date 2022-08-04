@@ -6,18 +6,19 @@
   "license": "MIT",
   "module": "es2022",
   "resolutions": {
-    "react": "18.0.0-rc.0",
-    "react-dom": "18.0.0-rc.0"
+    "react": "18.1.0-next-fc47cb1b6-20220404",
+    "react-dom": "18.1.0-next-fc47cb1b6-20220404"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
     "build:css": "unocss \"**/*.tsx\" --out-file \"app/uno.css\"",
     "build:worker": "esbuild app/entry.worker.tsx --outfile=public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
+    "build:start":"zx scripts/esm/build-start.mjs",
     "dev": "npx zx scripts/esm/dev.mjs",
     "postinstall": "patch-package && remix setup node",
     "prettier": "prettier --write '**/*.{json,md,mdx,mjs,js,jsx,ts,tsx}'",
-    "purge": "rm -rf radata *.tmp",
-    "push": " npx zx scripts/esm/git/push.mjs",
+    "purge": "rm -rf radata *.tmp **/*/! **/*/%1C",
+    "push": "zx scripts/esm/git/push.mjs",
     "start": "cross-env-shell NODE_ENV=production PUB=$PUB PRIV=$PRIV EPUB=$EPUB EPRIV=$EPRIV DOMAIN=$DOMAIN PORT=$PORT PEER_DOMAIN=$PEER_DOMAIN node ./build/index.js"
   },
   "dependencies": {
@@ -25,7 +26,6 @@
     "@remix-run/react": "0.0.0-experimental-4e814511",
     "@remix-run/server-runtime": "0.0.0-experimental-4e814511",
     "bresnow_utility-react-hooks": "0.2.9",
-    "cedit": "^1.1.0",
     "chainlocker": "^1.1.2",
     "chalk": "^5.0.1",
     "chokidar": "^3.5.3",
@@ -34,17 +34,14 @@
     "esbuild": "^0.14.47",
     "fast-glob": "^3.2.11",
     "fs-extra": "^10.1.0",
-    "fsxx": "^0.1.0",
     "gun": "^0.2020.1237",
     "lz-object": "^0.1.7",
     "mime": "^3.0.0",
-    "object-assign": "^4.1.1",
     "patch-package": "^6.4.7",
     "react": "18.0.0-rc.0",
     "react-dom": "18.0.0-rc.0",
     "redaxios": "^0.5.0",
     "remix": "0.0.0-experimental-4e814511",
-    "remix-utils": "^3.0.0",
     "zx": "^6.1.0"
   },
   "devDependencies": {
@@ -65,6 +62,7 @@
     "@unocss/preset-attributify": "^0.38.2",
     "@unocss/preset-typography": "^0.38.2",
     "autoprefixer": "^10.4.4",
+    "concurrently": "^7.3.0",
     "eslint": "^8.13.0",
     "nodemon": "^2.0.15",
     "postinstall": "^0.7.4",

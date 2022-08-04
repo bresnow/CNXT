@@ -1,4 +1,3 @@
-"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -16,7 +15,10 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 
 // node_modules/@remix-run/server-runtime/responses.js
 var require_responses = __commonJS({
@@ -103,18 +105,27 @@ function debug({ off = false, dev = true }) {
       dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
         if (typeof arg === "object") {
           arg = JSON.stringify(arg, null, 2);
-          console.log(`%c${arg.toString()}`, "color:#f6f8ff;font-size:15px;font-weight:light;font-family:system-ui;font-style:semi-bold;");
+          console.log(
+            `%c${arg.toString()}`,
+            "color:#f6f8ff;font-size:15px;font-weight:light;font-family:system-ui;font-style:semi-bold;"
+          );
         }
       }) : null;
     },
     warn(...args) {
       dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
-        console.log(`%c${arg}`, "color:#f3a712;font-size:15px;font-weight:light;font-family:monospace;font-style:semibold;");
+        console.log(
+          `%c${arg}`,
+          "color:#f3a712;font-size:15px;font-weight:light;font-family:monospace;font-style:semibold;"
+        );
       }) : null;
     },
     error(...args) {
       dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
-        console.log(`%c${arg}`, "color:red;font-size:15px;font-weight:light;font-family:monospace;font-style:bold;");
+        console.log(
+          `%c${arg}`,
+          "color:red;font-size:15px;font-weight:light;font-family:monospace;font-style:bold;"
+        );
       }) : null;
     },
     opt({ off: off2, dev: dev2 }) {
@@ -149,9 +160,12 @@ async function handleMessage(event) {
     ]);
     if (!existingDocument || !isMount) {
       log("Caching document for", documentUrl);
-      cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error2) => {
-        error2(`Failed to cache document for ${documentUrl}:`, error2);
-      }));
+      cachePromises.set(
+        documentUrl,
+        documentCache.add(documentUrl).catch((error2) => {
+          error2(`Failed to cache document for ${documentUrl}:`, error2);
+        })
+      );
     }
     if (isMount) {
       for (let match of matches) {
@@ -163,9 +177,12 @@ async function handleMessage(event) {
           let url = location.pathname + search + location.hash;
           if (!cachePromises.has(url)) {
             log("Caching data for", url);
-            cachePromises.set(url, dataCache.add(url).catch((error2) => {
-              error2(`Failed to cache data for ${url}:`, error2);
-            }));
+            cachePromises.set(
+              url,
+              dataCache.add(url).catch((error2) => {
+                error2(`Failed to cache data for ${url}:`, error2);
+              })
+            );
           }
         }
       }
@@ -201,16 +218,22 @@ async function handleFetch(event) {
       await cache.put(event.request, response.clone());
       return response;
     } catch (err) {
-      error("Serving data from network failed, falling back to cache", url.pathname);
+      error(
+        "Serving data from network failed, falling back to cache",
+        url.pathname
+      );
       let response = await caches.match(event.request);
       if (response) {
         response.headers.set("X-Remix-Worker", "yes");
         return response;
       }
-      return json({ message: "Network Error" }, {
-        status: 500,
-        headers: { "X-Remix-Catch": "yes", "X-Remix-Worker": "yes" }
-      });
+      return json(
+        { message: "Network Error" },
+        {
+          status: 500,
+          headers: { "X-Remix-Catch": "yes", "X-Remix-Worker": "yes" }
+        }
+      );
     }
   }
   if (isDocumentGetRequest(event.request)) {
@@ -221,7 +244,10 @@ async function handleFetch(event) {
       await cache.put(event.request, response.clone());
       return response;
     } catch (err) {
-      error("Serving document from network failed, falling back to cache", url.pathname);
+      error(
+        "Serving document from network failed, falling back to cache",
+        url.pathname
+      );
       let response = await caches.match(event.request);
       if (response) {
         return response;
@@ -254,15 +280,17 @@ self.addEventListener("message", (event) => {
   event.waitUntil(handleMessage(event));
 });
 self.addEventListener("fetch", (event) => {
-  event.respondWith((async () => {
-    let result = {};
-    try {
-      result.response = await handleFetch(event);
-    } catch (error2) {
-      result.error = error2;
-    }
-    return appHandleFetch(event, result);
-  })());
+  event.respondWith(
+    (async () => {
+      let result = {};
+      try {
+        result.response = await handleFetch(event);
+      } catch (error2) {
+        result.error = error2;
+      }
+      return appHandleFetch(event, result);
+    })()
+  );
 });
 async function appHandleFetch(event, {
   error: error2,
