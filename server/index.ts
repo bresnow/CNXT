@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as fsp from 'fs/promises';
 import { createServer } from 'http';
-import type { RequestListener, ServerResponse } from 'http';
+import type { RequestListener } from 'http';
 import * as path from 'path';
 import { installGlobals, formatServerError } from '@remix-run/node';
 import { createRequestHandler } from '@remix-run/server-runtime';
@@ -22,10 +22,11 @@ import 'gun/lib/load';
 import 'gun/lib/open';
 import 'gun/lib/not';
 import 'gun/lib/axe';
-
 import config from './data.config';
+
 installGlobals();
 const { ENV, ...appData } = config;
+
 let remixHandler = createRequestHandler(
   build,
   { formatServerError },
@@ -136,8 +137,9 @@ const gun = Gun({
 (async function () {
   await import('chainlocker');
   let _gun = gun;
-  let keypair = await _gun.keys(Object.values(ENV.APP_KEY_PAIR));
+  let keypair = await _gun.keys();
+  console.log(keypair);
   _gun.vault(host(), keypair);
-  let lock = _gun.locker(['the', 'world', 'is', 'safe']);
+  let lock = _gun.locker(['context']);
   lock.put(appData);
 })();

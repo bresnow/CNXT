@@ -6,7 +6,6 @@ import type {
   IGunUserInstance,
 } from 'gun/types';
 import type { ISEAPair } from 'gun/types';
-import type { Params } from 'react-router';
 import type { ServerResponse } from 'http';
 import { EntryContext } from 'remix';
 export * from './loaders';
@@ -58,10 +57,8 @@ export interface RmxGunCtx {
       radisk: boolean;
       localStorage: boolean;
     };
+    chainlocker(): Promise<IGunInstance<any>>;
     gun: IGunInstance;
-    seaAuth: SEAAuth;
     formData: () => Promise<Record<string, string>>;
   };
-  createToken: (sessionKey?: string) => Promise<string>;
-  verifyToken: (request: Request, sessionKey?: string) => Promise<void>;
 }

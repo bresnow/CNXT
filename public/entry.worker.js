@@ -99,7 +99,7 @@ var import_responses2 = __toESM(require_responses());
 // lib/debug.ts
 var collapse = console.groupCollapsed.bind(console.trace);
 function debug({ off = false, dev = true }) {
-  let isProd = false;
+  let isProd = development === "production";
   return {
     log(...args) {
       dev && !isProd && !off || !dev && !off ? args.forEach((arg) => {
