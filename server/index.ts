@@ -132,12 +132,20 @@ const gun = Gun({
     console.log(`Relay Server is listening on ${host()}`);
   }),
 });
+let user = gun.user();
 
-(async function () {
-  await import('chainlocker');
-  let _gun = gun;
-  let keypair = await _gun.keys(Object.values(ENV.APP_KEY_PAIR));
-  _gun.vault(host(), keypair);
-  let lock = _gun.locker(['the', 'world', 'is', 'safe']);
-  lock.put(appData);
-})();
+import('chainlocker').then(() => {
+  gun.keys(undefined, (pair) => {
+    console.log(pair);
+    user.auth(pair, (ack: any) => {
+      if (!ack.err) {
+        user.put(appData as any);
+      }
+    });
+    let vault = gun.vault(host(), pair);
+    let lock = gun.locker(['encrypted']);
+    lock.put(appData);
+
+    vault.get('pages').once((data) => console.log(data));
+  });
+});
