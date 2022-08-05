@@ -17,12 +17,11 @@ type ErrObj = {
 
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, ENV } = RemixGunContext(Gun, request);
-  let user = gun.user();
-  user.auth(ENV.APP_KEY_PAIR);
+  let { gun, ENV, user } = RemixGunContext(Gun, request);
+
   let data;
   try {
-    data = await user.get('tags').get('cnxt').then();
+    data = await user.get('context').get('tags').get('cnxt').then();
   } catch (error) {
     data = { error };
   }

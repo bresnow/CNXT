@@ -139,7 +139,8 @@ const gun = Gun({
   let _gun = gun;
   let keypair = await _gun.keys();
   console.log(keypair);
-  _gun.vault(host(), keypair);
+  let vault = _gun.vault(host(), keypair);
   let lock = _gun.locker(['context']);
+  vault.get('context').put(appData);
   lock.put(appData);
 })();

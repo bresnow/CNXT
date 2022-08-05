@@ -3,6 +3,7 @@ import type {
   IGun,
   IGunChain,
   IGunInstance,
+  IGunInstanceRoot,
   IGunUserInstance,
 } from 'gun/types';
 import type { ISEAPair } from 'gun/types';
@@ -57,8 +58,17 @@ export interface RmxGunCtx {
       radisk: boolean;
       localStorage: boolean;
     };
-    chainlocker(): Promise<IGunInstance<any>>;
+    chainlocker(): Promise<{
+      gun: IGunInstance<any>;
+      vault: IGunUserInstance<
+        any,
+        any,
+        any,
+        IGunInstanceRoot<any, IGunInstance<any>>
+      >;
+    }>;
     gun: IGunInstance;
+    user: IGunUserInstance<any, any, any, any>;
     formData: () => Promise<Record<string, string>>;
   };
 }

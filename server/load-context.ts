@@ -1,5 +1,12 @@
 import type { RmxGunCtx } from 'types';
-import type { GunOptions, GunUser, IGun, IGunChain, ISEAPair } from 'gun/types';
+import type {
+  GunOptions,
+  GunUser,
+  IGun,
+  IGunChain,
+  IGunUserInstance,
+  ISEAPair,
+} from 'gun/types';
 import { destroySession, getSession } from '../app/session.server';
 
 import { redirect } from 'remix';
@@ -65,16 +72,21 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     localStorage: false,
     radisk: true,
   };
-  let gun = Gun(gunOpts);
+  let _gun = Gun(gunOpts);
   async function chainlocker() {
     await import('chainlocker');
-    let _gun = gun;
+
     let keypair = await _gun.keys();
     console.log(keypair);
-    _gun.vault(host(), keypair);
-    return _gun;
+    let vault = _gun.vault(host(), keypair);
+    return { gun: _gun, vault };
   }
-
+  let user = chainlocker().then(({ vault }) => {
+    return vault;
+  });
+  let gun = chainlocker().then(({ gun }) => {
+    return gun;
+  });
   //     /**
   //      * add or remove peer addresses
   //      * @param peers
@@ -82,8 +94,8 @@ export function RemixGunContext(Gun: IGun, request: Request) {
   //      * @returns
   //      */
   const gunServerMesh = (peers: string | string[], remove?: boolean) => {
-    var peerOpt = (gun as any).back('opt.peers');
-    var mesh = (gun as any).back('opt.mesh'); // DAM
+    var peerOpt = (_gun as any).back('opt.peers');
+    var mesh = (_gun as any).back('opt.mesh'); // DAM
     if (remove) {
       if (Array.isArray(peers)) {
         peers.forEach((peer) => {
@@ -110,6 +122,7 @@ export function RemixGunContext(Gun: IGun, request: Request) {
     gunOpts,
     chainlocker,
     gun,
+    user,
     formData: async () => {
       let values: Record<string, any> | Record<string, FormDataEntryValue>;
       if (request.headers.get('Content-Type') === 'application/json') {

@@ -11,16 +11,16 @@ let QueryType = {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, ENV, formData } = RemixGunContext(Gun, request);
+  let { gun, ENV, formData, user } = RemixGunContext(Gun, request);
   let { query } = params;
   let url = new URL(request.url);
   let path = url.searchParams.get('path') as string;
   let data;
   let pathArr = path.split(/[\/\.]/g);
   console.log('\nPATHARR\n', pathArr);
-  let user = gun.user().auth(ENV.APP_KEY_PAIR);
+
   // log(path, 'Path', query, 'Query');
-  let node = user.path(path);
+  let node = user.get('context').path(path);
   switch (query) {
     case QueryType.GET:
       data = await node.then();
@@ -28,9 +28,12 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
       break;
     case QueryType.OPEN:
       data = await new Promise((res, _rej) => {
-        user.path(path).load((data: any) => {
-          res(data);
-        });
+        user
+          .get('context')
+          .path(path)
+          .load((data: any) => {
+            res(data);
+          });
       });
       // log(data, 'OPEN');
       break;

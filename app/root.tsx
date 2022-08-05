@@ -36,21 +36,14 @@ export const links: LinksFunction = () => {
 };
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { ENV, chainlocker } = RemixGunContext(Gun, request);
-  let gun = await chainlocker();
-  let user = gun.locker(['context', 'pages', 'root', 'data']);
+  let { ENV, chainlocker, user } = RemixGunContext(Gun, request);
+
   let url = new URL(request.url);
   let { protocol, host } = url;
   let meta;
   try {
-    meta = await new Promise((res, rej) => {
-      user.value((meta) => {
-        meta ? res(meta) : rej('No Meta');
-      });
-    });
-  } catch (error) {
-    console.log(error);
-  }
+    meta = await user.get('context').path(`pages.root.meta`).then();
+  } catch (error) {}
   let gunOpts = {
     peers: [`${protocol}//${host}/gun`],
     radisk: true,
@@ -63,7 +56,7 @@ export let loader: LoaderFunction = async ({ params, request, context }) => {
   });
 };
 export type RootLoaderData = {
-  meta: any;
+  meta: Record<string, string> | undefined;
   gunOpts: {
     peers: string[];
     radisk: boolean;
