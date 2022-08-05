@@ -133,7 +133,7 @@ const gun = Gun({
   }),
 });
 let user = gun.user();
-
+let v;
 import('chainlocker').then(() => {
   gun.keys(undefined, (pair) => {
     console.log(pair);
