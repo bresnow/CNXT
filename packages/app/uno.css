@@ -165,6 +165,8 @@
 .h-20{height:5rem;}
 .h-24{height:6rem;}
 .h-3{height:0.75rem;}
+.h-300,
+[h-300=""]{height:75rem;}
 .h-4{height:1rem;}
 .h-40,
 [h-40=""]{height:10rem;}
