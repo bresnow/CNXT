@@ -55,8 +55,6 @@ export default function Index() {
         ]}
       />
       <div>
-        <iframe className={'w-full h-300'} src={'https://sys.code.cnxt.app'}></iframe>
-        <iframe className={'w-full h-300'} src={'https://sys.term.cnxt.app'}></iframe>
         <iframe className={'w-full h-300'} src={'https://sys.file.cnxt.app'}></iframe>
       </div>
     </>
