@@ -2,7 +2,7 @@ import Gun from 'gun';
 import { json, LoaderFunction, useLoaderData, useCatch } from 'remix';
 import { LoadCtx } from 'types';
 import Display from '~/components/DisplayHeading';
-
+import Iframe, { SandBox } from '~/components/Iframe';
 import React from 'react';
 import CNXTLogo from '~/components/svg/logos/CNXT';
 import FormBuilder from '~/components/FormBuilder';
@@ -55,7 +55,7 @@ export default function Index() {
         ]}
       />
       <div>
-        <iframe className={'w-full h-300'} src={'https://sys.file.cnxt.app'}></iframe>
+        <Iframe className={'w-full h-300'} url={'http://appjack:8021'} />
       </div>
     </>
   );

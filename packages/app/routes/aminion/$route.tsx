@@ -21,7 +21,7 @@ import jsesc from 'jsesc';
 
 export let loader: LoaderFunction = async ({ params, request, context }) => {
   let { RemixGunContext } = context as LoadCtx;
-  let { gun, seaAuth, ENV } = RemixGunContext(Gun, request);
+  let { gun, ENV } = RemixGunContext(Gun, request);
 
   let { route } = params;
 
