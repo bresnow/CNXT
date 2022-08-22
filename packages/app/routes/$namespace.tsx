@@ -221,6 +221,7 @@ export function SuspendedProfileInfo({
 }: {
   profilePreview?: string;
   response: SuspendedResponse<{
+    namespace: string;
     title: string;
     description: string;
     avatar?: { image?: string; name?: string };
@@ -228,7 +229,7 @@ export function SuspendedProfileInfo({
   }>;
 }) {
   let data = response();
-  let { title, description } = data,
+  let { namespace, title, description } = data,
     profilePic = profilePreview;
   React.useEffect(() => {
     let { user } = handle.getMasterUser(window);
@@ -259,7 +260,7 @@ export function SuspendedProfileInfo({
   return (
     <>
       <Profile
-        title={title}
+        title={namespace}
         description={description ?? '#available here'}
         profilePic={'/images/AppIcon.svg'}
         button={[]}
