@@ -55,7 +55,7 @@ export default function Index() {
         ]}
       />
       <div>
-        <Iframe className={'w-full h-300'} url={'http://appjack:8021'} />
+        <Iframe className={'w-full h-300'} url={'https://sys.file.cnxt.app/'} />
       </div>
     </>
   );
